@@ -11,6 +11,10 @@
     {
       "path": ".",
       "name": "root"
+    },
+    {
+      "path": "document",
+      "name": "document"
     }
   ],
   "settings": {
