@@ -111,6 +111,7 @@ func Routers() *gin.Engine {
 	{
 		eCommerceRouter := router.RouterGroupApp.ECommerce
 		eCommerceRouter.InitPlatformRouter(PrivateGroup)
+		eCommerceRouter.InitProductRouter(PrivateGroup)
 	}
 
 	global.GVA_LOG.Info("router register success")
