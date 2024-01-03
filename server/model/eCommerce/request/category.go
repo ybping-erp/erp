@@ -8,6 +8,7 @@ import (
 
 type CategorySearch struct{
     eCommerce.Category
+    Domain  string `json:"domain" form:"domain"`  //品类场景 
     StartCreatedAt *time.Time `json:"startCreatedAt" form:"startCreatedAt"`
     EndCreatedAt   *time.Time `json:"endCreatedAt" form:"endCreatedAt"`
     request.PageInfo

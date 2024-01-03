@@ -1,55 +1,13 @@
 <template>
   <div>
-    <div class="gva-search-box">
-      <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-      <el-form-item label="创建日期" prop="createdAt">
-      <template #label>
-        <span>
-          创建日期
-          <el-tooltip content="搜索范围是开始日期（包含）至结束日期（不包含）">
-            <el-icon><QuestionFilled /></el-icon>
-          </el-tooltip>
-        </span>
-      </template>
-      <el-date-picker v-model="searchInfo.startCreatedAt" type="datetime" placeholder="开始日期" :disabled-date="time=> searchInfo.endCreatedAt ? time.getTime() > searchInfo.endCreatedAt.getTime() : false"></el-date-picker>
-       —
-      <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
-      </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="search" @click="onSubmit">查询</el-button>
-          <el-button icon="refresh" @click="onReset">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
     <div class="gva-table-box">
-        <div class="gva-btn-list">
-            <el-button type="primary" icon="plus" @click="openDialog">新增</el-button>
-            <el-popover v-model:visible="deleteVisible" :disabled="!multipleSelection.length" placement="top" width="160">
-            <p>确定要删除吗？</p>
-            <div style="text-align: right; margin-top: 8px;">
-                <el-button type="primary" link @click="deleteVisible = false">取消</el-button>
-                <el-button type="primary" @click="onDelete">确定</el-button>
-            </div>
-            <template #reference>
-                <el-button icon="delete" style="margin-left: 10px;" :disabled="!multipleSelection.length" @click="deleteVisible = true">删除</el-button>
-            </template>
-            </el-popover>
-        </div>
         <el-table
-        ref="multipleTable"
-        style="width: 100%"
-        tooltip-effect="dark"
         :data="tableData"
+        :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         row-key="ID"
-        @selection-change="handleSelectionChange"
-        >
-        <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="日期" width="180">
-            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
-        </el-table-column>
-        <el-table-column align="left" label="品类场景" prop="domain" width="120" />
+        style="width: 100%"
+      >
         <el-table-column align="left" label="类别名称" prop="name" width="120" />
-        <el-table-column align="left" label="父类别的标识符" prop="parentId" width="120" />
         <el-table-column
           align="left"
           label="创建人"
@@ -61,15 +19,18 @@
         </el-table-column>
         <el-table-column align="left" label="操作" min-width="120">
             <template #default="scope">
-            <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
+            <!-- <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
                 查看详情
-            </el-button>
+            </el-button> -->
+            <el-button type="primary" link icon="plus" @click="openDialog">新增子类别</el-button>
             <el-button type="primary" link icon="edit" class="table-button" @click="updateCategoryFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
             </template>
         </el-table-column>
-        </el-table>
+      </el-table>
+
+   
         <div class="gva-pagination">
             <el-pagination
             layout="total, sizes, prev, pager, next, jumper"
@@ -85,17 +46,13 @@
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
       <el-scrollbar height="500px">
           <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="品类场景:"  prop="domain" >
-                <el-select v-model="formData.domain" placeholder="请选择品类场景" style="width:100%" :clearable="true" >
-                   <el-option v-for="item in [50]" :key="item" :label="item" :value="item" />
-                </el-select>
+            <el-form-item label="父类别:"  prop="parentId" >
+              <el-input v-model.number="formData.parentId" :clearable="true" placeholder="自动传入父类别" />
             </el-form-item>
             <el-form-item label="类别名称:"  prop="name" >
               <el-input v-model="formData.name" :clearable="true"  placeholder="请输入类别名称" />
             </el-form-item>
-            <el-form-item label="父类别的标识符:"  prop="parentId" >
-              <el-input v-model.number="formData.parentId" :clearable="true" placeholder="请输入父类别的标识符" />
-            </el-form-item>
+            
           </el-form>
       </el-scrollbar>
       <template #footer>
@@ -138,7 +95,9 @@ import {
 import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
-
+import { useRoute } from "vue-router"
+const route = useRoute()
+const domain = route.params.domain
 defineOptions({
     name: 'Category'
 })
@@ -210,6 +169,7 @@ const handleCurrentChange = (val) => {
 
 // 查询
 const getTableData = async() => {
+  searchInfo.value.domain = domain
   const table = await getCategoryList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list

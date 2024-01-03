@@ -52,20 +52,31 @@ func (categoryService *CategoryService)GetCategoryInfoList(info eCommerceReq.Cat
 	offset := info.PageSize * (info.Page - 1)
     // 创建db
 	db := global.GVA_DB.Model(&eCommerce.Category{})
+	if info.Domain != "" {
+		db = db.Where("domain = ?", info.Domain)
+	}
     var categorys []eCommerce.Category
-    // 如果有条件搜索 下方会自动创建搜索语句
-    if info.StartCreatedAt !=nil && info.EndCreatedAt !=nil {
-     db = db.Where("created_at BETWEEN ? AND ?", info.StartCreatedAt, info.EndCreatedAt)
-    }
-	err = db.Count(&total).Error
+    err = db.Where("parent_id = ?", "0").Count(&total).Error
 	if err!=nil {
     	return
     }
-
 	if limit != 0 {
        db = db.Limit(limit).Offset(offset)
     }
-	
 	err = db.Preload("Creator").Find(&categorys).Error
+	for k := range categorys {
+		err = categoryService.findChildrenCategory(&categorys[k])
+	}
 	return  categorys, total, err
+}
+
+// findChildrenCategory 查询子品类
+func (categoryService *CategoryService) findChildrenCategory(category *eCommerce.Category) (err error) {
+	err = global.GVA_DB.Where("parent_id = ?", category.ID).Preload("Creator").Find(&category.Children).Error
+	if len(category.Children) > 0 {
+		for k := range category.Children {
+			err = categoryService.findChildrenCategory(&category.Children[k])
+		}
+	}
+	return err
 }

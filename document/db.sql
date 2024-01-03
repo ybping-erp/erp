@@ -47,9 +47,9 @@ CREATE TABLE t_category (
     deleted_at TIMESTAMP COMMENT '类别软删除时间（如果适用）'
 ) CHARACTER SET utf8mb4;
 ADD CONSTRAINT t_category UNIQUE (domain, name); -- 在同一个场景下类别唯一
-INSERT INTO t_category (domain, name, creator_id) VALUES 
-('Product', '所有分类',1),
-('Goods', '所有分类',1);
+INSERT INTO t_category (domain, name, creator_id, parent_id) VALUES 
+('Product', '所有分类',1, 0),
+('Goods', '所有分类',1, 0);
 
 -- Create Product table
 DROP Table IF EXISTS t_product;
