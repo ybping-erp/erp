@@ -15,19 +15,6 @@
        —
       <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
       </el-form-item>
-        <el-form-item label="产品所属的类别标识符" prop="categoryId">
-            
-             <el-input v-model.number="searchInfo.categoryId" placeholder="搜索条件" />
-
-        </el-form-item>
-        <el-form-item label="产品名称" prop="productName">
-         <el-input v-model="searchInfo.productName" placeholder="搜索条件" />
-
-        </el-form-item>
-        <el-form-item label="产品的唯一标识符" prop="sku">
-         <el-input v-model="searchInfo.sku" placeholder="搜索条件" />
-
-        </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">查询</el-button>
           <el-button icon="refresh" @click="onReset">重置</el-button>
@@ -60,12 +47,9 @@
         <el-table-column align="left" label="日期" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
-        <el-table-column align="left" label="产品所属的类别标识符" prop="categoryId" width="120" />
-        <el-table-column align="left" label="产品描述" prop="description" width="120" />
-        <el-table-column align="left" label="产品名称" prop="productName" width="120" />
-        <el-table-column align="left" label="产品的唯一标识符" prop="sku" width="120" />
-        <el-table-column align="left" label="产品摘要" prop="summary" width="120" />
-        <el-table-column align="left" label="产品的单价" prop="unitPrice" width="120" />
+        <el-table-column align="left" label="品类场景" prop="domain" width="120" />
+        <el-table-column align="left" label="类别名称" prop="name" width="120" />
+        <el-table-column align="left" label="父类别的标识符" prop="parentId" width="120" />
         <el-table-column
           align="left"
           label="创建人"
@@ -81,7 +65,7 @@
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
                 查看详情
             </el-button>
-            <el-button type="primary" link icon="edit" class="table-button" @click="updateProductFunc(scope.row)">变更</el-button>
+            <el-button type="primary" link icon="edit" class="table-button" @click="updateCategoryFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
             </template>
         </el-table-column>
@@ -101,23 +85,16 @@
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
       <el-scrollbar height="500px">
           <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="产品所属的类别标识符:"  prop="categoryId" >
-              <el-input v-model.number="formData.categoryId" :clearable="true" placeholder="请输入产品所属的类别标识符" />
+            <el-form-item label="品类场景:"  prop="domain" >
+                <el-select v-model="formData.domain" placeholder="请选择品类场景" style="width:100%" :clearable="true" >
+                   <el-option v-for="item in [50]" :key="item" :label="item" :value="item" />
+                </el-select>
             </el-form-item>
-            <el-form-item label="产品描述:"  prop="description" >
-              <el-input v-model="formData.description" :clearable="true"  placeholder="请输入产品描述" />
+            <el-form-item label="类别名称:"  prop="name" >
+              <el-input v-model="formData.name" :clearable="true"  placeholder="请输入类别名称" />
             </el-form-item>
-            <el-form-item label="产品名称:"  prop="productName" >
-              <el-input v-model="formData.productName" :clearable="true"  placeholder="请输入产品名称" />
-            </el-form-item>
-            <el-form-item label="产品的唯一标识符:"  prop="sku" >
-              <el-input v-model="formData.sku" :clearable="true"  placeholder="请输入产品的唯一标识符" />
-            </el-form-item>
-            <el-form-item label="产品摘要:"  prop="summary" >
-              <el-input v-model="formData.summary" :clearable="true"  placeholder="请输入产品摘要" />
-            </el-form-item>
-            <el-form-item label="产品的单价:"  prop="unitPrice" >
-              <el-input-number v-model="formData.unitPrice"  style="width:100%" :precision="2" :clearable="true"  />
+            <el-form-item label="父类别的标识符:"  prop="parentId" >
+              <el-input v-model.number="formData.parentId" :clearable="true" placeholder="请输入父类别的标识符" />
             </el-form-item>
           </el-form>
       </el-scrollbar>
@@ -132,23 +109,14 @@
     <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="查看详情" destroy-on-close>
       <el-scrollbar height="550px">
         <el-descriptions column="1" border>
-                <el-descriptions-item label="产品所属的类别标识符">
-                        {{ formData.categoryId }}
+                <el-descriptions-item label="品类场景">
+                        {{ formData.domain }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品描述">
-                        {{ formData.description }}
+                <el-descriptions-item label="类别名称">
+                        {{ formData.name }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品名称">
-                        {{ formData.productName }}
-                </el-descriptions-item>
-                <el-descriptions-item label="产品的唯一标识符">
-                        {{ formData.sku }}
-                </el-descriptions-item>
-                <el-descriptions-item label="产品摘要">
-                        {{ formData.summary }}
-                </el-descriptions-item>
-                <el-descriptions-item label="产品的单价">
-                        {{ formData.unitPrice }}
+                <el-descriptions-item label="父类别的标识符">
+                        {{ formData.parentId }}
                 </el-descriptions-item>
         </el-descriptions>
       </el-scrollbar>
@@ -158,13 +126,13 @@
 
 <script setup>
 import {
-  createProduct,
-  deleteProduct,
-  deleteProductByIds,
-  updateProduct,
-  findProduct,
-  getProductList
-} from '@/api/product'
+  createCategory,
+  deleteCategory,
+  deleteCategoryByIds,
+  updateCategory,
+  findCategory,
+  getCategoryList
+} from '@/api/category'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
@@ -172,17 +140,13 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 
 defineOptions({
-    name: 'Product'
+    name: 'Category'
 })
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
-        categoryId: 0,
-        description: '',
-        productName: '',
-        sku: '',
-        summary: '',
-        unitPrice: 0,
+        name: '',
+        parentId: 0,
         })
 
 
@@ -246,7 +210,7 @@ const handleCurrentChange = (val) => {
 
 // 查询
 const getTableData = async() => {
-  const table = await getProductList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
+  const table = await getCategoryList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -281,7 +245,7 @@ const deleteRow = (row) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-            deleteProductFunc(row)
+            deleteCategoryFunc(row)
         })
     }
 
@@ -303,7 +267,7 @@ const onDelete = async() => {
         multipleSelection.value.map(item => {
           ids.push(item.ID)
         })
-      const res = await deleteProductByIds({ ids })
+      const res = await deleteCategoryByIds({ ids })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -321,19 +285,19 @@ const onDelete = async() => {
 const type = ref('')
 
 // 更新行
-const updateProductFunc = async(row) => {
-    const res = await findProduct({ ID: row.ID })
+const updateCategoryFunc = async(row) => {
+    const res = await findCategory({ ID: row.ID })
     type.value = 'update'
     if (res.code === 0) {
-        formData.value = res.data.reproduct
+        formData.value = res.data.recategory
         dialogFormVisible.value = true
     }
 }
 
 
 // 删除行
-const deleteProductFunc = async (row) => {
-    const res = await deleteProduct({ ID: row.ID })
+const deleteCategoryFunc = async (row) => {
+    const res = await deleteCategory({ ID: row.ID })
     if (res.code === 0) {
         ElMessage({
                 type: 'success',
@@ -363,9 +327,9 @@ const openDetailShow = () => {
 // 打开详情
 const getDetails = async (row) => {
   // 打开弹窗
-  const res = await findProduct({ ID: row.ID })
+  const res = await findCategory({ ID: row.ID })
   if (res.code === 0) {
-    formData.value = res.data.reproduct
+    formData.value = res.data.recategory
     openDetailShow()
   }
 }
@@ -375,12 +339,8 @@ const getDetails = async (row) => {
 const closeDetailShow = () => {
   detailShow.value = false
   formData.value = {
-          categoryId: 0,
-          description: '',
-          productName: '',
-          sku: '',
-          summary: '',
-          unitPrice: 0,
+          name: '',
+          parentId: 0,
           }
 }
 
@@ -395,12 +355,8 @@ const openDialog = () => {
 const closeDialog = () => {
     dialogFormVisible.value = false
     formData.value = {
-        categoryId: 0,
-        description: '',
-        productName: '',
-        sku: '',
-        summary: '',
-        unitPrice: 0,
+        name: '',
+        parentId: 0,
         }
 }
 // 弹窗确定
@@ -410,13 +366,13 @@ const enterDialog = async () => {
               let res
               switch (type.value) {
                 case 'create':
-                  res = await createProduct(formData.value)
+                  res = await createCategory(formData.value)
                   break
                 case 'update':
-                  res = await updateProduct(formData.value)
+                  res = await updateCategory(formData.value)
                   break
                 default:
-                  res = await createProduct(formData.value)
+                  res = await createCategory(formData.value)
                   break
               }
               if (res.code === 0) {

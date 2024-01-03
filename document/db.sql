@@ -31,8 +31,8 @@ CREATE TABLE t_shop (
     deleted_at TIMESTAMP COMMENT '账号软删除时间（如果适用）'
 ) CHARACTER SET utf8mb4;
 ALTER TABLE t_shop ADD CONSTRAINT t_shop UNIQUE (platform_name, shop_id); -- 在同一个平台下店铺唯一
-INSERT INTO t_shop (platform_name, shop_id, shop_name) VALUES 
-('eBay', 'ShopID001', 'Shop 1');
+INSERT INTO t_shop (platform_name, shop_id, shop_name, creator_id) VALUES 
+('eBay', 'ShopID001', 'Shop 1', 1);
 
 -- Create Category table
 DROP Table IF EXISTS t_category;
@@ -47,9 +47,9 @@ CREATE TABLE t_category (
     deleted_at TIMESTAMP COMMENT '类别软删除时间（如果适用）'
 ) CHARACTER SET utf8mb4;
 ADD CONSTRAINT t_category UNIQUE (domain, name); -- 在同一个场景下类别唯一
-INSERT INTO t_category (domain, name) VALUES 
-('Product', '所有分类'),
-('Goods', '所有分类');
+INSERT INTO t_category (domain, name, creator_id) VALUES 
+('Product', '所有分类',1),
+('Goods', '所有分类',1);
 
 -- Create Product table
 DROP Table IF EXISTS t_product;

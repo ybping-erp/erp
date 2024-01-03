@@ -15,17 +15,16 @@
        —
       <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
       </el-form-item>
-        <el-form-item label="产品所属的类别标识符" prop="categoryId">
-            
-             <el-input v-model.number="searchInfo.categoryId" placeholder="搜索条件" />
+        <el-form-item label="平台名称" prop="platformName">
+         <el-input v-model="searchInfo.platformName" placeholder="搜索条件" />
 
         </el-form-item>
-        <el-form-item label="产品名称" prop="productName">
-         <el-input v-model="searchInfo.productName" placeholder="搜索条件" />
+        <el-form-item label="平台ID" prop="shopId">
+         <el-input v-model="searchInfo.shopId" placeholder="搜索条件" />
 
         </el-form-item>
-        <el-form-item label="产品的唯一标识符" prop="sku">
-         <el-input v-model="searchInfo.sku" placeholder="搜索条件" />
+        <el-form-item label="店铺名称" prop="shopName">
+         <el-input v-model="searchInfo.shopName" placeholder="搜索条件" />
 
         </el-form-item>
         <el-form-item>
@@ -60,12 +59,11 @@
         <el-table-column align="left" label="日期" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
-        <el-table-column align="left" label="产品所属的类别标识符" prop="categoryId" width="120" />
-        <el-table-column align="left" label="产品描述" prop="description" width="120" />
-        <el-table-column align="left" label="产品名称" prop="productName" width="120" />
-        <el-table-column align="left" label="产品的唯一标识符" prop="sku" width="120" />
-        <el-table-column align="left" label="产品摘要" prop="summary" width="120" />
-        <el-table-column align="left" label="产品的单价" prop="unitPrice" width="120" />
+        <el-table-column align="left" label="平台名称" prop="platformName" width="120" />
+        <el-table-column align="left" label="平台ID" prop="shopId" width="120" />
+        <el-table-column align="left" label="店铺名称" prop="shopName" width="120" />
+        <el-table-column align="left" label="API Client ID" prop="clientId" width="120" />
+        <el-table-column align="left" label="API Client Cert" prop="clientCert" width="120" />
         <el-table-column
           align="left"
           label="创建人"
@@ -81,7 +79,7 @@
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
                 查看详情
             </el-button>
-            <el-button type="primary" link icon="edit" class="table-button" @click="updateProductFunc(scope.row)">变更</el-button>
+            <el-button type="primary" link icon="edit" class="table-button" @click="updateShopFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
             </template>
         </el-table-column>
@@ -101,23 +99,23 @@
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
       <el-scrollbar height="500px">
           <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="产品所属的类别标识符:"  prop="categoryId" >
-              <el-input v-model.number="formData.categoryId" :clearable="true" placeholder="请输入产品所属的类别标识符" />
+            <el-form-item label="平台名称:"  prop="platformName" >
+              <el-input v-model="formData.platformName" :clearable="true"  placeholder="请输入平台名称" />
             </el-form-item>
-            <el-form-item label="产品描述:"  prop="description" >
-              <el-input v-model="formData.description" :clearable="true"  placeholder="请输入产品描述" />
+            <el-form-item label="平台ID:"  prop="shopId" >
+              <el-input v-model="formData.shopId" :clearable="true"  placeholder="请输入平台ID" />
             </el-form-item>
-            <el-form-item label="产品名称:"  prop="productName" >
-              <el-input v-model="formData.productName" :clearable="true"  placeholder="请输入产品名称" />
+            <el-form-item label="店铺名称:"  prop="shopName" >
+              <el-input v-model="formData.shopName" :clearable="true"  placeholder="请输入店铺名称" />
             </el-form-item>
-            <el-form-item label="产品的唯一标识符:"  prop="sku" >
-              <el-input v-model="formData.sku" :clearable="true"  placeholder="请输入产品的唯一标识符" />
+            <el-form-item label="API Client ID:"  prop="clientId" >
+              <el-input v-model="formData.clientId" :clearable="true"  placeholder="请输入API Client ID" />
             </el-form-item>
-            <el-form-item label="产品摘要:"  prop="summary" >
-              <el-input v-model="formData.summary" :clearable="true"  placeholder="请输入产品摘要" />
+            <el-form-item label="API Client Cert:"  prop="clientCert" >
+              <el-input v-model="formData.clientCert" :clearable="true"  placeholder="请输入API Client Cert" />
             </el-form-item>
-            <el-form-item label="产品的单价:"  prop="unitPrice" >
-              <el-input-number v-model="formData.unitPrice"  style="width:100%" :precision="2" :clearable="true"  />
+            <el-form-item label="创建人:"  prop="creatorId" >
+              <el-input v-model.number="formData.creatorId" :clearable="true" placeholder="请输入创建人" />
             </el-form-item>
           </el-form>
       </el-scrollbar>
@@ -132,23 +130,23 @@
     <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="查看详情" destroy-on-close>
       <el-scrollbar height="550px">
         <el-descriptions column="1" border>
-                <el-descriptions-item label="产品所属的类别标识符">
-                        {{ formData.categoryId }}
+                <el-descriptions-item label="平台名称">
+                        {{ formData.platformName }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品描述">
-                        {{ formData.description }}
+                <el-descriptions-item label="平台ID">
+                        {{ formData.shopId }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品名称">
-                        {{ formData.productName }}
+                <el-descriptions-item label="店铺名称">
+                        {{ formData.shopName }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品的唯一标识符">
-                        {{ formData.sku }}
+                <el-descriptions-item label="API Client ID">
+                        {{ formData.clientId }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品摘要">
-                        {{ formData.summary }}
+                <el-descriptions-item label="API Client Cert">
+                        {{ formData.clientCert }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品的单价">
-                        {{ formData.unitPrice }}
+                <el-descriptions-item label="创建人">
+                        {{ formData.creatorId }}
                 </el-descriptions-item>
         </el-descriptions>
       </el-scrollbar>
@@ -158,13 +156,13 @@
 
 <script setup>
 import {
-  createProduct,
-  deleteProduct,
-  deleteProductByIds,
-  updateProduct,
-  findProduct,
-  getProductList
-} from '@/api/product'
+  createShop,
+  deleteShop,
+  deleteShopByIds,
+  updateShop,
+  findShop,
+  getShopList
+} from '@/api/shop'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
@@ -172,17 +170,17 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 
 defineOptions({
-    name: 'Product'
+    name: 'Shop'
 })
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
-        categoryId: 0,
-        description: '',
-        productName: '',
-        sku: '',
-        summary: '',
-        unitPrice: 0,
+        platformName: '',
+        shopId: '',
+        shopName: '',
+        clientId: '',
+        clientCert: '',
+        creatorId: 0,
         })
 
 
@@ -246,7 +244,7 @@ const handleCurrentChange = (val) => {
 
 // 查询
 const getTableData = async() => {
-  const table = await getProductList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
+  const table = await getShopList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -281,7 +279,7 @@ const deleteRow = (row) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-            deleteProductFunc(row)
+            deleteShopFunc(row)
         })
     }
 
@@ -303,7 +301,7 @@ const onDelete = async() => {
         multipleSelection.value.map(item => {
           ids.push(item.ID)
         })
-      const res = await deleteProductByIds({ ids })
+      const res = await deleteShopByIds({ ids })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -321,19 +319,19 @@ const onDelete = async() => {
 const type = ref('')
 
 // 更新行
-const updateProductFunc = async(row) => {
-    const res = await findProduct({ ID: row.ID })
+const updateShopFunc = async(row) => {
+    const res = await findShop({ ID: row.ID })
     type.value = 'update'
     if (res.code === 0) {
-        formData.value = res.data.reproduct
+        formData.value = res.data.reshop
         dialogFormVisible.value = true
     }
 }
 
 
 // 删除行
-const deleteProductFunc = async (row) => {
-    const res = await deleteProduct({ ID: row.ID })
+const deleteShopFunc = async (row) => {
+    const res = await deleteShop({ ID: row.ID })
     if (res.code === 0) {
         ElMessage({
                 type: 'success',
@@ -363,9 +361,9 @@ const openDetailShow = () => {
 // 打开详情
 const getDetails = async (row) => {
   // 打开弹窗
-  const res = await findProduct({ ID: row.ID })
+  const res = await findShop({ ID: row.ID })
   if (res.code === 0) {
-    formData.value = res.data.reproduct
+    formData.value = res.data.reshop
     openDetailShow()
   }
 }
@@ -375,12 +373,12 @@ const getDetails = async (row) => {
 const closeDetailShow = () => {
   detailShow.value = false
   formData.value = {
-          categoryId: 0,
-          description: '',
-          productName: '',
-          sku: '',
-          summary: '',
-          unitPrice: 0,
+          platformName: '',
+          shopId: '',
+          shopName: '',
+          clientId: '',
+          clientCert: '',
+          creatorId: 0,
           }
 }
 
@@ -395,12 +393,12 @@ const openDialog = () => {
 const closeDialog = () => {
     dialogFormVisible.value = false
     formData.value = {
-        categoryId: 0,
-        description: '',
-        productName: '',
-        sku: '',
-        summary: '',
-        unitPrice: 0,
+        platformName: '',
+        shopId: '',
+        shopName: '',
+        clientId: '',
+        clientCert: '',
+        creatorId: 0,
         }
 }
 // 弹窗确定
@@ -410,13 +408,13 @@ const enterDialog = async () => {
               let res
               switch (type.value) {
                 case 'create':
-                  res = await createProduct(formData.value)
+                  res = await createShop(formData.value)
                   break
                 case 'update':
-                  res = await updateProduct(formData.value)
+                  res = await updateShop(formData.value)
                   break
                 default:
-                  res = await createProduct(formData.value)
+                  res = await createShop(formData.value)
                   break
               }
               if (res.code === 0) {
