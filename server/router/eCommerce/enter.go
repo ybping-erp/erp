@@ -5,4 +5,6 @@ type RouterGroup struct {
 	ProductRouter
 	ShopRouter
 	CategoryRouter
+	OrderRouter
+	OrderItemRouter
 }

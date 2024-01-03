@@ -15,17 +15,6 @@
        —
       <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
       </el-form-item>
-        <el-form-item label="平台名称" prop="platformName">
-         <el-input v-model="searchInfo.platformName" placeholder="搜索条件" />
-        </el-form-item>
-        <el-form-item label="平台ID" prop="shopId">
-         <el-input v-model="searchInfo.shopId" placeholder="搜索条件" />
-
-        </el-form-item>
-        <el-form-item label="店铺名称" prop="shopName">
-         <el-input v-model="searchInfo.shopName" placeholder="搜索条件" />
-
-        </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">查询</el-button>
           <el-button icon="refresh" @click="onReset">重置</el-button>
@@ -58,27 +47,20 @@
         <el-table-column align="left" label="日期" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
-        <el-table-column align="left" label="平台名称" prop="platformName" width="120" />
-        <el-table-column align="left" label="平台ID" prop="shopId" width="120" />
-        <el-table-column align="left" label="店铺名称" prop="shopName" width="120" />
-        <el-table-column align="left" label="API Client ID" prop="clientId" width="120" />
-        <el-table-column align="left" label="API Client Cert" prop="clientCert" width="120" />
-        <el-table-column
-          align="left"
-          label="创建人"
-          width="140"
-        >
-          <template #default="scope">
-            <div>{{ scope.row.creator.userName }}({{ scope.row.creator.nickName }})</div>
-          </template>
-        </el-table-column>
+        <el-table-column align="left" label="关联订单的标识符" prop="orderId" width="120" />
+        <el-table-column align="left" label="关联产品的标识符" prop="productSku" width="120" />
+        <el-table-column align="left" label="产品图片" prop="productUrl" width="120" />
+        <el-table-column align="left" label="产品属性" prop="attributes" width="120" />
+        <el-table-column align="left" label="订单中产品的数量" prop="quantity" width="120" />
+        <el-table-column align="left" label="产品的单价" prop="unitPrice" width="120" />
+        <el-table-column align="left" label="订单项总金额" prop="totalAmount" width="120" />
         <el-table-column align="left" label="操作" min-width="120">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
                 查看详情
             </el-button>
-            <el-button type="primary" link icon="edit" class="table-button" @click="updateShopFunc(scope.row)">变更</el-button>
+            <el-button type="primary" link icon="edit" class="table-button" @click="updateOrderItemFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
             </template>
         </el-table-column>
@@ -98,23 +80,25 @@
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
       <el-scrollbar height="500px">
           <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="平台名称:"  prop="platformName" >
-              <el-input v-model="formData.platformName" :clearable="true"  placeholder="请输入平台名称" />
+            <el-form-item label="关联订单的标识符:"  prop="orderId" >
+              <el-input v-model="formData.orderId" :clearable="true"  placeholder="请输入关联订单的标识符" />
             </el-form-item>
-            <el-form-item label="平台ID:"  prop="shopId" >
-              <el-input v-model="formData.shopId" :clearable="true"  placeholder="请输入平台ID" />
+            <el-form-item label="关联产品的标识符:"  prop="productSku" >
+              <el-input v-model="formData.productSku" :clearable="true"  placeholder="请输入关联产品的标识符" />
             </el-form-item>
-            <el-form-item label="店铺名称:"  prop="shopName" >
-              <el-input v-model="formData.shopName" :clearable="true"  placeholder="请输入店铺名称" />
+            <el-form-item label="产品图片:"  prop="productUrl" >
+              <el-input v-model="formData.productUrl" :clearable="true"  placeholder="请输入产品图片" />
             </el-form-item>
-            <el-form-item label="API Client ID:"  prop="clientId" >
-              <el-input v-model="formData.clientId" :clearable="true"  placeholder="请输入API Client ID" />
+            <el-form-item label="产品属性:"  prop="attributes" >
             </el-form-item>
-            <el-form-item label="API Client Cert:"  prop="clientCert" >
-              <el-input v-model="formData.clientCert" :clearable="true"  placeholder="请输入API Client Cert" />
+            <el-form-item label="订单中产品的数量:"  prop="quantity" >
+              <el-input v-model.number="formData.quantity" :clearable="true" placeholder="请输入订单中产品的数量" />
             </el-form-item>
-            <el-form-item label="创建人:"  prop="creatorId" >
-              <el-input v-model.number="formData.creatorId" :clearable="true" placeholder="请输入创建人" />
+            <el-form-item label="产品的单价:"  prop="unitPrice" >
+              <el-input-number v-model="formData.unitPrice"  style="width:100%" :precision="2" :clearable="true"  />
+            </el-form-item>
+            <el-form-item label="订单项总金额:"  prop="totalAmount" >
+              <el-input-number v-model="formData.totalAmount"  style="width:100%" :precision="2" :clearable="true"  />
             </el-form-item>
           </el-form>
       </el-scrollbar>
@@ -129,23 +113,26 @@
     <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="查看详情" destroy-on-close>
       <el-scrollbar height="550px">
         <el-descriptions column="1" border>
-                <el-descriptions-item label="平台名称">
-                        {{ formData.platformName }}
+                <el-descriptions-item label="关联订单的标识符">
+                        {{ formData.orderId }}
                 </el-descriptions-item>
-                <el-descriptions-item label="平台ID">
-                        {{ formData.shopId }}
+                <el-descriptions-item label="关联产品的标识符">
+                        {{ formData.productSku }}
                 </el-descriptions-item>
-                <el-descriptions-item label="店铺名称">
-                        {{ formData.shopName }}
+                <el-descriptions-item label="产品图片">
+                        {{ formData.productUrl }}
                 </el-descriptions-item>
-                <el-descriptions-item label="API Client ID">
-                        {{ formData.clientId }}
+                <el-descriptions-item label="产品属性">
+                        {{ formData.attributes }}
                 </el-descriptions-item>
-                <el-descriptions-item label="API Client Cert">
-                        {{ formData.clientCert }}
+                <el-descriptions-item label="订单中产品的数量">
+                        {{ formData.quantity }}
                 </el-descriptions-item>
-                <el-descriptions-item label="创建人">
-                        {{ formData.creatorId }}
+                <el-descriptions-item label="产品的单价">
+                        {{ formData.unitPrice }}
+                </el-descriptions-item>
+                <el-descriptions-item label="订单项总金额">
+                        {{ formData.totalAmount }}
                 </el-descriptions-item>
         </el-descriptions>
       </el-scrollbar>
@@ -155,13 +142,13 @@
 
 <script setup>
 import {
-  createShop,
-  deleteShop,
-  deleteShopByIds,
-  updateShop,
-  findShop,
-  getShopList
-} from '@/api/shop'
+  createOrderItem,
+  deleteOrderItem,
+  deleteOrderItemByIds,
+  updateOrderItem,
+  findOrderItem,
+  getOrderItemList
+} from '@/api/order_item'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
@@ -169,17 +156,17 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 
 defineOptions({
-    name: 'Shop'
+    name: 'OrderItem'
 })
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
-        platformName: '',
-        shopId: '',
-        shopName: '',
-        clientId: '',
-        clientCert: '',
-        creatorId: 0,
+        orderId: '',
+        productSku: '',
+        productUrl: '',
+        quantity: 0,
+        unitPrice: 0,
+        totalAmount: 0,
         })
 
 
@@ -243,7 +230,7 @@ const handleCurrentChange = (val) => {
 
 // 查询
 const getTableData = async() => {
-  const table = await getShopList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
+  const table = await getOrderItemList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -278,7 +265,7 @@ const deleteRow = (row) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-            deleteShopFunc(row)
+            deleteOrderItemFunc(row)
         })
     }
 
@@ -300,7 +287,7 @@ const onDelete = async() => {
         multipleSelection.value.map(item => {
           ids.push(item.ID)
         })
-      const res = await deleteShopByIds({ ids })
+      const res = await deleteOrderItemByIds({ ids })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -318,19 +305,19 @@ const onDelete = async() => {
 const type = ref('')
 
 // 更新行
-const updateShopFunc = async(row) => {
-    const res = await findShop({ ID: row.ID })
+const updateOrderItemFunc = async(row) => {
+    const res = await findOrderItem({ ID: row.ID })
     type.value = 'update'
     if (res.code === 0) {
-        formData.value = res.data.reshop
+        formData.value = res.data.reorderItem
         dialogFormVisible.value = true
     }
 }
 
 
 // 删除行
-const deleteShopFunc = async (row) => {
-    const res = await deleteShop({ ID: row.ID })
+const deleteOrderItemFunc = async (row) => {
+    const res = await deleteOrderItem({ ID: row.ID })
     if (res.code === 0) {
         ElMessage({
                 type: 'success',
@@ -360,9 +347,9 @@ const openDetailShow = () => {
 // 打开详情
 const getDetails = async (row) => {
   // 打开弹窗
-  const res = await findShop({ ID: row.ID })
+  const res = await findOrderItem({ ID: row.ID })
   if (res.code === 0) {
-    formData.value = res.data.reshop
+    formData.value = res.data.reorderItem
     openDetailShow()
   }
 }
@@ -372,12 +359,12 @@ const getDetails = async (row) => {
 const closeDetailShow = () => {
   detailShow.value = false
   formData.value = {
-          platformName: '',
-          shopId: '',
-          shopName: '',
-          clientId: '',
-          clientCert: '',
-          creatorId: 0,
+          orderId: '',
+          productSku: '',
+          productUrl: '',
+          quantity: 0,
+          unitPrice: 0,
+          totalAmount: 0,
           }
 }
 
@@ -392,12 +379,12 @@ const openDialog = () => {
 const closeDialog = () => {
     dialogFormVisible.value = false
     formData.value = {
-        platformName: '',
-        shopId: '',
-        shopName: '',
-        clientId: '',
-        clientCert: '',
-        creatorId: 0,
+        orderId: '',
+        productSku: '',
+        productUrl: '',
+        quantity: 0,
+        unitPrice: 0,
+        totalAmount: 0,
         }
 }
 // 弹窗确定
@@ -407,13 +394,13 @@ const enterDialog = async () => {
               let res
               switch (type.value) {
                 case 'create':
-                  res = await createShop(formData.value)
+                  res = await createOrderItem(formData.value)
                   break
                 case 'update':
-                  res = await updateShop(formData.value)
+                  res = await updateOrderItem(formData.value)
                   break
                 default:
-                  res = await createShop(formData.value)
+                  res = await createOrderItem(formData.value)
                   break
               }
               if (res.code === 0) {

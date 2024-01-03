@@ -5,4 +5,6 @@ type ApiGroup struct {
 	ProductApi
 	ShopApi
 	CategoryApi
+	OrderApi
+	OrderItemApi
 }

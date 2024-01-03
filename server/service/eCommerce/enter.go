@@ -5,4 +5,6 @@ type ServiceGroup struct {
 	ProductService
 	ShopService
 	CategoryService
+	OrderService
+	OrderItemService
 }

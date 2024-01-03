@@ -146,7 +146,6 @@ CREATE TABLE t_order (
 
     ship_at TIMESTAMP COMMENT '发货时间',
     refund_at TIMESTAMP COMMENT '退款时间',
-
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '订单创建时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '订单最后更新时间',
     deleted_at TIMESTAMP COMMENT '订单软删除时间（如果适用）'
