@@ -224,20 +224,19 @@ CREATE TABLE t_wms_zone (
 
 -- Insert values into WMS Zone table
 INSERT INTO t_wms_zone (name, status) VALUES 
-('拣货区', '1'),
-('次品区', '0');
+('拣货区', 1）,
+('次品区', 2);
 
 -- Create t_wms_rack table
 DROP Table IF EXISTS t_wms_rack;
 CREATE TABLE t_wms_rack (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '数据库主键',
-    warehouse_name VARCHAR(255) DEFAULT '默认仓库' COMMENT '仓库名称',
-    zone_name VARCHAR(255) DEFAULT '拣货区' COMMENT '仓库分区',
+    warehouse_id BIGINT UNSIGNED DEFAULT 0 COMMENT '仓库ID',
+    zone_id BIGINT UNSIGNED DEFAULT 1 COMMENT '分区ID',
     rack_code VARCHAR(50) NOT NULL COMMENT '货架编号',
     status ENUM('可分配','停止收货','停用货架') DEFAULT '可分配' COMMENT '货架状态',
     priority INT DEFAULT 1000 COMMENT '拣货权重', -- 拣货权重数值越大权重越小
     remarks TEXT COMMENT '备注说明',
-    creator_id BIGINT UNSIGNED COMMENT "创建人",
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '货架创建时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '货架最后更新时间',
     deleted_at TIMESTAMP COMMENT '货架软删除时间（如果适用）'

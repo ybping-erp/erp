@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/wms"
 )
 
 func Gorm() *gorm.DB {
@@ -53,7 +54,7 @@ func RegisterTables() {
 		example.ExaFile{},
 		example.ExaCustomer{},
 		example.ExaFileChunk{},
-		example.ExaFileUploadAndDownload{}, eCommerce.Platform{}, eCommerce.Product{}, eCommerce.Shop{}, eCommerce.Category{}, eCommerce.Order{}, eCommerce.OrderItem{},
+		example.ExaFileUploadAndDownload{}, eCommerce.Platform{}, eCommerce.Product{}, eCommerce.Shop{}, eCommerce.Category{}, eCommerce.Order{}, eCommerce.OrderItem{}, wms.Goods{}, wms.Inventory{}, wms.LogisticsPackaging{}, wms.Rack{}, wms.Warehouse{}, wms.SkuMapping{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
