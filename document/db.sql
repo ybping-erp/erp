@@ -247,12 +247,19 @@ DROP Table IF EXISTS t_wms_inventory;
 CREATE TABLE t_wms_inventory (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '数据库主键',
     goods_sku VARCHAR(50) UNIQUE COMMENT '商品SKU',
-    warehouse_id BIGINT UNSIGNED COMMENT '关联仓库的标识符',
-    quantity INT COMMENT '库存数量',
-    reserved_quantity INT COMMENT '预留库存数量',
-    on_order_quantity INT COMMENT '在途库存数量',
+    warehouse_id BIGINT UNSIGNED COMMENT '仓库ID',
+    zone_id BIGINT UNSIGNED COMMENT '库区ID',
+    rack_id  BIGINT UNSIGNED COMMENT '货架ID',
+    quantity INT COMMENT '总库存数量',
+    -- 安全库存：它是安全交期库存数量，用于仓库剩余库存达到一定数值时，采购提前补货参考
+    safety_quantity INT COMMENT '安全库存',
+    -- 自发货订单还未发货的商品数，未发=待审核 + 待处理 + 运单号申请 + 待打单
+    unshipping_quantity INT COMMENT '预售库存',
+    -- 在途数量 = 采购/加工在途 + 库内在途 + 调拨在途
+    on_order_quantity INT COMMENT '在途库存',
+    -- 预售：它是订单商品SKU预售数量，即订单待打单，已占用库存数
+    pre_sale_quantity INT COMMENT '预售库存',
     stock_status ENUM('In Stock', 'Out of Stock', 'Backordered') COMMENT '库存状态',
-    last_stock_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '最后更新库存时间',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '库存创建时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '库存最后更新时间',
     deleted_at TIMESTAMP COMMENT '库存软删除时间（如果适用）'

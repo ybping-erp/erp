@@ -2,29 +2,18 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-      <el-form-item label="创建日期" prop="createdAt">
-      <template #label>
-        <span>
-          创建日期
-          <el-tooltip content="搜索范围是开始日期（包含）至结束日期（不包含）">
-            <el-icon><QuestionFilled /></el-icon>
-          </el-tooltip>
-        </span>
-      </template>
-      <el-date-picker v-model="searchInfo.startCreatedAt" type="datetime" placeholder="开始日期" :disabled-date="time=> searchInfo.endCreatedAt ? time.getTime() > searchInfo.endCreatedAt.getTime() : false"></el-date-picker>
-       —
-      <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
-      </el-form-item>
+        <el-form-item label="仓库" prop="warehouseId">
+             <el-input v-model.number="searchInfo.warehouseId" placeholder="全部仓库" />
+        </el-form-item>
+        <el-form-item label="库区" prop="stockStatus">
+            <el-select v-model="searchInfo.rackId" clearable placeholder="请选择" @clear="()=>{searchInfo.rackId=undefined}">
+              <el-option v-for="(item,key) in wms_zoneOptions" :key="key" :label="item.label" :value="item.value" />
+            </el-select>
+            </el-form-item>
         <el-form-item label="商品SKU" prop="goodsSku">
          <el-input v-model="searchInfo.goodsSku" placeholder="搜索条件" />
-
         </el-form-item>
-        <el-form-item label="关联仓库的标识符" prop="warehouseId">
-            
-             <el-input v-model.number="searchInfo.warehouseId" placeholder="搜索条件" />
-
-        </el-form-item>
-           <el-form-item label="库存状态" prop="stockStatus">
+        <el-form-item label="库存状态" prop="stockStatus">
             <el-select v-model="searchInfo.stockStatus" clearable placeholder="请选择" @clear="()=>{searchInfo.stockStatus=undefined}">
               <el-option v-for="(item,key) in stock_statusOptions" :key="key" :label="item.label" :value="item.value" />
             </el-select>
@@ -62,11 +51,11 @@
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
         <el-table-column align="left" label="商品SKU" prop="goodsSku" width="120" />
-        <el-table-column align="left" label="关联仓库的标识符" prop="warehouseId" width="120" />
-        <el-table-column align="left" label="库存数量" prop="quantity" width="120" />
-        <el-table-column align="left" label="预留库存数量" prop="reservedQuantity" width="120" />
-        <el-table-column align="left" label="在途库存数量" prop="onOrderQuantity" width="120" />
-        <el-table-column align="left" label="库存状态" prop="stockStatus" width="120">
+        <el-table-column align="left" label="仓库" prop="warehouseId" width="120" />
+        <el-table-column align="left" label="总数量" prop="quantity" width="120" />
+        <el-table-column align="left" label="预留" prop="safetyQuantity" width="120" />
+        <el-table-column align="left" label="在途" prop="onOrderQuantity" width="120" />
+        <el-table-column align="left" label="状态" prop="stockStatus" width="120">
             <template #default="scope">
             {{ filterDict(scope.row.stockStatus,stock_statusOptions) }}
             </template>
@@ -103,14 +92,14 @@
             <el-form-item label="商品SKU:"  prop="goodsSku" >
               <el-input v-model="formData.goodsSku" :clearable="true"  placeholder="请输入商品SKU" />
             </el-form-item>
-            <el-form-item label="关联仓库的标识符:"  prop="warehouseId" >
-              <el-input v-model.number="formData.warehouseId" :clearable="true" placeholder="请输入关联仓库的标识符" />
+            <el-form-item label="仓库:"  prop="warehouseId" >
+              <el-input v-model.number="formData.warehouseId" :clearable="true" placeholder="请输入仓库" />
             </el-form-item>
             <el-form-item label="库存数量:"  prop="quantity" >
               <el-input v-model.number="formData.quantity" :clearable="true" placeholder="请输入库存数量" />
             </el-form-item>
-            <el-form-item label="预留库存数量:"  prop="reservedQuantity" >
-              <el-input v-model.number="formData.reservedQuantity" :clearable="true" placeholder="请输入预留库存数量" />
+            <el-form-item label="预留库存数量:"  prop="safetyQuantity" >
+              <el-input v-model.number="formData.safetyQuantity" :clearable="true" placeholder="请输入预留库存数量" />
             </el-form-item>
             <el-form-item label="在途库存数量:"  prop="onOrderQuantity" >
               <el-input v-model.number="formData.onOrderQuantity" :clearable="true" placeholder="请输入在途库存数量" />
@@ -139,14 +128,14 @@
                 <el-descriptions-item label="商品SKU">
                         {{ formData.goodsSku }}
                 </el-descriptions-item>
-                <el-descriptions-item label="关联仓库的标识符">
+                <el-descriptions-item label="仓库">
                         {{ formData.warehouseId }}
                 </el-descriptions-item>
                 <el-descriptions-item label="库存数量">
                         {{ formData.quantity }}
                 </el-descriptions-item>
                 <el-descriptions-item label="预留库存数量">
-                        {{ formData.reservedQuantity }}
+                        {{ formData.safetyQuantity }}
                 </el-descriptions-item>
                 <el-descriptions-item label="在途库存数量">
                         {{ formData.onOrderQuantity }}
@@ -184,11 +173,12 @@ defineOptions({
 
 // 自动化生成的字典（可能为空）以及字段
 const stock_statusOptions = ref([])
+const wms_zoneOptions = ref([])
 const formData = ref({
         goodsSku: '',
         warehouseId: 0,
         quantity: 0,
-        reservedQuantity: 0,
+        safetyQuantity: 0,
         onOrderQuantity: 0,
         stockStatus: undefined,
         lastStockUpdate: new Date(),
@@ -271,6 +261,7 @@ getTableData()
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
     stock_statusOptions.value = await getDictFunc('stock_status')
+    wms_zoneOptions.value = await getDictFunc('wms_zone')
 }
 
 // 获取需要的字典 可能为空 按需保留
@@ -388,7 +379,7 @@ const closeDetailShow = () => {
           goodsSku: '',
           warehouseId: 0,
           quantity: 0,
-          reservedQuantity: 0,
+          safetyQuantity: 0,
           onOrderQuantity: 0,
           stockStatus: undefined,
           lastStockUpdate: new Date(),
@@ -409,7 +400,7 @@ const closeDialog = () => {
         goodsSku: '',
         warehouseId: 0,
         quantity: 0,
-        reservedQuantity: 0,
+        safetyQuantity: 0,
         onOrderQuantity: 0,
         stockStatus: undefined,
         lastStockUpdate: new Date(),

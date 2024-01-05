@@ -66,6 +66,9 @@ func (inventoryService *InventoryService)GetInventoryInfoList(info wmsReq.Invent
     if info.StockStatus != nil {
         db = db.Where("stock_status = ?",info.StockStatus)
     }
+	if info.RackId != nil {
+		db = db.Where("rack_id = ?",info.RackId)
+	}
 	err = db.Count(&total).Error
 	if err!=nil {
     	return
