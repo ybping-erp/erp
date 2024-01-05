@@ -7,12 +7,14 @@
 
         </el-form-item>
         <el-form-item label="销售方式" prop="salesMethod">
-         <el-input v-model="searchInfo.salesMethod" placeholder="搜索条件" />
-
+           <el-select v-model="searchInfo.stockStatus" clearable placeholder="请选择" @clear="()=>{searchInfo.salesMethod=undefined}">
+              <el-option v-for="(item,key) in sales_methodOptions" :key="key" :label="item.label" :value="item.value" />
+            </el-select>
         </el-form-item>
         <el-form-item label="商品状态" prop="status">
-         <el-input v-model="searchInfo.status" placeholder="搜索条件" />
-
+         <el-select v-model="searchInfo.status" clearable placeholder="请选择" @clear="()=>{searchInfo.salesMethod=undefined}">
+              <el-option v-for="(item,key) in goods_statusOptions" :key="key" :label="item.label" :value="item.value" />
+            </el-select>
         </el-form-item>
         <el-form-item label="中文名称" prop="chineseName">
          <el-input v-model="searchInfo.chineseName" placeholder="搜索条件" />
@@ -61,7 +63,11 @@
         <el-table-column align="left" label="组合商品" prop="childrenSku" width="120" />
         <el-table-column align="left" label="需要加工" prop="needAdditionalProcess" width="120" />
         <el-table-column align="left" label="销售方式" prop="salesMethod" width="120" />
-        <el-table-column align="left" label="商品状态" prop="status" width="120" />
+        <el-table-column align="left" label="商品状态" prop="status" width="120">
+          <template #default="scope">
+            {{ filterDict(scope.row.status,goods_statusOptions) }}
+            </template>
+        </el-table-column>
         <el-table-column align="left" label="商品分类" prop="categoryId" width="120" />
         <el-table-column align="left" label="中文名称" prop="chineseName" width="120" />
         <el-table-column align="left" label="英文名称" prop="englishName" width="120" />
@@ -112,8 +118,14 @@
               <el-input v-model.number="formData.needAdditionalProcess" :clearable="true" placeholder="请输入需要加工" />
             </el-form-item>
             <el-form-item label="销售方式:"  prop="salesMethod" >
+              <el-select v-model="formData.salesMethod" placeholder="请选择销售方式" style="width:100%" :clearable="true" >
+                <el-option v-for="(item,key) in sales_methodOptions" :key="key" :label="item.label" :value="item.value" />
+              </el-select>
             </el-form-item>
             <el-form-item label="商品状态:"  prop="status" >
+              <el-select v-model="formData.status" placeholder="请选择库存状态" style="width:100%" :clearable="true" >
+                <el-option v-for="(item,key) in goods_statusOptions" :key="key" :label="item.label" :value="item.value" />
+              </el-select>
             </el-form-item>
             <el-form-item label="商品分类:"  prop="categoryId" >
               <el-input v-model.number="formData.categoryId" :clearable="true" placeholder="请输入商品分类" />
@@ -162,10 +174,10 @@
                         {{ formData.needAdditionalProcess }}
                 </el-descriptions-item>
                 <el-descriptions-item label="销售方式">
-                        {{ formData.salesMethod }}
+                        {{ filterDict(formData.salesMethod,sales_methodOptions) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="商品状态">
-                        {{ formData.status }}
+                        {{ filterDict(formData.status,goods_statusOptions) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="商品分类">
                         {{ formData.categoryId }}
@@ -208,6 +220,8 @@ defineOptions({
 })
 
 // 自动化生成的字典（可能为空）以及字段
+const sales_methodOptions = ref([])
+const goods_statusOptions = ref([])
 const formData = ref({
         code: '',
         spu: '',
@@ -298,6 +312,8 @@ getTableData()
 
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
+  sales_methodOptions.value = await getDictFunc('sales_method')
+  goods_statusOptions.value = await getDictFunc('goods_status')
 }
 
 // 获取需要的字典 可能为空 按需保留

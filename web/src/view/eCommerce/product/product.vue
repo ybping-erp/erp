@@ -2,14 +2,14 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-        <el-form-item label="产品所属的类别标识符" prop="categoryId">
+        <el-form-item label="类别ID" prop="categoryId">
              <el-input v-model.number="searchInfo.categoryId" placeholder="搜索条件" />
         </el-form-item>
         <el-form-item label="产品名称" prop="productName">
          <el-input v-model="searchInfo.productName" placeholder="搜索条件" />
 
         </el-form-item>
-        <el-form-item label="产品的唯一标识符" prop="sku">
+        <el-form-item label="产品SKU" prop="sku">
          <el-input v-model="searchInfo.sku" placeholder="搜索条件" />
 
         </el-form-item>
