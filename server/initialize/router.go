@@ -111,6 +111,7 @@ func Routers() *gin.Engine {
 		wmsRouter.InitLogisticsPackagingRouter(PrivateGroup)
 		wmsRouter.InitRackRouter(PrivateGroup)
 		wmsRouter.InitWarehouseRouter(PrivateGroup)
+		wmsRouter.InitSkuMappingRouter(PrivateGroup)
 	}
 
 	global.GVA_LOG.Info("router register success")

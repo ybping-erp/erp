@@ -60,7 +60,7 @@
             {{ filterDict(scope.row.stockStatus,stock_statusOptions) }}
             </template>
         </el-table-column>
-         <el-table-column align="left" label="最后更新库存时间" width="180">
+         <el-table-column align="left" label="更新时间" width="180">
             <template #default="scope">{{ formatDate(scope.row.lastStockUpdate) }}</template>
          </el-table-column>
         <el-table-column align="left" label="操作" min-width="120">

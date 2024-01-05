@@ -292,15 +292,14 @@ CREATE TABLE t_wms_goods (
 DROP Table IF EXISTS t_wms_sku_mapping;
 CREATE TABLE t_wms_sku_mapping (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '数据库主键',
-    goods_sku VARCHAR(50) UNIQUE COMMENT '商品SKU',
-    product_sku VARCHAR(50) UNIQUE COMMENT '产品SKU',
-    creator_id BIGINT UNSIGNED COMMENT "创建人",
+    goods_sku VARCHAR(50) COMMENT '商品SKU',
+    product_sku VARCHAR(50) COMMENT '产品SKU',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
-    deleted_at TIMESTAMP COMMENT '软删除时间（如果适用）'
+    deleted_at TIMESTAMP COMMENT '软删除时间（如果适用）',
+    UNIQUE KEY u_wms_sku_mapping (goods_sku, product_sku)
 ) CHARACTER SET utf8mb4;
--- 平台销售SKU、FNSKU等，用于建立平台SKU与商品SKU的关系
-ALTER TABLE t_wms_sku_mapping ADD CONSTRAINT t_wms_sku_mapping UNIQUE (goods_sku, product_sku);
+
 
 -- Create t_logistics_packaging table
 DROP TABLE IF EXISTS t_wms_logistics_packaging
