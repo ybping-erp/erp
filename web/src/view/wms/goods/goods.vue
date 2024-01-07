@@ -128,7 +128,14 @@
               </el-select>
             </el-form-item>
             <el-form-item label="商品分类:"  prop="categoryId" >
-              <el-input v-model.number="formData.categoryId" :clearable="true" placeholder="请输入商品分类" />
+              <el-cascader
+                v-model="formData.categoryId"
+                style="width:100%"
+                :options="goods_categoryOptions"
+                :show-all-levels="false"
+                :props="{ multiple:false,checkStrictly: true,label:'categoryName',value:'categoryId',disabled:'disabled',emitPath:false}"
+                :clearable="true"
+              />
             </el-form-item>
             <el-form-item label="中文名称:"  prop="chineseName" >
               <el-input v-model="formData.chineseName" :clearable="true"  placeholder="请输入中文名称" />
@@ -209,6 +216,10 @@ import {
   findGoods,
   getGoodsList
 } from '@/api/goods'
+
+import {
+  getCategoryList
+} from '@/api/category'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
@@ -308,12 +319,37 @@ const getTableData = async() => {
 
 getTableData()
 
+const goods_categoryOptions = ref([])
+const setGoodsCategoryOptions = (GoodsCategoryData, optionsData) => {
+  GoodsCategoryData && GoodsCategoryData.forEach(item => {
+    if (item.children && item.children.length) {
+      const option = {
+        categoryId: item.ID,
+        categoryName: item.name,
+        children: []
+      }
+      setGoodsCategoryOptions(item.children, option.children)
+      optionsData.push(option)
+    } else {
+      const option = {
+        categoryId: item.ID,
+        categoryName: item.name,
+      }
+      optionsData.push(option)
+    }
+  })
+}
 // ============== 表格控制部分结束 ===============
 
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
   sales_methodOptions.value = await getDictFunc('sales_method')
   goods_statusOptions.value = await getDictFunc('goods_status')
+
+  // 构建商品类别字典
+  const res = await getCategoryList({ page: 1, pageSize: 999, domain: "Goods"})
+  goods_categoryOptions.value = []
+  setGoodsCategoryOptions(res.data.list, goods_statusOptions.value)
 }
 
 // 获取需要的字典 可能为空 按需保留

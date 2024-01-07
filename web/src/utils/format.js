@@ -22,6 +22,19 @@ export const filterDict = (value, options) => {
   return rowLabel && rowLabel[0] && rowLabel[0].label
 }
 
+export const filterCascaderDict = (value, options) => {
+  options && options.forEach(item => {
+    if (item.value === value) {
+      return item.label
+    }
+
+    if (item.children) {
+      return filterCascaderDict(value, item.children)
+    }
+  })
+  return ''
+}
+
 export const getDictFunc = async(type) => {
   const dicts = await getDict(type)
   return dicts

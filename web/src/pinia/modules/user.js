@@ -65,7 +65,6 @@ export const useUserStore = defineStore('user', () => {
         asyncRouters.forEach(asyncRouter => {
           router.addRoute(asyncRouter)
         })
-
         if (!router.hasRoute(userInfo.value.authority.defaultRouter)) {
           ElMessage.error('请联系管理员进行授权')
         } else {

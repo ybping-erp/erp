@@ -16,6 +16,10 @@
        —
       <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
       </el-form-item> -->
+      <el-form-item label="订单号" prop="orderId">
+         <el-input v-model="searchInfo.orderId" placeholder="搜索条件" />
+      </el-form-item>
+
         <el-form-item label="电商平台" prop="platformName">
          <el-input v-model="searchInfo.platformName" placeholder="搜索条件" />
 
@@ -35,7 +39,6 @@
             </el-form-item>
         <el-form-item label="运单号" prop="shippingOrderId">
          <el-input v-model="searchInfo.shippingOrderId" placeholder="搜索条件" />
-
         </el-form-item>
         <el-form-item label="国家" prop="shippingCountry">
          <el-input v-model="searchInfo.shippingCountry" placeholder="搜索条件" />

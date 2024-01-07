@@ -2,8 +2,15 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-        <el-form-item label="类别ID" prop="categoryId">
-             <el-input v-model.number="searchInfo.categoryId" placeholder="搜索条件" />
+        <el-form-item label="类别" prop="categoryId">
+             <el-cascader
+                v-model="searchInfo.categoryId"
+                style="width:100%"
+                :options="product_categoryOptions"
+                :show-all-levels="false"
+                :props="{ multiple:false,checkStrictly: true,label:'label',value:'value',disabled:'disabled',emitPath:false}"
+                :clearable="true"
+              />
         </el-form-item>
         <el-form-item label="产品名称" prop="productName">
          <el-input v-model="searchInfo.productName" placeholder="搜索条件" />
@@ -42,15 +49,16 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="日期" width="180">
-            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
+        <el-table-column align="left" label="类别" prop="categoryId" width="120">
+          <template #default="scope"> 
+            {{scope.row.categoryId}} - {{product_categoryOptions}}-{{ filterCascaderDict(scope.row.categoryId, product_categoryOptions) }}
+          </template>
         </el-table-column>
-        <el-table-column align="left" label="产品所属的类别标识符" prop="categoryId" width="120" />
-        <el-table-column align="left" label="产品描述" prop="description" width="120" />
-        <el-table-column align="left" label="产品名称" prop="productName" width="120" />
-        <el-table-column align="left" label="产品的唯一标识符" prop="sku" width="120" />
-        <el-table-column align="left" label="产品摘要" prop="summary" width="120" />
-        <el-table-column align="left" label="产品的单价" prop="unitPrice" width="120" />
+        <el-table-column align="left" label="描述" prop="description" width="120" />
+        <el-table-column align="left" label="名称" prop="productName" width="120" />
+        <el-table-column align="left" label="SKU" prop="sku" width="120" />
+        <el-table-column align="left" label="摘要" prop="summary" width="120" />
+        <el-table-column align="left" label="单价" prop="unitPrice" width="120" />
         <el-table-column
           align="left"
           label="创建人"
@@ -86,22 +94,29 @@
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
       <el-scrollbar height="500px">
           <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="产品所属的类别标识符:"  prop="categoryId" >
-              <el-input v-model.number="formData.categoryId" :clearable="true" placeholder="请输入产品所属的类别标识符" />
+            <el-form-item label="类别:"  prop="categoryId" >
+              <el-cascader
+                v-model="formData.categoryId"
+                style="width:100%"
+                :options="product_categoryOptions"
+                :show-all-levels="false"
+                :props="{ multiple:false,checkStrictly: true,label:'label',value:'value',disabled:'disabled',emitPath:false}"
+                :clearable="true"
+              />
             </el-form-item>
-            <el-form-item label="产品描述:"  prop="description" >
+            <el-form-item label="描述:"  prop="description" >
               <el-input v-model="formData.description" :clearable="true"  placeholder="请输入产品描述" />
             </el-form-item>
-            <el-form-item label="产品名称:"  prop="productName" >
+            <el-form-item label="名称:"  prop="productName" >
               <el-input v-model="formData.productName" :clearable="true"  placeholder="请输入产品名称" />
             </el-form-item>
-            <el-form-item label="产品的唯一标识符:"  prop="sku" >
+            <el-form-item label="SKU:"  prop="sku" >
               <el-input v-model="formData.sku" :clearable="true"  placeholder="请输入产品的唯一标识符" />
             </el-form-item>
-            <el-form-item label="产品摘要:"  prop="summary" >
+            <el-form-item label="摘要:"  prop="summary" >
               <el-input v-model="formData.summary" :clearable="true"  placeholder="请输入产品摘要" />
             </el-form-item>
-            <el-form-item label="产品的单价:"  prop="unitPrice" >
+            <el-form-item label="单价:"  prop="unitPrice" >
               <el-input-number v-model="formData.unitPrice"  style="width:100%" :precision="2" :clearable="true"  />
             </el-form-item>
           </el-form>
@@ -117,22 +132,22 @@
     <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="查看详情" destroy-on-close>
       <el-scrollbar height="550px">
         <el-descriptions column="1" border>
-                <el-descriptions-item label="产品所属的类别标识符">
-                        {{ formData.categoryId }}
+                <el-descriptions-item label="类别">
+                        {{ filterCascaderDict(formData.categoryId, product_categoryOptions) }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品描述">
+                <el-descriptions-item label="描述">
                         {{ formData.description }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品名称">
+                <el-descriptions-item label="名称">
                         {{ formData.productName }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品的唯一标识符">
+                <el-descriptions-item label="SKU">
                         {{ formData.sku }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品摘要">
+                <el-descriptions-item label="摘要">
                         {{ formData.summary }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品的单价">
+                <el-descriptions-item label="单价">
                         {{ formData.unitPrice }}
                 </el-descriptions-item>
         </el-descriptions>
@@ -151,8 +166,12 @@ import {
   getProductList
 } from '@/api/product'
 
+import {
+  getCategoryList
+} from '@/api/category'
+
 // 全量引入格式化工具 请按需保留
-import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
+import { getDictFunc, formatDate, formatBoolean, filterCascaderDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 
@@ -242,10 +261,36 @@ const getTableData = async() => {
 
 getTableData()
 
+const product_categoryOptions = ref([])
+const setProductCategoryOptions = (GoodsCategoryData, optionsData) => {
+  GoodsCategoryData && GoodsCategoryData.forEach(item => {
+    if (item.children && item.children.length) {
+      const option = {
+        value: item.ID,
+        label: item.name,
+        children: []
+      }
+      setProductCategoryOptions(item.children, option.children)
+      optionsData.push(option)
+    } else {
+      const option = {
+        value: item.ID,
+        label: item.name,
+      }
+      optionsData.push(option)
+    }
+  })
+}
+
 // ============== 表格控制部分结束 ===============
 
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
+
+  // 构建商品类别字典
+  const res = await getCategoryList({ page: 1, pageSize: 999, domain: "Product"})
+  product_categoryOptions.value = []
+  setProductCategoryOptions(res.data.list, product_categoryOptions.value)
 }
 
 // 获取需要的字典 可能为空 按需保留

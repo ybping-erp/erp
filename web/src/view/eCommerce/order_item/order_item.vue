@@ -2,18 +2,8 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-      <el-form-item label="创建日期" prop="createdAt">
-      <template #label>
-        <span>
-          创建日期
-          <el-tooltip content="搜索范围是开始日期（包含）至结束日期（不包含）">
-            <el-icon><QuestionFilled /></el-icon>
-          </el-tooltip>
-        </span>
-      </template>
-      <el-date-picker v-model="searchInfo.startCreatedAt" type="datetime" placeholder="开始日期" :disabled-date="time=> searchInfo.endCreatedAt ? time.getTime() > searchInfo.endCreatedAt.getTime() : false"></el-date-picker>
-       —
-      <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
+        <el-form-item label="订单号" prop="orderId">
+         <el-input v-model="searchInfo.orderId" placeholder="搜索条件" />
       </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">查询</el-button>
@@ -44,14 +34,18 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="日期" width="180">
-            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
+        <el-table-column align="left" label="订单ID" prop="orderId" width="120" />
+        <el-table-column align="left" label="产品SKU" prop="productSku" width="120" />
+        <el-table-column align="left" label="产品图片" width="120">
+          <template #default="scope">
+            <CustomPic
+              style="margin-top:8px"
+              :pic-src="scope.row.productUrl"
+            />
+          </template>
         </el-table-column>
-        <el-table-column align="left" label="关联订单的标识符" prop="orderId" width="120" />
-        <el-table-column align="left" label="关联产品的标识符" prop="productSku" width="120" />
-        <el-table-column align="left" label="产品图片" prop="productUrl" width="120" />
         <el-table-column align="left" label="产品属性" prop="attributes" width="120" />
-        <el-table-column align="left" label="订单中产品的数量" prop="quantity" width="120" />
+        <el-table-column align="left" label="数量" prop="quantity" width="120" />
         <el-table-column align="left" label="产品的单价" prop="unitPrice" width="120" />
         <el-table-column align="left" label="订单项总金额" prop="totalAmount" width="120" />
         <el-table-column align="left" label="操作" min-width="120">
@@ -80,19 +74,19 @@
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
       <el-scrollbar height="500px">
           <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="关联订单的标识符:"  prop="orderId" >
-              <el-input v-model="formData.orderId" :clearable="true"  placeholder="请输入关联订单的标识符" />
+            <el-form-item label="订单ID:"  prop="orderId" >
+              <el-input v-model="formData.orderId" :clearable="true"  placeholder="请输入订单ID" />
             </el-form-item>
-            <el-form-item label="关联产品的标识符:"  prop="productSku" >
-              <el-input v-model="formData.productSku" :clearable="true"  placeholder="请输入关联产品的标识符" />
+            <el-form-item label="产品SKU:"  prop="productSku" >
+              <el-input v-model="formData.productSku" :clearable="true"  placeholder="请输入产品SKU" />
             </el-form-item>
             <el-form-item label="产品图片:"  prop="productUrl" >
               <el-input v-model="formData.productUrl" :clearable="true"  placeholder="请输入产品图片" />
             </el-form-item>
             <el-form-item label="产品属性:"  prop="attributes" >
             </el-form-item>
-            <el-form-item label="订单中产品的数量:"  prop="quantity" >
-              <el-input v-model.number="formData.quantity" :clearable="true" placeholder="请输入订单中产品的数量" />
+            <el-form-item label="数量:"  prop="quantity" >
+              <el-input v-model.number="formData.quantity" :clearable="true" placeholder="请输入数量" />
             </el-form-item>
             <el-form-item label="产品的单价:"  prop="unitPrice" >
               <el-input-number v-model="formData.unitPrice"  style="width:100%" :precision="2" :clearable="true"  />
@@ -113,10 +107,10 @@
     <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="查看详情" destroy-on-close>
       <el-scrollbar height="550px">
         <el-descriptions column="1" border>
-                <el-descriptions-item label="关联订单的标识符">
+                <el-descriptions-item label="订单ID">
                         {{ formData.orderId }}
                 </el-descriptions-item>
-                <el-descriptions-item label="关联产品的标识符">
+                <el-descriptions-item label="产品SKU">
                         {{ formData.productSku }}
                 </el-descriptions-item>
                 <el-descriptions-item label="产品图片">
@@ -125,7 +119,7 @@
                 <el-descriptions-item label="产品属性">
                         {{ formData.attributes }}
                 </el-descriptions-item>
-                <el-descriptions-item label="订单中产品的数量">
+                <el-descriptions-item label="数量">
                         {{ formData.quantity }}
                 </el-descriptions-item>
                 <el-descriptions-item label="产品的单价">
