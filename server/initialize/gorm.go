@@ -54,7 +54,7 @@ func RegisterTables() {
 		example.ExaFile{},
 		example.ExaCustomer{},
 		example.ExaFileChunk{},
-		example.ExaFileUploadAndDownload{}, eCommerce.Platform{}, eCommerce.Product{}, eCommerce.Shop{}, eCommerce.Category{}, eCommerce.Order{}, eCommerce.OrderItem{}, wms.Goods{}, wms.Inventory{}, wms.LogisticsPackaging{}, wms.Rack{}, wms.Warehouse{}, wms.SkuMapping{},
+		example.ExaFileUploadAndDownload{}, eCommerce.Platform{}, eCommerce.Product{}, eCommerce.Shop{}, eCommerce.Category{}, eCommerce.Order{}, eCommerce.OrderItem{}, wms.Goods{}, wms.Inventory{}, wms.LogisticsPackaging{}, wms.Rack{}, wms.Warehouse{}, wms.SkuMapping{}, wms.InboundLog{}, wms.OutboundLog{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))

@@ -7,4 +7,6 @@ type ApiGroup struct {
 	RackApi
 	WarehouseApi
 	SkuMappingApi
+	InboundLogApi
+	OutboundLogApi
 }

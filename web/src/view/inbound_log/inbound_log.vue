@@ -2,25 +2,24 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-        <el-form-item label="仓库" prop="warehouseId">
-          <el-select v-model.number="searchInfo.warehouseId" placeholder="请选择" style="width:100%" :clearable="true" >
-            <el-option v-for="item in my_wms_warehouses" :key="item.ID" :label="item.name" :value="item.ID" />
-          </el-select>
-        </el-form-item>
-           <el-form-item label="库区" prop="zoneId">
-            <el-select v-model="searchInfo.zoneId" clearable placeholder="请选择" @clear="()=>{searchInfo.zoneId=undefined}">
-              <el-option v-for="(item,key) in wms_zoneOptions" :key="key" :label="item.label" :value="item.value" />
-            </el-select>
-            </el-form-item>
-        <el-form-item label="货架编号" prop="rackCode">
-         <el-input v-model="searchInfo.rackCode" placeholder="搜索条件" />
+      <el-form-item label="创建日期" prop="createdAt">
+      <template #label>
+        <span>
+          创建日期
+          <el-tooltip content="搜索范围是开始日期（包含）至结束日期（不包含）">
+            <el-icon><QuestionFilled /></el-icon>
+          </el-tooltip>
+        </span>
+      </template>
+      <el-date-picker v-model="searchInfo.startCreatedAt" type="datetime" placeholder="开始日期" :disabled-date="time=> searchInfo.endCreatedAt ? time.getTime() > searchInfo.endCreatedAt.getTime() : false"></el-date-picker>
+       —
+      <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
+      </el-form-item>
+      
+        <el-form-item label="商品SKU" prop="goodsSku">
+         <el-input v-model="searchInfo.goodsSku" placeholder="搜索条件" />
 
         </el-form-item>
-           <el-form-item label="货架状态" prop="status">
-            <el-select v-model="searchInfo.status" clearable placeholder="请选择" @clear="()=>{searchInfo.status=undefined}">
-              <el-option v-for="(item,key) in rack_statusOptions" :key="key" :label="item.label" :value="item.value" />
-            </el-select>
-            </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">查询</el-button>
           <el-button icon="refresh" @click="onReset">重置</el-button>
@@ -50,27 +49,23 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
+        
+        <el-table-column align="left" label="日期" width="180">
+            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
+        </el-table-column>
+        
+        <el-table-column align="left" label="商品SKU" prop="goodsSku" width="120" />
+        <el-table-column align="left" label="入库数量" prop="quantity" width="120" />
+        <el-table-column align="left" label="货架" prop="rackId" width="120" />
         <el-table-column align="left" label="仓库" prop="warehouseId" width="120" />
-        <el-table-column align="left" label="库区" prop="zoneId" width="120">
-            <template #default="scope">
-            {{ filterDict(scope.row.zoneId,wms_zoneOptions) }}
-            </template>
-        </el-table-column>
-        <el-table-column align="left" label="货架编号" prop="rackCode" width="120" />
-        <el-table-column align="left" label="货架状态" prop="status" width="120">
-            <template #default="scope">
-            {{ filterDict(scope.row.status,rack_statusOptions) }}
-            </template>
-        </el-table-column>
-        <el-table-column align="left" label="拣货权重" prop="priority" width="120" />
-        <el-table-column align="left" label="备注说明" prop="remarks" width="120" />
-        <el-table-column align="left" label="操作" min-width="120">
+        <el-table-column align="left" label="库区" prop="zoneId" width="120" />
+        <el-table-column align="left" label="操作" fixed="right" min-width="240">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
                 查看详情
             </el-button>
-            <el-button type="primary" link icon="edit" class="table-button" @click="updateRackFunc(scope.row)">变更</el-button>
+            <!-- <el-button type="primary" link icon="edit" class="table-button" @click="updateInboundLogFunc(scope.row)">变更</el-button> -->
             <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
             </template>
         </el-table-column>
@@ -87,32 +82,32 @@
             />
         </div>
     </div>
-    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
+    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'新增入库':'修改'" destroy-on-close>
       <el-scrollbar height="500px">
           <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
+            <el-form-item label="SKU:"  prop="goodsSku" >
+              <!-- <el-input v-model="formData.goodsSku" :clearable="true"  placeholder="请输入商品SKU" /> -->
+              <el-select v-model.number="formData.goodsSku" placeholder="请选择商品" style="width:100%" :clearable="true" >
+                <el-option v-for="item in wms_goods" :key="item.sku" :label="`${item.sku} - ${item.chineseName} - ${item.englishName}`" :value="item.sku" />
+            </el-select>
+            </el-form-item>
+            <el-form-item label="数量:"  prop="quantity" >
+              <el-input v-model.number="formData.quantity" :clearable="true" placeholder="请输入入库数量" />
+            </el-form-item>
             <el-form-item label="仓库:"  prop="warehouseId" >
-              <el-select v-model.number="formData.warehouseId" placeholder="请选择" :clearable="true" >
-                <el-option v-for="item in my_wms_warehouses" :key="item.ID" :label="item.name" :value="item.ID" />
+              <el-select v-model.number="formData.warehouseId" placeholder="请选择仓库" style="width:100%" :clearable="true" @change="handleWarehouseChange">
+                <el-option v-for="item in wms_warehouses" :key="item.ID" :label="item.name" :value="item.ID" />
               </el-select>
             </el-form-item>
             <el-form-item label="库区:"  prop="zoneId" >
-              <el-select v-model="formData.zoneId" placeholder="请选择库区" style="width:100%" :clearable="true" >
+              <el-select v-model="formData.zoneId" placeholder="请选择库区" style="width:100%" :clearable="true" @change="handleZoneChange">
                 <el-option v-for="(item,key) in wms_zoneOptions" :key="key" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
-            <el-form-item label="货架编号:"  prop="rackCode" >
-              <el-input v-model="formData.rackCode" :clearable="true"  placeholder="请输入货架编号" />
-            </el-form-item>
-            <el-form-item label="货架状态:"  prop="status" >
-              <el-select v-model="formData.status" placeholder="请选择货架状态" style="width:100%" :clearable="true" >
-                <el-option v-for="(item,key) in rack_statusOptions" :key="key" :label="item.label" :value="item.value" />
+            <el-form-item label="货架:"  prop="rackId" >
+              <el-select v-model.number="formData.rackId" placeholder="请选择框架" style="width:100%" :clearable="true" >
+                <el-option v-for="item in wms_racks" :key="item.ID" :label="item.rackCode" :value="item.ID" />
               </el-select>
-            </el-form-item>
-            <el-form-item label="拣货权重:"  prop="priority" >
-              <el-input v-model.number="formData.priority" :clearable="true" placeholder="请输入拣货权重" />
-            </el-form-item>
-            <el-form-item label="备注说明:"  prop="remarks" >
-              <el-input v-model="formData.remarks" :clearable="true"  placeholder="请输入备注说明" />
             </el-form-item>
           </el-form>
       </el-scrollbar>
@@ -127,23 +122,20 @@
     <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="查看详情" destroy-on-close>
       <el-scrollbar height="550px">
         <el-descriptions column="1" border>
+                <el-descriptions-item label="商品SKU">
+                        {{ formData.goodsSku }}
+                </el-descriptions-item>
+                <el-descriptions-item label="入库数量">
+                        {{ formData.quantity }}
+                </el-descriptions-item>
+                <el-descriptions-item label="货架">
+                        {{ formData.rackId }}
+                </el-descriptions-item>
                 <el-descriptions-item label="仓库">
                         {{ formData.warehouseId }}
                 </el-descriptions-item>
                 <el-descriptions-item label="库区">
-                        {{ filterDict(formData.zoneId,wms_zoneOptions) }}
-                </el-descriptions-item>
-                <el-descriptions-item label="货架编号">
-                        {{ formData.rackCode }}
-                </el-descriptions-item>
-                <el-descriptions-item label="货架状态">
-                        {{ filterDict(formData.status,rack_statusOptions) }}
-                </el-descriptions-item>
-                <el-descriptions-item label="拣货权重">
-                        {{ formData.priority }}
-                </el-descriptions-item>
-                <el-descriptions-item label="备注说明">
-                        {{ formData.remarks }}
+                        {{ formData.zoneId }}
                 </el-descriptions-item>
         </el-descriptions>
       </el-scrollbar>
@@ -153,11 +145,19 @@
 
 <script setup>
 import {
-  createRack,
-  deleteRack,
-  deleteRackByIds,
-  updateRack,
-  findRack,
+  createInboundLog,
+  deleteInboundLog,
+  deleteInboundLogByIds,
+  updateInboundLog,
+  findInboundLog,
+  getInboundLogList
+} from '@/api/inbound_log'
+
+import {
+  getGoodsList
+} from '@/api/goods'
+
+import {
   getRackList
 } from '@/api/rack'
 
@@ -171,25 +171,60 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 
 defineOptions({
-    name: 'Rack'
+    name: 'InboundLog'
 })
 
 // 自动化生成的字典（可能为空）以及字段
 const wms_zoneOptions = ref([])
-const rack_statusOptions = ref([])
-const my_wms_warehouses = ref([])
+const wms_warehouses = ref([])
+const wms_goods = ref([])
+const wms_racks = ref([])
 const formData = ref({
+        goodsSku: '',
+        quantity: 0,
         warehouseId: undefined,
         zoneId: undefined,
-        rackCode: '',
-        status: undefined,
-        priority: 0,
-        remarks: '',
+        rackId: undefined,
         })
 
 
 // 验证规则
 const rule = reactive({
+               goodsSku : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               },
+               {
+                   whitespace: true,
+                   message: '不能只输入空格',
+                   trigger: ['input', 'blur'],
+              }
+              ],
+               quantity : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               },
+              ],
+               rackId : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               },
+              ],
+               warehouseId : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               },
+              ],
+               zoneId : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               },
+              ],
 })
 
 const searchRule = reactive({
@@ -248,7 +283,7 @@ const handleCurrentChange = (val) => {
 
 // 查询
 const getTableData = async() => {
-  const table = await getRackList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
+  const table = await getInboundLogList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -263,18 +298,34 @@ getTableData()
 
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
-    wms_zoneOptions.value = await getDictFunc('wms_zone')
-    rack_statusOptions.value = await getDictFunc('rack_status')
+  wms_zoneOptions.value = await getDictFunc('wms_zone')
+  
+  const warehouseListRes = await getWarehouseList({ page: 1, pageSize: 1000})
+  if (warehouseListRes.code === 0) {
+    wms_warehouses.value = warehouseListRes.data.list
+  }
 
-  const res = await getWarehouseList({ page: 1, pageSize: 1000})
-  if (res.code === 0) {
-    my_wms_warehouses.value = res.data.list
+  const goodsListRes = await getGoodsList({ page: 1, pageSize: 1000})
+  if (goodsListRes.code === 0) {
+    wms_goods.value = goodsListRes.data.list
   }
 }
 
 // 获取需要的字典 可能为空 按需保留
 setOptions()
 
+const handleWarehouseChange = async () => {
+  formData.value.zoneId = undefined
+  formData.value.rackId = undefined
+}
+
+const handleZoneChange = async() => {
+  formData.value.rackId = undefined
+  const racksRes = await getRackList({ page: 1, pageSize: 1000, warehouseId: formData.value.warehouseId, zoneId: formData.value.zoneId})
+  if (racksRes.code === 0) {
+    wms_racks.value = racksRes.data.list
+  }
+}
 
 // 多选数据
 const multipleSelection = ref([])
@@ -290,7 +341,7 @@ const deleteRow = (row) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-            deleteRackFunc(row)
+            deleteInboundLogFunc(row)
         })
     }
 
@@ -300,7 +351,7 @@ const deleteVisible = ref(false)
 
 // 多选删除
 const onDelete = async() => {
-      const ids = []
+      const IDs = []
       if (multipleSelection.value.length === 0) {
         ElMessage({
           type: 'warning',
@@ -310,15 +361,15 @@ const onDelete = async() => {
       }
       multipleSelection.value &&
         multipleSelection.value.map(item => {
-          ids.push(item.ID)
+          IDs.push(item.ID)
         })
-      const res = await deleteRackByIds({ ids })
+      const res = await deleteInboundLogByIds({ IDs })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
           message: '删除成功'
         })
-        if (tableData.value.length === ids.length && page.value > 1) {
+        if (tableData.value.length === IDs.length && page.value > 1) {
           page.value--
         }
         deleteVisible.value = false
@@ -330,19 +381,19 @@ const onDelete = async() => {
 const type = ref('')
 
 // 更新行
-const updateRackFunc = async(row) => {
-    const res = await findRack({ ID: row.ID })
+const updateInboundLogFunc = async(row) => {
+    const res = await findInboundLog({ ID: row.ID })
     type.value = 'update'
     if (res.code === 0) {
-        formData.value = res.data.rerack
+        formData.value = res.data.reinboundLog
         dialogFormVisible.value = true
     }
 }
 
 
 // 删除行
-const deleteRackFunc = async (row) => {
-    const res = await deleteRack({ ID: row.ID })
+const deleteInboundLogFunc = async (row) => {
+    const res = await deleteInboundLog({ ID: row.ID })
     if (res.code === 0) {
         ElMessage({
                 type: 'success',
@@ -372,9 +423,9 @@ const openDetailShow = () => {
 // 打开详情
 const getDetails = async (row) => {
   // 打开弹窗
-  const res = await findRack({ ID: row.ID })
+  const res = await findInboundLog({ ID: row.ID })
   if (res.code === 0) {
-    formData.value = res.data.rerack
+    formData.value = res.data.reinboundLog
     openDetailShow()
   }
 }
@@ -384,13 +435,12 @@ const getDetails = async (row) => {
 const closeDetailShow = () => {
   detailShow.value = false
   formData.value = {
-          warehouseId: 0,
+          goodsSku: '',
+          quantity: 0,
+          warehouseId: undefined,
           zoneId: undefined,
-          rackCode: '',
-          status: undefined,
-          priority: 0,
-          remarks: '',
-          }
+          rackId: undefined,
+        }
 }
 
 
@@ -404,12 +454,11 @@ const openDialog = () => {
 const closeDialog = () => {
     dialogFormVisible.value = false
     formData.value = {
-        warehouseId: 0,
+        goodsSku: '',
+        quantity: 0,
+        warehouseId: undefined,
         zoneId: undefined,
-        rackCode: '',
-        status: undefined,
-        priority: 0,
-        remarks: '',
+        rackId: undefined,
         }
 }
 // 弹窗确定
@@ -419,13 +468,13 @@ const enterDialog = async () => {
               let res
               switch (type.value) {
                 case 'create':
-                  res = await createRack(formData.value)
+                  res = await createInboundLog(formData.value)
                   break
                 case 'update':
-                  res = await updateRack(formData.value)
+                  res = await updateInboundLog(formData.value)
                   break
                 default:
-                  res = await createRack(formData.value)
+                  res = await createInboundLog(formData.value)
                   break
               }
               if (res.code === 0) {

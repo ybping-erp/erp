@@ -265,6 +265,32 @@ CREATE TABLE t_wms_inventory (
     deleted_at TIMESTAMP COMMENT '库存软删除时间（如果适用）'
 ) CHARACTER SET utf8mb4;
 
+DROP Table IF EXISTS t_wms_inbound_log;
+CREATE TABLE t_wms_inbound_log ( 
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '数据库主键',
+    goods_sku VARCHAR(50) UNIQUE COMMENT '商品SKU',
+    warehouse_id BIGINT UNSIGNED COMMENT '仓库ID',
+    zone_id BIGINT UNSIGNED COMMENT '库区ID',
+    rack_id  BIGINT UNSIGNED COMMENT '货架ID',
+    quantity INT COMMENT '入库数量',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '库存创建时间',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '库存最后更新时间',
+    deleted_at TIMESTAMP COMMENT '库存软删除时间（如果适用）'
+) CHARACTER SET utf8mb4;
+
+DROP Table IF EXISTS t_wms_outbound_log;
+CREATE TABLE t_wms_outbound_log (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '数据库主键',
+    goods_sku VARCHAR(50) UNIQUE COMMENT '商品SKU',
+    warehouse_id BIGINT UNSIGNED COMMENT '仓库ID',
+    zone_id BIGINT UNSIGNED COMMENT '库区ID',
+    rack_id  BIGINT UNSIGNED COMMENT '货架ID',
+    quantity INT COMMENT '出库数量',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '库存创建时间',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '库存最后更新时间',
+    deleted_at TIMESTAMP COMMENT '库存软删除时间（如果适用）'
+) CHARACTER SET utf8mb4;
+
 -- Create t_wms_goods table
 DROP TABLE IF EXISTS t_wms_goods;
 CREATE TABLE t_wms_goods (

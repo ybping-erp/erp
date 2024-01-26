@@ -7,4 +7,6 @@ type RouterGroup struct {
 	RackRouter
 	WarehouseRouter
 	SkuMappingRouter
+	InboundLogRouter
+	OutboundLogRouter
 }

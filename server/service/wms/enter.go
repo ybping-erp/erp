@@ -7,4 +7,6 @@ type ServiceGroup struct {
 	RackService
 	WarehouseService
 	SkuMappingService
+	InboundLogService
+	OutboundLogService
 }
