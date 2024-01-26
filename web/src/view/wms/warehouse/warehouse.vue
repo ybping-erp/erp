@@ -4,7 +4,6 @@
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
         <el-form-item label="仓库名称" prop="name">
          <el-input v-model="searchInfo.name" placeholder="搜索条件" />
-
         </el-form-item>
         <el-form-item label="城市" prop="city">
          <el-input v-model="searchInfo.city" placeholder="搜索条件" />
@@ -43,13 +42,10 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="日期" width="180">
-            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
-        </el-table-column>
         <el-table-column align="left" label="仓库名称" prop="name" width="120" />
         <el-table-column align="left" label="负责人" prop="owner" width="120" />
         <el-table-column align="left" label="联系电话" prop="telephone" width="120" />
-        <el-table-column align="left" label="仓库街道地址" prop="streetAddress" width="120" />
+        <el-table-column align="left" label="街道" prop="streetAddress" width="120" />
         <el-table-column align="left" label="城市" prop="city" width="120" />
         <el-table-column align="left" label="州/省" prop="stateProvince" width="120" />
         <el-table-column align="left" label="邮政编码" prop="postalCode" width="120" />
@@ -89,8 +85,8 @@
             <el-form-item label="联系电话:"  prop="telephone" >
               <el-input v-model="formData.telephone" :clearable="true"  placeholder="请输入联系电话" />
             </el-form-item>
-            <el-form-item label="仓库街道地址:"  prop="streetAddress" >
-              <el-input v-model="formData.streetAddress" :clearable="true"  placeholder="请输入仓库街道地址" />
+            <el-form-item label="街道:"  prop="streetAddress" >
+              <el-input v-model="formData.streetAddress" :clearable="true"  placeholder="请输入街道" />
             </el-form-item>
             <el-form-item label="城市:"  prop="city" >
               <el-input v-model="formData.city" :clearable="true"  placeholder="请输入城市" />
@@ -126,7 +122,7 @@
                 <el-descriptions-item label="联系电话">
                         {{ formData.telephone }}
                 </el-descriptions-item>
-                <el-descriptions-item label="仓库街道地址">
+                <el-descriptions-item label="街道">
                         {{ formData.streetAddress }}
                 </el-descriptions-item>
                 <el-descriptions-item label="城市">

@@ -2,12 +2,12 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-        <el-form-item label="仓库ID" prop="warehouseId">
-            
-             <el-input v-model.number="searchInfo.warehouseId" placeholder="搜索条件" />
-
+        <el-form-item label="仓库" prop="warehouseId">
+          <el-select v-model.number="searchInfo.warehouseId" placeholder="请选择" style="width:100%" :clearable="true" >
+            <el-option v-for="item in my_wms_warehouses" :key="item.ID" :label="item.name" :value="item.ID" />
+          </el-select>
         </el-form-item>
-           <el-form-item label="分区ID" prop="zoneId">
+           <el-form-item label="货区" prop="zoneId">
             <el-select v-model="searchInfo.zoneId" clearable placeholder="请选择" @clear="()=>{searchInfo.zoneId=undefined}">
               <el-option v-for="(item,key) in wms_zoneOptions" :key="key" :label="item.label" :value="item.value" />
             </el-select>
@@ -50,11 +50,8 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="日期" width="180">
-            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
-        </el-table-column>
-        <el-table-column align="left" label="仓库ID" prop="warehouseId" width="120" />
-        <el-table-column align="left" label="分区ID" prop="zoneId" width="120">
+        <el-table-column align="left" label="仓库" prop="warehouseId" width="120" />
+        <el-table-column align="left" label="货区" prop="zoneId" width="120">
             <template #default="scope">
             {{ filterDict(scope.row.zoneId,wms_zoneOptions) }}
             </template>
@@ -93,11 +90,13 @@
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
       <el-scrollbar height="500px">
           <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="仓库ID:"  prop="warehouseId" >
-              <el-input v-model.number="formData.warehouseId" :clearable="true" placeholder="请输入仓库ID" />
+            <el-form-item label="仓库:"  prop="warehouseId" >
+              <el-select v-model.number="formData.warehouseId" placeholder="请选择" :clearable="true" >
+                <el-option v-for="item in my_wms_warehouses" :key="item.ID" :label="item.name" :value="item.ID" />
+              </el-select>
             </el-form-item>
-            <el-form-item label="分区ID:"  prop="zoneId" >
-              <el-select v-model="formData.zoneId" placeholder="请选择分区ID" style="width:100%" :clearable="true" >
+            <el-form-item label="货区:"  prop="zoneId" >
+              <el-select v-model="formData.zoneId" placeholder="请选择货区" style="width:100%" :clearable="true" >
                 <el-option v-for="(item,key) in wms_zoneOptions" :key="key" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
@@ -128,10 +127,10 @@
     <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="查看详情" destroy-on-close>
       <el-scrollbar height="550px">
         <el-descriptions column="1" border>
-                <el-descriptions-item label="仓库ID">
+                <el-descriptions-item label="仓库">
                         {{ formData.warehouseId }}
                 </el-descriptions-item>
-                <el-descriptions-item label="分区ID">
+                <el-descriptions-item label="货区">
                         {{ filterDict(formData.zoneId,wms_zoneOptions) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="货架编号">
@@ -162,6 +161,10 @@ import {
   getRackList
 } from '@/api/rack'
 
+import {
+  getWarehouseList 
+} from '@/api/warehouse'
+
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -174,8 +177,9 @@ defineOptions({
 // 自动化生成的字典（可能为空）以及字段
 const wms_zoneOptions = ref([])
 const rack_statusOptions = ref([])
+const my_wms_warehouses = ref([])
 const formData = ref({
-        warehouseId: 0,
+        warehouseId: undefined,
         zoneId: undefined,
         rackCode: '',
         status: undefined,
@@ -261,6 +265,11 @@ getTableData()
 const setOptions = async () =>{
     wms_zoneOptions.value = await getDictFunc('wms_zone')
     rack_statusOptions.value = await getDictFunc('rack_status')
+
+  const res = await getWarehouseList({ page: 1, pageSize: 1000})
+  if (res.code === 0) {
+    my_wms_warehouses.value = res.data.list
+  }
 }
 
 // 获取需要的字典 可能为空 按需保留

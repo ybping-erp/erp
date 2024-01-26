@@ -3,7 +3,9 @@
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
         <el-form-item label="仓库" prop="warehouseId">
-             <el-input v-model.number="searchInfo.warehouseId" placeholder="全部仓库" />
+             <el-select v-model.number="searchInfo.warehouseId" placeholder="请选择" style="width:100%" :clearable="true" >
+                <el-option v-for="item in my_wms_warehouses" :key="item.ID" :label="item.name" :value="item.ID" />
+              </el-select>
         </el-form-item>
         <el-form-item label="库区" prop="stockStatus">
             <el-select v-model="searchInfo.rackId" clearable placeholder="请选择" @clear="()=>{searchInfo.rackId=undefined}">
@@ -47,9 +49,6 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="日期" width="180">
-            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
-        </el-table-column>
         <el-table-column align="left" label="商品SKU" prop="goodsSku" width="120" />
         <el-table-column align="left" label="仓库" prop="warehouseId" width="120" />
         <el-table-column align="left" label="总数量" prop="quantity" width="120" />
@@ -93,7 +92,9 @@
               <el-input v-model="formData.goodsSku" :clearable="true"  placeholder="请输入商品SKU" />
             </el-form-item>
             <el-form-item label="仓库:"  prop="warehouseId" >
-              <el-input v-model.number="formData.warehouseId" :clearable="true" placeholder="请输入仓库" />
+              <el-select v-model.number="formData.warehouseId" placeholder="请选择" :clearable="true" >
+                <el-option v-for="item in my_wms_warehouses" :key="item.ID" :label="item.name" :value="item.ID" />
+              </el-select>
             </el-form-item>
             <el-form-item label="库存数量:"  prop="quantity" >
               <el-input v-model.number="formData.quantity" :clearable="true" placeholder="请输入库存数量" />
@@ -162,6 +163,10 @@ import {
   getInventoryList
 } from '@/api/inventory'
 
+import {
+  getWarehouseList 
+} from '@/api/warehouse'
+
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -174,9 +179,10 @@ defineOptions({
 // 自动化生成的字典（可能为空）以及字段
 const stock_statusOptions = ref([])
 const wms_zoneOptions = ref([])
+const my_wms_warehouses = ref([])
 const formData = ref({
         goodsSku: '',
-        warehouseId: 0,
+        warehouseId: undefined,
         quantity: 0,
         safetyQuantity: 0,
         onOrderQuantity: 0,
@@ -258,10 +264,16 @@ getTableData()
 
 // ============== 表格控制部分结束 ===============
 
+
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
-    stock_statusOptions.value = await getDictFunc('stock_status')
-    wms_zoneOptions.value = await getDictFunc('wms_zone')
+  stock_statusOptions.value = await getDictFunc('stock_status')
+  wms_zoneOptions.value = await getDictFunc('wms_zone')
+
+  const res = await getWarehouseList({ page: 1, pageSize: 1000})
+  if (res.code === 0) {
+    my_wms_warehouses.value = res.data.list
+  }
 }
 
 // 获取需要的字典 可能为空 按需保留
