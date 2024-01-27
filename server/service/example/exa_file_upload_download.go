@@ -100,6 +100,7 @@ func (e *FileUploadAndDownloadService) UploadFile(header *multipart.FileHeader, 
 		Name: header.Filename,
 		Tag:  s[len(s)-1],
 		Key:  key,
+		Size: header.Size,
 	}
 	if noSave == "0" {
 		return f, e.Upload(f)

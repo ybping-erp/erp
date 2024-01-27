@@ -83,10 +83,10 @@ hua-wei-obs:
     access-key: you-access-key
     secret-key: you-secret-key
 jwt:
-    signing-key: 822f2771-18fd-4796-a522-fa1457756a71
+    signing-key: IWXtNmkFkKQzZsYXJh5#L9Quf&A%YaxLLD6
     expires-time: 7d
     buffer-time: 1d
-    issuer: qmPlus
+    issuer: ybping
 local:
     path: uploads/file
     store-path: uploads/file
@@ -96,6 +96,7 @@ mongo:
     database: ""
     username: ""
     password: ""
+    auth-source: ""
     min-pool-size: 0
     max-pool-size: 100
     socket-timeout-ms: 0
@@ -162,10 +163,10 @@ pgsql:
     log-zap: false
 qiniu:
     zone: ZoneHuaDong
-    bucket: ""
-    img-path: ""
-    access-key: ""
-    secret-key: ""
+    bucket: ybping-private-test
+    img-path: http://s7wxfedul.hd-bkt.clouddn.com
+    access-key: IM8gfLrJpRMJy4Qx5bj3JuvCeWLQKVlHpTHVPgZt
+    secret-key: Ckd7VNum_pRCELMe0GUw-Pc37V7DLkUrBLMwEjg5
     use-https: false
     use-cdn-domains: false
 redis:
@@ -189,7 +190,7 @@ sqlite:
 system:
     env: local
     db-type: mysql
-    oss-type: local
+    oss-type: qiniu
     router-prefix: ""
     addr: 8888
     iplimit-count: 15000
@@ -206,7 +207,7 @@ tencent-cos:
     path-prefix: github.com/flipped-aurora/gin-vue-admin/server
 zap:
     level: info
-    prefix: '[github.com/flipped-aurora/gin-vue-admin/server]'
+    prefix: '[next-erp/server]'
     format: console
     director: log
     encode-level: LowercaseColorLevelEncoder
