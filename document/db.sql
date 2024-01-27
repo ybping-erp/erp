@@ -268,7 +268,7 @@ CREATE TABLE t_wms_inventory (
 DROP Table IF EXISTS t_wms_inbound_log;
 CREATE TABLE t_wms_inbound_log ( 
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '数据库主键',
-    goods_sku VARCHAR(50) UNIQUE COMMENT '商品SKU',
+    goods_sku VARCHAR(50) COMMENT '商品SKU',
     warehouse_id BIGINT UNSIGNED COMMENT '仓库ID',
     zone_id BIGINT UNSIGNED COMMENT '库区ID',
     rack_id  BIGINT UNSIGNED COMMENT '货架ID',
@@ -281,7 +281,7 @@ CREATE TABLE t_wms_inbound_log (
 DROP Table IF EXISTS t_wms_outbound_log;
 CREATE TABLE t_wms_outbound_log (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '数据库主键',
-    goods_sku VARCHAR(50) UNIQUE COMMENT '商品SKU',
+    goods_sku VARCHAR(50) COMMENT '商品SKU',
     warehouse_id BIGINT UNSIGNED COMMENT '仓库ID',
     zone_id BIGINT UNSIGNED COMMENT '库区ID',
     rack_id  BIGINT UNSIGNED COMMENT '货架ID',
