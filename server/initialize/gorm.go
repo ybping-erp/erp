@@ -7,10 +7,10 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 
-	"go.uber.org/zap"
-	"gorm.io/gorm"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/wms"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 func Gorm() *gorm.DB {
@@ -54,7 +54,24 @@ func RegisterTables() {
 		example.ExaFile{},
 		example.ExaCustomer{},
 		example.ExaFileChunk{},
-		example.ExaFileUploadAndDownload{}, eCommerce.Platform{}, eCommerce.Product{}, eCommerce.Shop{}, eCommerce.Category{}, eCommerce.Order{}, eCommerce.OrderItem{}, wms.Goods{}, wms.Inventory{}, wms.LogisticsPackaging{}, wms.Rack{}, wms.Warehouse{}, wms.SkuMapping{}, wms.InboundLog{}, wms.OutboundLog{},
+		example.ExaFileUploadAndDownload{},
+
+		eCommerce.Platform{},
+		eCommerce.Product{},
+		eCommerce.Shop{},
+		eCommerce.Category{},
+		eCommerce.Order{},
+		eCommerce.OrderItem{},
+
+		wms.Goods{},
+		wms.GoodsSPU{},
+		wms.GoodsAttribute{},
+		wms.Inventory{},
+		wms.LogisticsPackaging{},
+		wms.Rack{}, wms.Warehouse{},
+		wms.SkuMapping{},
+		wms.InboundLog{},
+		wms.OutboundLog{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))

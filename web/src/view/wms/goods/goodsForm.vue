@@ -1,28 +1,13 @@
+
 <template>
   <div>
     <div class="gva-form-box">
       <el-form :model="formData" ref="elFormRef" label-position="right" :rules="rule" label-width="80px">
-        <el-form-item label="商品编码:" prop="code">
-          <el-input v-model="formData.code" :clearable="true" placeholder="请输入" />
-       </el-form-item>
-        <el-form-item label="商品SPU:" prop="spu">
-          <el-input v-model="formData.spu" :clearable="true" placeholder="请输入" />
-       </el-form-item>
-        <el-form-item label="属性信息:" prop="spuAttributes">
-          <el-input v-model="formData.spuAttributes" :clearable="true" placeholder="请输入" />
+        <el-form-item label="商品SPU:" prop="spuId">
+          <el-input v-model.number="formData.spuId" :clearable="true" placeholder="请输入" />
        </el-form-item>
         <el-form-item label="商品SKU:" prop="sku">
           <el-input v-model="formData.sku" :clearable="true" placeholder="请输入" />
-       </el-form-item>
-        <el-form-item label="组合商品:" prop="childrenSku">
-          <el-input v-model="formData.childrenSku" :clearable="true" placeholder="请输入" />
-       </el-form-item>
-        <el-form-item label="需要加工:" prop="needAdditionalProcess">
-          <el-input v-model.number="formData.needAdditionalProcess" :clearable="true" placeholder="请输入" />
-       </el-form-item>
-        <el-form-item label="销售方式:" prop="salesMethod">
-       </el-form-item>
-        <el-form-item label="商品状态:" prop="status">
        </el-form-item>
         <el-form-item label="商品分类:" prop="categoryId">
           <el-input v-model.number="formData.categoryId" :clearable="true" placeholder="请输入" />
@@ -30,14 +15,32 @@
         <el-form-item label="中文名称:" prop="chineseName">
           <el-input v-model="formData.chineseName" :clearable="true" placeholder="请输入" />
        </el-form-item>
+        <el-form-item label="商品编码:" prop="code">
+          <el-input v-model="formData.code" :clearable="true" placeholder="请输入" />
+       </el-form-item>
         <el-form-item label="英文名称:" prop="englishName">
           <el-input v-model="formData.englishName" :clearable="true" placeholder="请输入" />
        </el-form-item>
         <el-form-item label="识别码:" prop="identifierCode">
           <el-input v-model="formData.identifierCode" :clearable="true" placeholder="请输入" />
        </el-form-item>
-        <el-form-item label="来源URL列表:" prop="sourceUrls">
+        <el-form-item label="销售方式:" prop="salesMethod">
+          <el-input v-model.number="formData.salesMethod" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="状态:" prop="status">
+          <el-input v-model.number="formData.status" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="来源:" prop="sourceUrls">
           <el-input v-model="formData.sourceUrls" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="创建者:" prop="createdBy">
+          <el-input v-model.number="formData.createdBy" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="删除者:" prop="deletedBy">
+          <el-input v-model.number="formData.deletedBy" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="更新者:" prop="updatedBy">
+          <el-input v-model.number="formData.updatedBy" :clearable="true" placeholder="请输入" />
        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="save">保存</el-button>
@@ -70,17 +73,19 @@ const router = useRouter()
 
 const type = ref('')
 const formData = ref({
-            code: '',
-            spu: '',
-            spuAttributes: '',
+            spuId: 0,
             sku: '',
-            childrenSku: '',
-            needAdditionalProcess: 0,
             categoryId: 0,
             chineseName: '',
+            code: '',
             englishName: '',
             identifierCode: '',
+            salesMethod: 0,
+            status: 0,
             sourceUrls: '',
+            createdBy: 0,
+            deletedBy: 0,
+            updatedBy: 0,
         })
 // 验证规则
 const rule = reactive({
