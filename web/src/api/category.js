@@ -95,3 +95,34 @@ export const getCategoryList = (params) => {
     params
   })
 }
+
+const _buildProductCategoryOptions = (GoodsCategoryData, optionsData) => {
+  GoodsCategoryData && GoodsCategoryData.forEach(item => {
+    if (item.children && item.children.length) {
+      const option = {
+        value: item.ID,
+        label: item.name,
+        children: []
+      }
+      _buildProductCategoryOptions(item.children, option.children)
+      optionsData.push(option)
+    } else {
+      const option = {
+        value: item.ID,
+        label: item.name,
+      }
+      optionsData.push(option)
+    }
+  })
+}
+
+export const buildProductCategoryOptions = async (domain) => {
+  const res = await getCategoryList({ page: 1, pageSize: 1000, domain: domain})
+  const categoryOptions = []
+  if (res.code === 0) {
+    _buildProductCategoryOptions(res.data.list, categoryOptions)
+  } else {
+    console.log(res)
+  }
+  return categoryOptions
+}

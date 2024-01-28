@@ -49,16 +49,15 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
+        <el-table-column align="left" label="SKU" prop="sku" width="120" />
         <el-table-column align="left" label="类别" prop="categoryId" width="120">
           <template #default="scope"> 
-            {{scope.row.categoryId}} - {{product_categoryOptions}}-{{ filterCascaderDict(scope.row.categoryId, product_categoryOptions) }}
+            {{ filterCascaderDict(scope.row.categoryId, product_categoryOptions) }}
           </template>
         </el-table-column>
-        <el-table-column align="left" label="描述" prop="description" width="120" />
         <el-table-column align="left" label="名称" prop="productName" width="120" />
-        <el-table-column align="left" label="SKU" prop="sku" width="120" />
-        <el-table-column align="left" label="摘要" prop="summary" width="120" />
         <el-table-column align="left" label="单价" prop="unitPrice" width="120" />
+        <el-table-column align="left" label="摘要" prop="summary" width="120" />
         <el-table-column
           align="left"
           label="创建人"
@@ -167,7 +166,7 @@ import {
 } from '@/api/product'
 
 import {
-  getCategoryList
+  buildProductCategoryOptions
 } from '@/api/category'
 
 // 全量引入格式化工具 请按需保留
@@ -212,6 +211,7 @@ const searchRule = reactive({
 
 const elFormRef = ref()
 const elSearchFormRef = ref()
+const product_categoryOptions = ref([])
 
 // =========== 表格控制部分 ===========
 const page = ref(1)
@@ -261,36 +261,13 @@ const getTableData = async() => {
 
 getTableData()
 
-const product_categoryOptions = ref([])
-const setProductCategoryOptions = (GoodsCategoryData, optionsData) => {
-  GoodsCategoryData && GoodsCategoryData.forEach(item => {
-    if (item.children && item.children.length) {
-      const option = {
-        value: item.ID,
-        label: item.name,
-        children: []
-      }
-      setProductCategoryOptions(item.children, option.children)
-      optionsData.push(option)
-    } else {
-      const option = {
-        value: item.ID,
-        label: item.name,
-      }
-      optionsData.push(option)
-    }
-  })
-}
-
 // ============== 表格控制部分结束 ===============
 
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
 
   // 构建商品类别字典
-  const res = await getCategoryList({ page: 1, pageSize: 999, domain: "Product"})
-  product_categoryOptions.value = []
-  setProductCategoryOptions(res.data.list, product_categoryOptions.value)
+  product_categoryOptions.value = await buildProductCategoryOptions("Product")
 }
 
 // 获取需要的字典 可能为空 按需保留

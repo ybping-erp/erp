@@ -222,7 +222,7 @@ import { getDictFunc, formatDate, formatBoolean, filterDict, filterCascaderDict,
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 import {
-  getCategoryList
+  buildProductCategoryOptions
 } from '@/api/category'
 
 defineOptions({
@@ -313,36 +313,14 @@ const getTableData = async() => {
 }
 
 getTableData()
-const setProductCategoryOptions = (GoodsCategoryData, optionsData) => {
-  GoodsCategoryData && GoodsCategoryData.forEach(item => {
-    if (item.children && item.children.length) {
-      const option = {
-        value: item.ID,
-        label: item.name,
-        children: []
-      }
-      setProductCategoryOptions(item.children, option.children)
-      optionsData.push(option)
-    } else {
-      const option = {
-        value: item.ID,
-        label: item.name,
-      }
-      optionsData.push(option)
-    }
-  })
-}
+
 // ============== 表格控制部分结束 ===============
 
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
     sales_methodOptions.value = await getDictFunc('sales_method')
     goods_statusOptions.value = await getDictFunc('goods_status')
-
-  // 构建商品类别字典
-  const res = await getCategoryList({ page: 1, pageSize: 999, domain: "Goods"})
-  product_categoryOptions.value = []
-  setProductCategoryOptions(res.data.list, product_categoryOptions.value)
+    product_categoryOptions.value = await buildProductCategoryOptions("Goods")
 }
 
 // 获取需要的字典 可能为空 按需保留

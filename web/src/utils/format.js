@@ -23,17 +23,26 @@ export const filterDict = (value, options) => {
 }
 
 export const filterCascaderDict = (value, options) => {
+  let result = '';
+
   options && options.forEach(item => {
     if (item.value === value) {
-      return item.label
+      result = item.label;
+      return; // Exit the loop when a match is found
     }
 
     if (item.children) {
-      return filterCascaderDict(value, item.children)
+      const childResult = filterCascaderDict(value, item.children);
+      if (childResult !== '') {
+        result = childResult;
+        return; // Exit the loop when a match is found in the children
+      }
     }
-  })
-  return ''
-}
+  });
+
+  return result;
+};
+
 
 export const getDictFunc = async(type) => {
   const dicts = await getDict(type)
