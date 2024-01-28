@@ -2,19 +2,6 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-      <el-form-item label="创建日期" prop="createdAt">
-      <template #label>
-        <span>
-          创建日期
-          <el-tooltip content="搜索范围是开始日期（包含）至结束日期（不包含）">
-            <el-icon><QuestionFilled /></el-icon>
-          </el-tooltip>
-        </span>
-      </template>
-      <el-date-picker v-model="searchInfo.startCreatedAt" type="datetime" placeholder="开始日期" :disabled-date="time=> searchInfo.endCreatedAt ? time.getTime() > searchInfo.endCreatedAt.getTime() : false"></el-date-picker>
-       —
-      <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
-      </el-form-item>
         <el-form-item label="平台名称" prop="platformName">
          <el-input v-model="searchInfo.platformName" placeholder="搜索条件" />
         </el-form-item>
@@ -63,15 +50,6 @@
         <el-table-column align="left" label="店铺名称" prop="shopName" width="120" />
         <el-table-column align="left" label="API Client ID" prop="clientId" width="120" />
         <el-table-column align="left" label="API Client Cert" prop="clientCert" width="120" />
-        <el-table-column
-          align="left"
-          label="创建人"
-          width="140"
-        >
-          <template #default="scope">
-            <div>{{ scope.row.creator.userName }}({{ scope.row.creator.nickName }})</div>
-          </template>
-        </el-table-column>
         <el-table-column align="left" label="操作" min-width="120">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
@@ -113,9 +91,6 @@
             <el-form-item label="API Client Cert:"  prop="clientCert" >
               <el-input v-model="formData.clientCert" :clearable="true"  placeholder="请输入API Client Cert" />
             </el-form-item>
-            <el-form-item label="创建人:"  prop="creatorId" >
-              <el-input v-model.number="formData.creatorId" :clearable="true" placeholder="请输入创建人" />
-            </el-form-item>
           </el-form>
       </el-scrollbar>
       <template #footer>
@@ -143,9 +118,6 @@
                 </el-descriptions-item>
                 <el-descriptions-item label="API Client Cert">
                         {{ formData.clientCert }}
-                </el-descriptions-item>
-                <el-descriptions-item label="创建人">
-                        {{ formData.creatorId }}
                 </el-descriptions-item>
         </el-descriptions>
       </el-scrollbar>
@@ -179,7 +151,6 @@ const formData = ref({
         shopName: '',
         clientId: '',
         clientCert: '',
-        creatorId: 0,
         })
 
 
@@ -377,7 +348,6 @@ const closeDetailShow = () => {
           shopName: '',
           clientId: '',
           clientCert: '',
-          creatorId: 0,
           }
 }
 
@@ -397,7 +367,6 @@ const closeDialog = () => {
         shopName: '',
         clientId: '',
         clientCert: '',
-        creatorId: 0,
         }
 }
 // 弹窗确定

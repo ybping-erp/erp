@@ -58,15 +58,6 @@
         <el-table-column align="left" label="名称" prop="productName" width="120" />
         <el-table-column align="left" label="单价" prop="unitPrice" width="120" />
         <el-table-column align="left" label="摘要" prop="summary" width="120" />
-        <el-table-column
-          align="left"
-          label="创建人"
-          width="140"
-        >
-          <template #default="scope">
-            <div>{{ scope.row.creator.userName }}({{ scope.row.creator.nickName }})</div>
-          </template>
-        </el-table-column>
         <el-table-column align="left" label="操作" min-width="120">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">

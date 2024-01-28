@@ -27,7 +27,3 @@ func (InboundLog) TableName() string {
 func (inboundLog *InboundLog) AfterCreate(tx *gorm.DB) (err error) {
 	return Inventory{}.UpdateInventory(tx, inboundLog.GoodsSku, *inboundLog.WarehouseId, *inboundLog.ZoneId, *inboundLog.RackId, *inboundLog.Quantity)
 }
-
-func (inboundLog *InboundLog) AfterDelete(tx *gorm.DB) (err error) {
-	return Inventory{}.UpdateInventory(tx, inboundLog.GoodsSku, *inboundLog.WarehouseId, *inboundLog.ZoneId, *inboundLog.RackId, *inboundLog.Quantity*-1)
-}
