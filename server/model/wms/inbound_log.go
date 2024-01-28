@@ -2,8 +2,6 @@
 package wms
 
 import (
-	"errors"
-
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"gorm.io/gorm"
 )
@@ -27,24 +25,9 @@ func (InboundLog) TableName() string {
 }
 
 func (inboundLog *InboundLog) AfterCreate(tx *gorm.DB) (err error) {
-	var inventory Inventory
-	err = tx.Model(&Inventory{}).Where("goods_sku = ? and warehouse_id = ? and zone_id = ? and rack_id = ?", inboundLog.GoodsSku, inboundLog.WarehouseId, inboundLog.ZoneId, inboundLog.RackId).First(&inventory).Error
+	return Inventory{}.UpdateInventory(tx, inboundLog.GoodsSku, *inboundLog.WarehouseId, *inboundLog.ZoneId, *inboundLog.RackId, *inboundLog.Quantity)
+}
 
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
-	}
-
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		inventory = Inventory{
-			GoodsSku:    inboundLog.GoodsSku,
-			WarehouseId: inboundLog.WarehouseId,
-			ZoneId:      inboundLog.ZoneId,
-			RackId:      inboundLog.RackId,
-			Quantity:    new(int),
-		}
-	}
-
-	// 更新库存
-	*inventory.Quantity += *inboundLog.Quantity
-	return tx.Save(&inventory).Error
+func (inboundLog *InboundLog) AfterDelete(tx *gorm.DB) (err error) {
+	return Inventory{}.UpdateInventory(tx, inboundLog.GoodsSku, *inboundLog.WarehouseId, *inboundLog.ZoneId, *inboundLog.RackId, *inboundLog.Quantity*-1)
 }

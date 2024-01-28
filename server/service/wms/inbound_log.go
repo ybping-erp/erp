@@ -24,9 +24,16 @@ func (inboundLogService *InboundLogService) DeleteInboundLog(ID string, userID u
 		if err := tx.Model(&wms.InboundLog{}).Where("id = ?", ID).Update("deleted_by", userID).Error; err != nil {
 			return err
 		}
-		if err = tx.Delete(&wms.InboundLog{}, "id = ?", ID).Error; err != nil {
+
+		inboundLog, err := inboundLogService.GetInboundLog(ID)
+		if err != nil {
 			return err
 		}
+
+		if err = tx.Delete(&inboundLog).Error; err != nil {
+			return err
+		}
+
 		return nil
 	})
 	return err

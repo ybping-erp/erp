@@ -65,7 +65,7 @@
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
                 查看详情
             </el-button>
-            <el-button type="primary" link icon="edit" class="table-button" @click="updateOutboundLogFunc(scope.row)">变更</el-button>
+            <!-- <el-button type="primary" link icon="edit" class="table-button" @click="updateInboundLogFunc(scope.row)">变更</el-button> -->
             <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
             </template>
         </el-table-column>
@@ -82,23 +82,32 @@
             />
         </div>
     </div>
-    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
+    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'新增出库':'修改'" destroy-on-close>
       <el-scrollbar height="500px">
           <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="商品SKU:"  prop="goodsSku" >
-              <el-input v-model="formData.goodsSku" :clearable="true"  placeholder="请输入商品SKU" />
+            <el-form-item label="SKU:"  prop="goodsSku" >
+              <!-- <el-input v-model="formData.goodsSku" :clearable="true"  placeholder="请输入商品SKU" /> -->
+              <el-select v-model.number="formData.goodsSku" placeholder="请选择商品" style="width:100%" :clearable="true" >
+                <el-option v-for="item in wms_goods" :key="item.sku" :label="`${item.sku} - ${item.chineseName} - ${item.englishName}`" :value="item.sku" />
+            </el-select>
             </el-form-item>
-            <el-form-item label="出库数量:"  prop="quantity" >
-              <el-input v-model.number="formData.quantity" :clearable="true" placeholder="请输入出库数量" />
-            </el-form-item>
-            <el-form-item label="货架:"  prop="rackId" >
-              <el-input v-model.number="formData.rackId" :clearable="true" placeholder="请输入货架" />
+            <el-form-item label="数量:"  prop="quantity" >
+              <el-input v-model.number="formData.quantity" :clearable="true" placeholder="请输入入库数量" />
             </el-form-item>
             <el-form-item label="仓库:"  prop="warehouseId" >
-              <el-input v-model.number="formData.warehouseId" :clearable="true" placeholder="请输入仓库" />
+              <el-select v-model.number="formData.warehouseId" placeholder="请选择仓库" style="width:100%" :clearable="true" @change="handleWarehouseChange">
+                <el-option v-for="item in wms_warehouses" :key="item.ID" :label="item.name" :value="item.ID" />
+              </el-select>
             </el-form-item>
             <el-form-item label="库区:"  prop="zoneId" >
-              <el-input v-model.number="formData.zoneId" :clearable="true" placeholder="请输入库区" />
+              <el-select v-model="formData.zoneId" placeholder="请选择库区" style="width:100%" :clearable="true" @change="handleZoneChange">
+                <el-option v-for="(item,key) in wms_zoneOptions" :key="key" :label="item.label" :value="item.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="货架:"  prop="rackId" >
+              <el-select v-model.number="formData.rackId" placeholder="请选择框架" style="width:100%" :clearable="true" >
+                <el-option v-for="item in wms_racks" :key="item.ID" :label="item.rackCode" :value="item.ID" />
+              </el-select>
             </el-form-item>
           </el-form>
       </el-scrollbar>
@@ -144,6 +153,18 @@ import {
   getOutboundLogList
 } from '@/api/outbound_log'
 
+import {
+  getGoodsList
+} from '@/api/goods'
+
+import {
+  getRackList
+} from '@/api/rack'
+
+import {
+  getWarehouseList 
+} from '@/api/warehouse'
+
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -154,12 +175,16 @@ defineOptions({
 })
 
 // 自动化生成的字典（可能为空）以及字段
+const wms_zoneOptions = ref([])
+const wms_warehouses = ref([])
+const wms_goods = ref([])
+const wms_racks = ref([])
 const formData = ref({
         goodsSku: '',
         quantity: 0,
-        rackId: 0,
-        warehouseId: 0,
-        zoneId: 0,
+        rackId: undefined,
+        warehouseId: undefined,
+        zoneId: undefined,
         })
 
 
@@ -273,11 +298,34 @@ getTableData()
 
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
+  wms_zoneOptions.value = await getDictFunc('wms_zone')
+  
+  const warehouseListRes = await getWarehouseList({ page: 1, pageSize: 1000})
+  if (warehouseListRes.code === 0) {
+    wms_warehouses.value = warehouseListRes.data.list
+  }
+
+  const goodsListRes = await getGoodsList({ page: 1, pageSize: 1000})
+  if (goodsListRes.code === 0) {
+    wms_goods.value = goodsListRes.data.list
+  }
 }
 
 // 获取需要的字典 可能为空 按需保留
 setOptions()
 
+const handleWarehouseChange = async () => {
+  formData.value.zoneId = undefined
+  formData.value.rackId = undefined
+}
+
+const handleZoneChange = async() => {
+  formData.value.rackId = undefined
+  const racksRes = await getRackList({ page: 1, pageSize: 1000, warehouseId: formData.value.warehouseId, zoneId: formData.value.zoneId})
+  if (racksRes.code === 0) {
+    wms_racks.value = racksRes.data.list
+  }
+}
 
 // 多选数据
 const multipleSelection = ref([])
@@ -389,9 +437,9 @@ const closeDetailShow = () => {
   formData.value = {
           goodsSku: '',
           quantity: 0,
-          rackId: 0,
-          warehouseId: 0,
-          zoneId: 0,
+          rackId: undefined,
+          warehouseId: undefined,
+          zoneId: undefined,
           }
 }
 
@@ -408,9 +456,9 @@ const closeDialog = () => {
     formData.value = {
         goodsSku: '',
         quantity: 0,
-        rackId: 0,
-        warehouseId: 0,
-        zoneId: 0,
+        rackId: undefined,
+        warehouseId: undefined,
+        zoneId: undefined,
         }
 }
 // 弹窗确定

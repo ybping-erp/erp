@@ -2,7 +2,11 @@
 package wms
 
 import (
+	"errors"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"gorm.io/gorm"
 )
 
 // 商品库存 结构体  Inventory
@@ -24,4 +28,28 @@ type Inventory struct {
 // TableName 商品库存 Inventory自定义表名 t_wms_inventory
 func (Inventory) TableName() string {
 	return "t_wms_inventory"
+}
+
+func (Inventory) UpdateInventory(tx *gorm.DB, goodsSku string, warehouseId, zoneId, rackId, quantity int) (err error) {
+	var inventory Inventory
+	err = tx.Model(&Inventory{}).Where("goods_sku = ? and warehouse_id = ? and zone_id = ? and rack_id = ?", goodsSku, warehouseId, zoneId, rackId).First(&inventory).Error
+
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return
+	}
+
+	// 初始化库存
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		inventory = Inventory{
+			GoodsSku:    goodsSku,
+			WarehouseId: utils.Pointer[int](warehouseId),
+			ZoneId:      utils.Pointer[int](zoneId),
+			RackId:      utils.Pointer[int](rackId),
+			Quantity:    utils.Pointer[int](0),
+		}
+	}
+
+	// 更新库存
+	*inventory.Quantity += quantity
+	return tx.Save(&inventory).Error
 }
