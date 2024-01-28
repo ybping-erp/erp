@@ -1,29 +1,38 @@
+
 <template>
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-        <el-form-item label="商品SKU" prop="sku">
-         <el-input v-model="searchInfo.sku" placeholder="搜索条件" />
-
+      <el-form-item label="创建日期" prop="createdAt">
+      <template #label>
+        <span>
+          创建日期
+          <el-tooltip content="搜索范围是开始日期（包含）至结束日期（不包含）">
+            <el-icon><QuestionFilled /></el-icon>
+          </el-tooltip>
+        </span>
+      </template>
+      <el-date-picker v-model="searchInfo.startCreatedAt" type="datetime" placeholder="开始日期" :disabled-date="time=> searchInfo.endCreatedAt ? time.getTime() > searchInfo.endCreatedAt.getTime() : false"></el-date-picker>
+       —
+      <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
+      </el-form-item>
+      
+        <el-form-item label="商品分类" prop="categoryId">
+             <el-input v-model.number="searchInfo.categoryId" placeholder="搜索条件" />
         </el-form-item>
-        <el-form-item label="销售方式" prop="salesMethod">
-           <el-select v-model="searchInfo.stockStatus" clearable placeholder="请选择" @clear="()=>{searchInfo.salesMethod=undefined}">
+           <el-form-item label="销售方式" prop="salesMethod">
+            <el-select v-model="searchInfo.salesMethod" clearable placeholder="请选择" @clear="()=>{searchInfo.salesMethod=undefined}">
               <el-option v-for="(item,key) in sales_methodOptions" :key="key" :label="item.label" :value="item.value" />
             </el-select>
+            </el-form-item>
+        <el-form-item label="商品SKU" prop="sku">
+         <el-input v-model="searchInfo.sku" placeholder="搜索条件" />
         </el-form-item>
-        <el-form-item label="商品状态" prop="status">
-         <el-select v-model="searchInfo.status" clearable placeholder="请选择" @clear="()=>{searchInfo.salesMethod=undefined}">
+           <el-form-item label="商品状态" prop="status">
+            <el-select v-model="searchInfo.status" clearable placeholder="请选择" @clear="()=>{searchInfo.status=undefined}">
               <el-option v-for="(item,key) in goods_statusOptions" :key="key" :label="item.label" :value="item.value" />
             </el-select>
-        </el-form-item>
-        <el-form-item label="中文名称" prop="chineseName">
-         <el-input v-model="searchInfo.chineseName" placeholder="搜索条件" />
-
-        </el-form-item>
-        <el-form-item label="英文名称" prop="englishName">
-         <el-input v-model="searchInfo.englishName" placeholder="搜索条件" />
-
-        </el-form-item>
+            </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">查询</el-button>
           <el-button icon="refresh" @click="onReset">重置</el-button>
@@ -53,27 +62,30 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
+        
         <el-table-column align="left" label="日期" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
+        
+        <el-table-column align="left" label="商品分类" prop="categoryId" width="120" />
+        <el-table-column align="left" label="中文名称" prop="chineseName" width="120" />
         <el-table-column align="left" label="商品编码" prop="code" width="120" />
-        <el-table-column align="left" label="商品SPU" prop="spu" width="120" />
-        <el-table-column align="left" label="属性信息" prop="spuAttributes" width="120" />
+        <el-table-column align="left" label="英文名称" prop="englishName" width="120" />
+        <el-table-column align="left" label="识别码" prop="identifierCode" width="120" />
+        <el-table-column align="left" label="销售方式" prop="salesMethod" width="120">
+            <template #default="scope">
+            {{ filterDict(scope.row.salesMethod,sales_methodOptions) }}
+            </template>
+        </el-table-column>
         <el-table-column align="left" label="商品SKU" prop="sku" width="120" />
-        <el-table-column align="left" label="组合商品" prop="childrenSku" width="120" />
-        <el-table-column align="left" label="需要加工" prop="needAdditionalProcess" width="120" />
-        <el-table-column align="left" label="销售方式" prop="salesMethod" width="120" />
+        <el-table-column align="left" label="来源URL列表" prop="sourceUrls" width="120" />
+        <el-table-column align="left" label="商品SPU" prop="spuId" width="120" />
         <el-table-column align="left" label="商品状态" prop="status" width="120">
-          <template #default="scope">
+            <template #default="scope">
             {{ filterDict(scope.row.status,goods_statusOptions) }}
             </template>
         </el-table-column>
-        <el-table-column align="left" label="商品分类" prop="categoryId" width="120" />
-        <el-table-column align="left" label="中文名称" prop="chineseName" width="120" />
-        <el-table-column align="left" label="英文名称" prop="englishName" width="120" />
-        <el-table-column align="left" label="识别码" prop="identifierCode" width="120" />
-        <el-table-column align="left" label="来源URL列表" prop="sourceUrls" width="120" />
-        <el-table-column align="left" label="操作" min-width="120">
+        <el-table-column align="left" label="操作" fixed="right" min-width="240">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
@@ -98,58 +110,42 @@
     </div>
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
       <el-scrollbar height="500px">
-          <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="商品编码:"  prop="code" >
-              <el-input v-model="formData.code" :clearable="true"  placeholder="请输入商品编码" />
-            </el-form-item>
-            <el-form-item label="商品SPU:"  prop="spu" >
-              <el-input v-model="formData.spu" :clearable="true"  placeholder="请输入商品SPU" />
-            </el-form-item>
-            <el-form-item label="属性信息:"  prop="spuAttributes" >
-              <el-input v-model="formData.spuAttributes" :clearable="true"  placeholder="请输入属性信息" />
-            </el-form-item>
-            <el-form-item label="商品SKU:"  prop="sku" >
-              <el-input v-model="formData.sku" :clearable="true"  placeholder="请输入商品SKU" />
-            </el-form-item>
-            <el-form-item label="组合商品:"  prop="childrenSku" >
-              <el-input v-model="formData.childrenSku" :clearable="true"  placeholder="请输入组合商品" />
-            </el-form-item>
-            <el-form-item label="需要加工:"  prop="needAdditionalProcess" >
-              <el-input v-model.number="formData.needAdditionalProcess" :clearable="true" placeholder="请输入需要加工" />
-            </el-form-item>
-            <el-form-item label="销售方式:"  prop="salesMethod" >
-              <el-select v-model="formData.salesMethod" placeholder="请选择销售方式" style="width:100%" :clearable="true" >
-                <el-option v-for="(item,key) in sales_methodOptions" :key="key" :label="item.label" :value="item.value" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="商品状态:"  prop="status" >
-              <el-select v-model="formData.status" placeholder="请选择库存状态" style="width:100%" :clearable="true" >
-                <el-option v-for="(item,key) in goods_statusOptions" :key="key" :label="item.label" :value="item.value" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="商品分类:"  prop="categoryId" >
-              <el-cascader
-                v-model="formData.categoryId"
-                style="width:100%"
-                :options="goods_categoryOptions"
-                :show-all-levels="false"
-                :props="{ multiple:false,checkStrictly: true,label:'categoryName',value:'categoryId',disabled:'disabled',emitPath:false}"
-                :clearable="true"
-              />
-            </el-form-item>
-            <el-form-item label="中文名称:"  prop="chineseName" >
-              <el-input v-model="formData.chineseName" :clearable="true"  placeholder="请输入中文名称" />
-            </el-form-item>
-            <el-form-item label="英文名称:"  prop="englishName" >
-              <el-input v-model="formData.englishName" :clearable="true"  placeholder="请输入英文名称" />
-            </el-form-item>
-            <el-form-item label="识别码:"  prop="identifierCode" >
-              <el-input v-model="formData.identifierCode" :clearable="true"  placeholder="请输入识别码" />
-            </el-form-item>
-            <el-form-item label="来源URL列表:"  prop="sourceUrls" >
-              <el-input v-model="formData.sourceUrls" :clearable="true"  placeholder="请输入来源URL列表" />
-            </el-form-item>
-          </el-form>
+              <el-form :model="formData" ref="elFormRef" label-position="right" :rules="rule" label-width="80px">
+        <el-form-item label="商品分类:" prop="categoryId">
+          <el-input v-model.number="formData.categoryId" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="中文名称:" prop="chineseName">
+          <el-input v-model="formData.chineseName" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="商品编码:" prop="code">
+          <el-input v-model="formData.code" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="英文名称:" prop="englishName">
+          <el-input v-model="formData.englishName" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="识别码:" prop="identifierCode">
+          <el-input v-model="formData.identifierCode" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="销售方式:" prop="salesMethod">
+          <el-select v-model="formData.salesMethod" placeholder="请选择" :clearable="true">
+            <el-option v-for="(item,key) in sales_methodOptions" :key="key" :label="item.label" :value="item.value" />
+          </el-select>
+       </el-form-item>
+        <el-form-item label="商品SKU:" prop="sku">
+          <el-input v-model="formData.sku" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="来源URL列表:" prop="sourceUrls">
+          <el-input v-model="formData.sourceUrls" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="商品SPU:" prop="spuId">
+          <el-input v-model.number="formData.spuId" :clearable="true" placeholder="请输入" />
+       </el-form-item>
+        <el-form-item label="商品状态:" prop="status">
+          <el-select v-model="formData.status" placeholder="请选择" :clearable="true">
+            <el-option v-for="(item,key) in goods_statusOptions" :key="key" :label="item.label" :value="item.value" />
+          </el-select>
+       </el-form-item>
+      </el-form>
       </el-scrollbar>
       <template #footer>
         <div class="dialog-footer">
@@ -162,35 +158,14 @@
     <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="查看详情" destroy-on-close>
       <el-scrollbar height="550px">
         <el-descriptions column="1" border>
-                <el-descriptions-item label="商品编码">
-                        {{ formData.code }}
-                </el-descriptions-item>
-                <el-descriptions-item label="商品SPU">
-                        {{ formData.spu }}
-                </el-descriptions-item>
-                <el-descriptions-item label="属性信息">
-                        {{ formData.spuAttributes }}
-                </el-descriptions-item>
-                <el-descriptions-item label="商品SKU">
-                        {{ formData.sku }}
-                </el-descriptions-item>
-                <el-descriptions-item label="组合商品">
-                        {{ formData.childrenSku }}
-                </el-descriptions-item>
-                <el-descriptions-item label="需要加工">
-                        {{ formData.needAdditionalProcess }}
-                </el-descriptions-item>
-                <el-descriptions-item label="销售方式">
-                        {{ filterDict(formData.salesMethod,sales_methodOptions) }}
-                </el-descriptions-item>
-                <el-descriptions-item label="商品状态">
-                        {{ filterDict(formData.status,goods_statusOptions) }}
-                </el-descriptions-item>
                 <el-descriptions-item label="商品分类">
                         {{ formData.categoryId }}
                 </el-descriptions-item>
                 <el-descriptions-item label="中文名称">
                         {{ formData.chineseName }}
+                </el-descriptions-item>
+                <el-descriptions-item label="商品编码">
+                        {{ formData.code }}
                 </el-descriptions-item>
                 <el-descriptions-item label="英文名称">
                         {{ formData.englishName }}
@@ -198,8 +173,20 @@
                 <el-descriptions-item label="识别码">
                         {{ formData.identifierCode }}
                 </el-descriptions-item>
+                <el-descriptions-item label="销售方式">
+                        {{ filterDict(formData.salesMethod,sales_methodOptions) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="商品SKU">
+                        {{ formData.sku }}
+                </el-descriptions-item>
                 <el-descriptions-item label="来源URL列表">
                         {{ formData.sourceUrls }}
+                </el-descriptions-item>
+                <el-descriptions-item label="商品SPU">
+                        {{ formData.spuId }}
+                </el-descriptions-item>
+                <el-descriptions-item label="商品状态">
+                        {{ filterDict(formData.status,goods_statusOptions) }}
                 </el-descriptions-item>
         </el-descriptions>
       </el-scrollbar>
@@ -217,10 +204,6 @@ import {
   getGoodsList
 } from '@/api/goods'
 
-import {
-  getCategoryList
-} from '@/api/category'
-
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -234,23 +217,18 @@ defineOptions({
 const sales_methodOptions = ref([])
 const goods_statusOptions = ref([])
 const formData = ref({
-        code: '',
-        spu: '',
-        spuAttributes: '',
-        sku: '',
-        childrenSku: '',
-        needAdditionalProcess: 0,
         categoryId: 0,
         chineseName: '',
+        code: '',
         englishName: '',
         identifierCode: '',
+        salesMethod: undefined,
+        sku: '',
         sourceUrls: '',
+        spuId: 0,
+        status: undefined,
         })
 
-
-// 验证规则
-const rule = reactive({
-})
 
 const searchRule = reactive({
   createdAt: [
@@ -319,37 +297,12 @@ const getTableData = async() => {
 
 getTableData()
 
-const goods_categoryOptions = ref([])
-const setGoodsCategoryOptions = (GoodsCategoryData, optionsData) => {
-  GoodsCategoryData && GoodsCategoryData.forEach(item => {
-    if (item.children && item.children.length) {
-      const option = {
-        categoryId: item.ID,
-        categoryName: item.name,
-        children: []
-      }
-      setGoodsCategoryOptions(item.children, option.children)
-      optionsData.push(option)
-    } else {
-      const option = {
-        categoryId: item.ID,
-        categoryName: item.name,
-      }
-      optionsData.push(option)
-    }
-  })
-}
 // ============== 表格控制部分结束 ===============
 
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
-  sales_methodOptions.value = await getDictFunc('sales_method')
-  goods_statusOptions.value = await getDictFunc('goods_status')
-
-  // 构建商品类别字典
-  const res = await getCategoryList({ page: 1, pageSize: 999, domain: "Goods"})
-  goods_categoryOptions.value = []
-  setGoodsCategoryOptions(res.data.list, goods_statusOptions.value)
+    sales_methodOptions.value = await getDictFunc('sales_method')
+    goods_statusOptions.value = await getDictFunc('goods_status')
 }
 
 // 获取需要的字典 可能为空 按需保留
@@ -380,7 +333,7 @@ const deleteVisible = ref(false)
 
 // 多选删除
 const onDelete = async() => {
-      const ids = []
+      const IDs = []
       if (multipleSelection.value.length === 0) {
         ElMessage({
           type: 'warning',
@@ -390,15 +343,15 @@ const onDelete = async() => {
       }
       multipleSelection.value &&
         multipleSelection.value.map(item => {
-          ids.push(item.ID)
+          IDs.push(item.ID)
         })
-      const res = await deleteGoodsByIds({ ids })
+      const res = await deleteGoodsByIds({ IDs })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
           message: '删除成功'
         })
-        if (tableData.value.length === ids.length && page.value > 1) {
+        if (tableData.value.length === IDs.length && page.value > 1) {
           page.value--
         }
         deleteVisible.value = false
@@ -464,17 +417,16 @@ const getDetails = async (row) => {
 const closeDetailShow = () => {
   detailShow.value = false
   formData.value = {
-          code: '',
-          spu: '',
-          spuAttributes: '',
-          sku: '',
-          childrenSku: '',
-          needAdditionalProcess: 0,
           categoryId: 0,
           chineseName: '',
+          code: '',
           englishName: '',
           identifierCode: '',
+          salesMethod: undefined,
+          sku: '',
           sourceUrls: '',
+          spuId: 0,
+          status: undefined,
           }
 }
 
@@ -489,17 +441,16 @@ const openDialog = () => {
 const closeDialog = () => {
     dialogFormVisible.value = false
     formData.value = {
-        code: '',
-        spu: '',
-        spuAttributes: '',
-        sku: '',
-        childrenSku: '',
-        needAdditionalProcess: 0,
         categoryId: 0,
         chineseName: '',
+        code: '',
         englishName: '',
         identifierCode: '',
+        salesMethod: undefined,
+        sku: '',
         sourceUrls: '',
+        spuId: 0,
+        status: undefined,
         }
 }
 // 弹窗确定
@@ -534,3 +485,4 @@ const enterDialog = async () => {
 <style>
 
 </style>
+

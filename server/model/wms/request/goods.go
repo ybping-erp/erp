@@ -1,14 +1,18 @@
 package request
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/model/wms"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"time"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 )
 
-type GoodsSearch struct{
-    wms.Goods
-    StartCreatedAt *time.Time `json:"startCreatedAt" form:"startCreatedAt"`
-    EndCreatedAt   *time.Time `json:"endCreatedAt" form:"endCreatedAt"`
-    request.PageInfo
+type GoodsSearch struct {
+	StartCreatedAt *time.Time `json:"startCreatedAt" form:"startCreatedAt"`
+	EndCreatedAt   *time.Time `json:"endCreatedAt" form:"endCreatedAt"`
+
+	CategoryId  *int   `json:"categoryId" form:"categoryId" `
+	SalesMethod *int   `json:"salesMethod" form:"salesMethod" `
+	Sku         string `json:"sku" form:"sku" `
+	Status      *int   `json:"status" form:"status" `
+	request.PageInfo
 }

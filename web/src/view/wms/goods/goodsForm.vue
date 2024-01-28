@@ -3,12 +3,6 @@
   <div>
     <div class="gva-form-box">
       <el-form :model="formData" ref="elFormRef" label-position="right" :rules="rule" label-width="80px">
-        <el-form-item label="商品SPU:" prop="spuId">
-          <el-input v-model.number="formData.spuId" :clearable="true" placeholder="请输入" />
-       </el-form-item>
-        <el-form-item label="商品SKU:" prop="sku">
-          <el-input v-model="formData.sku" :clearable="true" placeholder="请输入" />
-       </el-form-item>
         <el-form-item label="商品分类:" prop="categoryId">
           <el-input v-model.number="formData.categoryId" :clearable="true" placeholder="请输入" />
        </el-form-item>
@@ -25,22 +19,23 @@
           <el-input v-model="formData.identifierCode" :clearable="true" placeholder="请输入" />
        </el-form-item>
         <el-form-item label="销售方式:" prop="salesMethod">
-          <el-input v-model.number="formData.salesMethod" :clearable="true" placeholder="请输入" />
+          <el-select v-model="formData.salesMethod" placeholder="请选择" :clearable="true">
+            <el-option v-for="(item,key) in sales_methodOptions" :key="key" :label="item.label" :value="item.value" />
+          </el-select>
        </el-form-item>
-        <el-form-item label="状态:" prop="status">
-          <el-input v-model.number="formData.status" :clearable="true" placeholder="请输入" />
+        <el-form-item label="商品SKU:" prop="sku">
+          <el-input v-model="formData.sku" :clearable="true" placeholder="请输入" />
        </el-form-item>
-        <el-form-item label="来源:" prop="sourceUrls">
+        <el-form-item label="来源URL列表:" prop="sourceUrls">
           <el-input v-model="formData.sourceUrls" :clearable="true" placeholder="请输入" />
        </el-form-item>
-        <el-form-item label="创建者:" prop="createdBy">
-          <el-input v-model.number="formData.createdBy" :clearable="true" placeholder="请输入" />
+        <el-form-item label="商品SPU:" prop="spuId">
+          <el-input v-model.number="formData.spuId" :clearable="true" placeholder="请输入" />
        </el-form-item>
-        <el-form-item label="删除者:" prop="deletedBy">
-          <el-input v-model.number="formData.deletedBy" :clearable="true" placeholder="请输入" />
-       </el-form-item>
-        <el-form-item label="更新者:" prop="updatedBy">
-          <el-input v-model.number="formData.updatedBy" :clearable="true" placeholder="请输入" />
+        <el-form-item label="商品状态:" prop="status">
+          <el-select v-model="formData.status" placeholder="请选择" :clearable="true">
+            <el-option v-for="(item,key) in goods_statusOptions" :key="key" :label="item.label" :value="item.value" />
+          </el-select>
        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="save">保存</el-button>
@@ -72,23 +67,42 @@ const route = useRoute()
 const router = useRouter()
 
 const type = ref('')
+const sales_methodOptions = ref([])
+const goods_statusOptions = ref([])
 const formData = ref({
-            spuId: 0,
-            sku: '',
             categoryId: 0,
             chineseName: '',
             code: '',
             englishName: '',
             identifierCode: '',
-            salesMethod: 0,
-            status: 0,
+            salesMethod: undefined,
+            sku: '',
             sourceUrls: '',
-            createdBy: 0,
-            deletedBy: 0,
-            updatedBy: 0,
+            spuId: 0,
+            status: undefined,
         })
 // 验证规则
 const rule = reactive({
+               salesMethod : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               }],
+               sku : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               }],
+               spuId : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               }],
+               status : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               }],
 })
 
 const elFormRef = ref()
@@ -105,6 +119,8 @@ const init = async () => {
     } else {
       type.value = 'create'
     }
+    sales_methodOptions.value = await getDictFunc('sales_method')
+    goods_statusOptions.value = await getDictFunc('goods_status')
 }
 
 init()
