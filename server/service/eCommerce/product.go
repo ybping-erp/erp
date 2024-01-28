@@ -2,9 +2,9 @@ package eCommerce
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce"
 	eCommerceReq "github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce/request"
+	"gorm.io/gorm"
 )
 
 type ProductService struct {
@@ -17,17 +17,18 @@ func (productService *ProductService) CreateProduct(product *eCommerce.Product) 
 	return err
 }
 
-// DeleteProduct 删除产品表记录
-
-func (productService *ProductService) DeleteProduct(product eCommerce.Product) (err error) {
-	err = global.GVA_DB.Delete(&product).Error
-	return err
-}
-
 // DeleteProductByIds 批量删除产品表记录
 
-func (productService *ProductService) DeleteProductByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]eCommerce.Product{}, "id in ?", ids.Ids).Error
+func (productService *ProductService) DeleteProductByIds(IDs []int, deletedBy uint) (err error) {
+	err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&eCommerce.Product{}).Where("id in ?", IDs).Update("deleted_by", deletedBy).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("id in ?", IDs).Delete(&eCommerce.Product{}).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 	return err
 }
 

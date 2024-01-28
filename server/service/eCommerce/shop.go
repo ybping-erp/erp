@@ -2,9 +2,9 @@ package eCommerce
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce"
 	eCommerceReq "github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce/request"
+	"gorm.io/gorm"
 )
 
 type ShopService struct {
@@ -17,17 +17,18 @@ func (shopService *ShopService) CreateShop(shop *eCommerce.Shop) (err error) {
 	return err
 }
 
-// DeleteShop 删除店铺记录
-
-func (shopService *ShopService) DeleteShop(shop eCommerce.Shop) (err error) {
-	err = global.GVA_DB.Delete(&shop).Error
-	return err
-}
-
 // DeleteShopByIds 批量删除店铺记录
 
-func (shopService *ShopService) DeleteShopByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]eCommerce.Shop{}, "id in ?", ids.Ids).Error
+func (shopService *ShopService) DeleteShopByIds(IDs []int, deletedBy uint) (err error) {
+	err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&eCommerce.Shop{}).Where("id in ?", IDs).Update("deleted_by", deletedBy).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("id in ?", IDs).Delete(&eCommerce.Shop{}).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 	return err
 }
 
