@@ -1,3 +1,4 @@
+basePath: /
 definitions:
   config.AliyunOSS:
     properties:
@@ -106,6 +107,30 @@ definitions:
         description: 防爆破验证码超时时间，单位：s(秒)
         type: integer
     type: object
+  config.Email:
+    properties:
+      from:
+        description: 发件人  你自己要发邮件的邮箱
+        type: string
+      host:
+        description: 服务器地址 例如 smtp.qq.com  请前往QQ或者你要发邮件的邮箱查看其smtp协议
+        type: string
+      is-ssl:
+        description: 是否SSL   是否开启SSL
+        type: boolean
+      nickname:
+        description: 昵称    发件人昵称 通常为自己的邮箱
+        type: string
+      port:
+        description: 端口     请前往QQ或者你要发邮件的邮箱查看其smtp协议 大多为 465
+        type: integer
+      secret:
+        description: 密钥    用于登录的密钥 最好不要用邮箱密码 去邮箱smtp申请一个用于登录的密钥
+        type: string
+      to:
+        description: 收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用
+        type: string
+    type: object
   config.Excel:
     properties:
       dir:
@@ -150,6 +175,9 @@ definitions:
     type: object
   config.Mongo:
     properties:
+      auth-source:
+        description: 验证数据库
+        type: string
       coll:
         description: collection name
         type: string
@@ -396,23 +424,21 @@ definitions:
       aliyun-oss:
         $ref: '#/definitions/config.AliyunOSS'
       autocode:
-        allOf:
-        - $ref: '#/definitions/config.Autocode'
+        $ref: '#/definitions/config.Autocode'
         description: auto
       aws-s3:
         $ref: '#/definitions/config.AwsS3'
       captcha:
         $ref: '#/definitions/config.Captcha'
       cors:
-        allOf:
-        - $ref: '#/definitions/config.CORS'
+        $ref: '#/definitions/config.CORS'
         description: 跨域配置
       db-list:
         items:
           $ref: '#/definitions/config.SpecializedDB'
         type: array
       email:
-        $ref: '#/definitions/github_com_flipped-aurora_gin-vue-admin_server_config.Email'
+        $ref: '#/definitions/config.Email'
       excel:
         $ref: '#/definitions/config.Excel'
       hua-wei-obs:
@@ -420,16 +446,14 @@ definitions:
       jwt:
         $ref: '#/definitions/config.JWT'
       local:
-        allOf:
-        - $ref: '#/definitions/config.Local'
+        $ref: '#/definitions/config.Local'
         description: oss
       mongo:
         $ref: '#/definitions/config.Mongo'
       mssql:
         $ref: '#/definitions/config.Mssql'
       mysql:
-        allOf:
-        - $ref: '#/definitions/config.Mysql'
+        $ref: '#/definitions/config.Mysql'
         description: gorm
       oracle:
         $ref: '#/definitions/config.Oracle'
@@ -555,7 +579,7 @@ definitions:
       router-prefix:
         type: string
       use-mongo:
-        description: 使用redis
+        description: 使用mongo
         type: boolean
       use-multipoint:
         description: 多点登录拦截
@@ -609,6 +633,240 @@ definitions:
         description: 栈名
         type: string
     type: object
+  eCommerce.Category:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      children:
+        items:
+          $ref: '#/definitions/eCommerce.Category'
+        type: array
+      createdAt:
+        description: 创建时间
+        type: string
+      creator:
+        $ref: '#/definitions/system.SysUser'
+      creator_id:
+        description: 用户id
+        type: integer
+      domain:
+        description: 品类场景
+        type: string
+      name:
+        description: 类别名称
+        type: string
+      parentId:
+        description: 父类别的标识符
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  eCommerce.Order:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      customerEmail:
+        description: 客户邮箱
+        type: string
+      customerId:
+        description: 客户ID
+        type: string
+      customerName:
+        description: 客户名称
+        type: string
+      customerRemarks:
+        description: 客户备注
+        type: string
+      customerTel:
+        description: 客户电话
+        type: string
+      discount:
+        description: 订单折扣金额
+        type: number
+      orderId:
+        description: 店铺订单号
+        type: string
+      paymentAt:
+        description: 付款时间
+        type: string
+      paymentMethod:
+        description: 支付方式
+        type: string
+      platformName:
+        description: 电商平台
+        type: string
+      refundAt:
+        description: 退款时间
+        type: string
+      shipAt:
+        description: 发货时间
+        type: string
+      shippingCity:
+        description: 城市
+        type: string
+      shippingCost:
+        description: 运费
+        type: number
+      shippingCountry:
+        description: 国家
+        type: string
+      shippingOrderId:
+        description: 运单号
+        type: string
+      shippingPostalCode:
+        description: 邮政编码
+        type: string
+      shippingState:
+        description: 省/州
+        type: string
+      shippingStreetAddress:
+        description: 街道地址
+        type: string
+      shopId:
+        description: 店铺ID
+        type: string
+      shopName:
+        description: 店铺名称
+        type: string
+      statusId:
+        description: 状态ID
+        type: integer
+      tax:
+        description: 订单税额
+        type: number
+      totalAmount:
+        description: 订单总金额
+        type: number
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  eCommerce.OrderItem:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      attributes:
+        description: 产品属性
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      orderId:
+        description: 关联订单的标识符
+        type: string
+      productSku:
+        description: 关联产品的标识符
+        type: string
+      productUrl:
+        description: 产品图片
+        type: string
+      quantity:
+        description: 订单中产品的数量
+        type: integer
+      totalAmount:
+        description: 订单项总金额
+        type: number
+      unitPrice:
+        description: 产品的单价
+        type: number
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  eCommerce.Platform:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      logoUrl:
+        description: 平台logo
+        type: string
+      name:
+        description: 平台名称
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  eCommerce.Product:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      categoryId:
+        description: 产品所属的类别标识符
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
+      description:
+        description: 产品描述
+        type: string
+      productName:
+        description: 产品名称
+        type: string
+      sku:
+        description: 产品的唯一标识符
+        type: string
+      summary:
+        description: 产品摘要
+        type: string
+      unitPrice:
+        description: 产品的单价
+        type: number
+      updatedAt:
+        description: 更新时间
+        type: string
+      updatedBy:
+        type: integer
+    type: object
+  eCommerce.Shop:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      clientCert:
+        description: API Client Cert
+        type: string
+      clientId:
+        description: API Client ID
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
+      platformName:
+        description: 平台名称
+        type: string
+      shopId:
+        description: 平台ID
+        type: string
+      shopName:
+        description: 店铺名称
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+      updatedBy:
+        type: integer
+    type: object
   example.ExaCustomer:
     properties:
       ID:
@@ -624,8 +882,7 @@ definitions:
         description: 客户手机号
         type: string
       sysUser:
-        allOf:
-        - $ref: '#/definitions/system.SysUser'
+        $ref: '#/definitions/system.SysUser'
         description: 管理详情
       sysUserAuthorityID:
         description: 管理角色ID
@@ -689,44 +946,29 @@ definitions:
       createdAt:
         description: 创建时间
         type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
       key:
         description: 编号
         type: string
       name:
         description: 文件名
         type: string
+      size:
+        description: 文件大小 in Byte
+        type: integer
       tag:
         description: 文件标签
         type: string
       updatedAt:
         description: 更新时间
         type: string
+      updatedBy:
+        type: integer
       url:
         description: 文件地址
-        type: string
-    type: object
-  github_com_flipped-aurora_gin-vue-admin_server_config.Email:
-    properties:
-      from:
-        description: 发件人  你自己要发邮件的邮箱
-        type: string
-      host:
-        description: 服务器地址 例如 smtp.qq.com  请前往QQ或者你要发邮件的邮箱查看其smtp协议
-        type: string
-      is-ssl:
-        description: 是否SSL   是否开启SSL
-        type: boolean
-      nickname:
-        description: 昵称    发件人昵称 通常为自己的邮箱
-        type: string
-      port:
-        description: 端口     请前往QQ或者你要发邮件的邮箱查看其smtp协议 大多为 465
-        type: integer
-      secret:
-        description: 密钥    用于登录的密钥 最好不要用邮箱密码 去邮箱smtp申请一个用于登录的密钥
-        type: string
-      to:
-        description: 收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用
         type: string
     type: object
   request.AddMenuAuthorityInfo:
@@ -1001,7 +1243,8 @@ definitions:
     type: object
   response.PageResult:
     properties:
-      list: {}
+      list:
+        type: object
       page:
         type: integer
       pageSize:
@@ -1020,7 +1263,8 @@ definitions:
     properties:
       code:
         type: integer
-      data: {}
+      data:
+        type: object
       msg:
         type: string
     type: object
@@ -1120,7 +1364,8 @@ definitions:
         items:
           $ref: '#/definitions/system.Field'
         type: array
-      hasTimer:
+      gvaModel:
+        description: 是否使用gva默认Model
         type: boolean
       humpPackageName:
         description: go文件名称
@@ -1130,6 +1375,8 @@ definitions:
       packageName:
         description: 文件名称
         type: string
+      primaryField:
+        $ref: '#/definitions/system.Field'
       structName:
         description: Struct名称
         type: string
@@ -1172,32 +1419,15 @@ definitions:
       fieldType:
         description: Field数据类型
         type: string
+      primaryKey:
+        description: 是否主键
+        type: boolean
       require:
         description: 是否必填
         type: boolean
       sort:
         description: 是否增加排序
         type: boolean
-    type: object
-  system.Meta:
-    properties:
-      activeName:
-        type: string
-      closeTab:
-        description: 自动关闭tab
-        type: boolean
-      defaultMenu:
-        description: 是否是基础路由（开发中）
-        type: boolean
-      icon:
-        description: 菜单图标
-        type: string
-      keepAlive:
-        description: 是否缓存
-        type: boolean
-      title:
-        description: 菜单名
-        type: string
     type: object
   system.SysApi:
     properties:
@@ -1281,6 +1511,8 @@ definitions:
       ID:
         description: 主键ID
         type: integer
+      activeName:
+        type: string
       authoritys:
         items:
           $ref: '#/definitions/system.SysAuthority'
@@ -1289,23 +1521,31 @@ definitions:
         items:
           $ref: '#/definitions/system.SysBaseMenu'
         type: array
+      closeTab:
+        description: 自动关闭tab
+        type: boolean
       component:
         description: 对应前端文件路径
         type: string
       createdAt:
         description: 创建时间
         type: string
+      defaultMenu:
+        description: 是否是基础路由（开发中）
+        type: boolean
       hidden:
         description: 是否在列表隐藏
+        type: boolean
+      icon:
+        description: 菜单图标
+        type: string
+      keepAlive:
+        description: 是否缓存
         type: boolean
       menuBtn:
         items:
           $ref: '#/definitions/system.SysBaseMenuBtn'
         type: array
-      meta:
-        allOf:
-        - $ref: '#/definitions/system.Meta'
-        description: 附加属性
       name:
         description: 路由name
         type: string
@@ -1322,6 +1562,9 @@ definitions:
       sort:
         description: 排序标记
         type: integer
+      title:
+        description: 菜单名
+        type: string
       updatedAt:
         description: 更新时间
         type: string
@@ -1425,11 +1668,37 @@ definitions:
         description: 字典值
         type: integer
     type: object
+  system.SysExportTemplate:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      name:
+        description: 模板名称
+        type: string
+      tableName:
+        description: 表名称
+        type: string
+      templateID:
+        description: 模板标识
+        type: string
+      templateInfo:
+        description: 模板信息
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
   system.SysMenu:
     properties:
       ID:
         description: 主键ID
         type: integer
+      activeName:
+        type: string
       authoritys:
         items:
           $ref: '#/definitions/system.SysAuthority'
@@ -1442,14 +1711,26 @@ definitions:
         items:
           $ref: '#/definitions/system.SysMenu'
         type: array
+      closeTab:
+        description: 自动关闭tab
+        type: boolean
       component:
         description: 对应前端文件路径
         type: string
       createdAt:
         description: 创建时间
         type: string
+      defaultMenu:
+        description: 是否是基础路由（开发中）
+        type: boolean
       hidden:
         description: 是否在列表隐藏
+        type: boolean
+      icon:
+        description: 菜单图标
+        type: string
+      keepAlive:
+        description: 是否缓存
         type: boolean
       menuBtn:
         items:
@@ -1457,10 +1738,6 @@ definitions:
         type: array
       menuId:
         type: string
-      meta:
-        allOf:
-        - $ref: '#/definitions/system.Meta'
-        description: 附加属性
       name:
         description: 路由name
         type: string
@@ -1477,6 +1754,9 @@ definitions:
       sort:
         description: 排序标记
         type: integer
+      title:
+        description: 菜单名
+        type: string
       updatedAt:
         description: 更新时间
         type: string
@@ -1581,6 +1861,379 @@ definitions:
       config:
         $ref: '#/definitions/config.Server'
     type: object
+<<<<<<< HEAD
+=======
+  wms.Goods:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      attributes:
+        description: 属性信息
+        items:
+          $ref: '#/definitions/wms.GoodsAttribute'
+        type: array
+      categoryId:
+        description: 商品分类
+        type: integer
+      children:
+        description: 组合商品
+        items:
+          $ref: '#/definitions/wms.Goods'
+        type: array
+      chineseName:
+        description: 中文名称
+        type: string
+      code:
+        description: 商品编码
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
+      englishName:
+        description: 英文名称
+        type: string
+      identifierCode:
+        description: 识别码
+        type: string
+      salesMethod:
+        description: 销售方式
+        type: integer
+      sku:
+        description: 商品SKU
+        type: string
+      sku_mappings:
+        items:
+          $ref: '#/definitions/wms.SkuMapping'
+        type: array
+      sourceUrls:
+        description: 来源URL列表
+        type: string
+      spuId:
+        description: 商品SPU
+        type: integer
+      status:
+        description: 商品状态
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      updatedBy:
+        type: integer
+    type: object
+  wms.GoodsAttribute:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
+      goodsID:
+        type: integer
+      key:
+        description: 商品编码
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+      updatedBy:
+        type: integer
+      value:
+        description: 商品编码
+        type: string
+    type: object
+  wms.InboundLog:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
+      goodsSku:
+        description: 商品SKU
+        type: string
+      quantity:
+        description: 入库数量
+        type: integer
+      rackId:
+        description: 货架
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      updatedBy:
+        type: integer
+      warehouseId:
+        description: 仓库
+        type: integer
+      zoneId:
+        description: 库区
+        type: integer
+    required:
+    - goodsSku
+    - quantity
+    - rackId
+    - warehouseId
+    - zoneId
+    type: object
+  wms.Inventory:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      goodsSku:
+        description: 商品SKU
+        type: string
+      onOrderQuantity:
+        description: 在途库存数量
+        type: integer
+      preSaleQuantity:
+        description: 未发库存数量
+        type: integer
+      quantity:
+        description: 库存数量
+        type: integer
+      rackId:
+        description: 货架ID
+        type: integer
+      reservedQuantity:
+        description: 预留库存数量
+        type: integer
+      safetyQuantity:
+        description: 预留库存数量
+        type: integer
+      stockStatus:
+        description: 库存状态
+        type: integer
+      unshippingQuantity:
+        description: 未发库存数量
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      warehouseId:
+        description: 关联仓库的标识符
+        type: integer
+      zoneId:
+        description: 库区ID
+        type: integer
+    type: object
+  wms.LogisticsPackaging:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      customsCode:
+        description: 海关编码
+        type: string
+      declarationChineseName:
+        description: 报关中文名
+        type: string
+      declarationEnglishName:
+        description: 报关英文名
+        type: string
+      declarationPriceCurrency:
+        description: 报关价格币种
+        type: string
+      declarationWeightUnit:
+        description: 报关重量单位
+        type: string
+      goodsSku:
+        description: 商品SKU
+        type: string
+      heightCm:
+        description: 商品尺寸 - 高 (cm)
+        type: number
+      lengthCm:
+        description: 商品尺寸 - 长 (cm)
+        type: number
+      material:
+        description: 材质
+        type: string
+      netWeight:
+        description: 商品净重 (g)
+        type: number
+      packaging:
+        description: 包装信息
+        type: string
+      purpose:
+        description: 用途
+        type: string
+      specialGoods:
+        description: 危险运输品
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      weightErrorTolerance:
+        description: 允许称重误差 (g)
+        type: number
+      widthCm:
+        description: 商品尺寸 - 宽 (cm)
+        type: number
+    type: object
+  wms.OutboundLog:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
+      goodsSku:
+        description: 商品SKU
+        type: string
+      quantity:
+        description: 出库数量
+        type: integer
+      rackId:
+        description: 货架
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      updatedBy:
+        type: integer
+      warehouseId:
+        description: 仓库
+        type: integer
+      zoneId:
+        description: 库区
+        type: integer
+    required:
+    - goodsSku
+    - quantity
+    - rackId
+    - warehouseId
+    - zoneId
+    type: object
+  wms.Rack:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
+      priority:
+        description: 拣货权重
+        type: integer
+      rackCode:
+        description: 货架编号
+        type: string
+      remarks:
+        description: 备注说明
+        type: string
+      status:
+        description: 货架状态
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      updatedBy:
+        type: integer
+      warehouseId:
+        description: 仓库ID
+        type: integer
+      zoneId:
+        description: 分区ID
+        type: integer
+    type: object
+  wms.SkuMapping:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
+      goodsSku:
+        description: 商品SKU
+        type: string
+      productSku:
+        description: 产品SKU
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+      updatedBy:
+        type: integer
+    type: object
+  wms.Warehouse:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      city:
+        description: 城市
+        type: string
+      country:
+        description: 国家
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
+      name:
+        description: 仓库名称
+        type: string
+      owner:
+        description: 负责人
+        type: string
+      postalCode:
+        description: 邮政编码
+        type: string
+      stateProvince:
+        description: 州/省
+        type: string
+      streetAddress:
+        description: 仓库街道地址
+        type: string
+      telephone:
+        description: 联系电话
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+      updatedBy:
+        type: integer
+    type: object
+>>>>>>> a15cf23b (更新Swag doc)
 info:
   contact: {}
   description: 使用gin+vue进行极速开发的全栈开发基础平台
@@ -2583,6 +3236,206 @@ paths:
       summary: 获取权限列表
       tags:
       - Casbin
+  /category/createCategory:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建品类
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建品类
+      tags:
+      - Category
+  /category/deleteCategory:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除品类
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除品类
+      tags:
+      - Category
+  /category/deleteCategoryByIds:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批量删除品类
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除品类
+      tags:
+      - Category
+  /category/findCategory:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 用户id
+        in: query
+        name: creator_id
+        type: integer
+      - description: 品类场景
+        in: query
+        name: domain
+        type: string
+      - description: 类别名称
+        in: query
+        name: name
+        type: string
+      - description: 父类别的标识符
+        in: query
+        name: parentId
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询品类
+      tags:
+      - Category
+  /category/getCategoryList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 用户id
+        in: query
+        name: creator_id
+        type: integer
+      - description: 品类场景
+        in: query
+        name: domain
+        type: string
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 类别名称
+        in: query
+        name: name
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 父类别的标识符
+        in: query
+        name: parentId
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取品类列表
+      tags:
+      - Category
+  /category/updateCategory:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新品类
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新品类
+      tags:
+      - Category
   /customer/customer:
     delete:
       consumes:
@@ -2955,6 +3808,402 @@ paths:
       summary: 上传文件示例
       tags:
       - ExaFileUploadAndDownload
+  /goods/createGoods:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建商品
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Goods'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建商品
+      tags:
+      - Goods
+  /goods/deleteGoods:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除商品
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Goods'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除商品
+      tags:
+      - Goods
+  /goods/deleteGoodsByIds:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除商品
+      tags:
+      - Goods
+  /goods/findGoods:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 商品分类
+        in: query
+        name: categoryId
+        type: integer
+      - description: 中文名称
+        in: query
+        name: chineseName
+        type: string
+      - description: 商品编码
+        in: query
+        name: code
+        type: string
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - description: 英文名称
+        in: query
+        name: englishName
+        type: string
+      - description: 识别码
+        in: query
+        name: identifierCode
+        type: string
+      - description: 销售方式
+        in: query
+        name: salesMethod
+        type: integer
+      - description: 商品SKU
+        in: query
+        name: sku
+        type: string
+      - description: 来源URL列表
+        in: query
+        name: sourceUrls
+        type: string
+      - description: 商品SPU
+        in: query
+        name: spuId
+        type: integer
+      - description: 商品状态
+        in: query
+        name: status
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询商品
+      tags:
+      - Goods
+  /goods/getGoodsList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: categoryId
+        type: integer
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: salesMethod
+        type: integer
+      - in: query
+        name: sku
+        type: string
+      - in: query
+        name: startCreatedAt
+        type: string
+      - in: query
+        name: status
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取商品列表
+      tags:
+      - Goods
+  /goods/updateGoods:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新商品
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Goods'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新商品
+      tags:
+      - Goods
+  /inboundLog/createInboundLog:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建入库记录
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.InboundLog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建入库记录
+      tags:
+      - InboundLog
+  /inboundLog/deleteInboundLog:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除入库记录
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.InboundLog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除入库记录
+      tags:
+      - InboundLog
+  /inboundLog/deleteInboundLogByIds:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除入库记录
+      tags:
+      - InboundLog
+  /inboundLog/findInboundLog:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - description: 商品SKU
+        in: query
+        name: goodsSku
+        required: true
+        type: string
+      - description: 入库数量
+        in: query
+        name: quantity
+        required: true
+        type: integer
+      - description: 货架
+        in: query
+        name: rackId
+        required: true
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      - description: 仓库
+        in: query
+        name: warehouseId
+        required: true
+        type: integer
+      - description: 库区
+        in: query
+        name: zoneId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询入库记录
+      tags:
+      - InboundLog
+  /inboundLog/getInboundLogList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: endCreatedAt
+        type: string
+      - in: query
+        name: goodsSku
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取入库记录列表
+      tags:
+      - InboundLog
+  /inboundLog/updateInboundLog:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新入库记录
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.InboundLog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新入库记录
+      tags:
+      - InboundLog
   /init/checkdb:
     post:
       produces:
@@ -2999,6 +4248,262 @@ paths:
       summary: 初始化用户数据库
       tags:
       - InitDB
+  /inventory/createInventory:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建商品库存
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Inventory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建商品库存
+      tags:
+      - Inventory
+  /inventory/deleteInventory:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除商品库存
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Inventory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除商品库存
+      tags:
+      - Inventory
+  /inventory/deleteInventoryByIds:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批量删除商品库存
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除商品库存
+      tags:
+      - Inventory
+  /inventory/findInventory:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 商品SKU
+        in: query
+        name: goodsSku
+        type: string
+      - description: 在途库存数量
+        in: query
+        name: onOrderQuantity
+        type: integer
+      - description: 未发库存数量
+        in: query
+        name: preSaleQuantity
+        type: integer
+      - description: 库存数量
+        in: query
+        name: quantity
+        type: integer
+      - description: 货架ID
+        in: query
+        name: rackId
+        type: integer
+      - description: 预留库存数量
+        in: query
+        name: reservedQuantity
+        type: integer
+      - description: 预留库存数量
+        in: query
+        name: safetyQuantity
+        type: integer
+      - description: 库存状态
+        in: query
+        name: stockStatus
+        type: integer
+      - description: 未发库存数量
+        in: query
+        name: unshippingQuantity
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - description: 关联仓库的标识符
+        in: query
+        name: warehouseId
+        type: integer
+      - description: 库区ID
+        in: query
+        name: zoneId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询商品库存
+      tags:
+      - Inventory
+  /inventory/getInventoryList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 商品SKU
+        in: query
+        name: goodsSku
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 在途库存数量
+        in: query
+        name: onOrderQuantity
+        type: integer
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 未发库存数量
+        in: query
+        name: preSaleQuantity
+        type: integer
+      - description: 库存数量
+        in: query
+        name: quantity
+        type: integer
+      - description: 货架ID
+        in: query
+        name: rackId
+        type: integer
+      - description: 预留库存数量
+        in: query
+        name: reservedQuantity
+        type: integer
+      - description: 预留库存数量
+        in: query
+        name: safetyQuantity
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      - description: 库存状态
+        in: query
+        name: stockStatus
+        type: integer
+      - description: 未发库存数量
+        in: query
+        name: unshippingQuantity
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - description: 关联仓库的标识符
+        in: query
+        name: warehouseId
+        type: integer
+      - description: 库区ID
+        in: query
+        name: zoneId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取商品库存列表
+      tags:
+      - Inventory
+  /inventory/updateInventory:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新商品库存
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Inventory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新商品库存
+      tags:
+      - Inventory
   /jwt/jsonInBlacklist:
     post:
       consumes:
@@ -3020,6 +4525,294 @@ paths:
       summary: jwt加入黑名单
       tags:
       - Jwt
+  /logisticsPackaging/createLogisticsPackaging:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建物流包装
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.LogisticsPackaging'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建物流包装
+      tags:
+      - LogisticsPackaging
+  /logisticsPackaging/deleteLogisticsPackaging:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除物流包装
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.LogisticsPackaging'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除物流包装
+      tags:
+      - LogisticsPackaging
+  /logisticsPackaging/deleteLogisticsPackagingByIds:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批量删除物流包装
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除物流包装
+      tags:
+      - LogisticsPackaging
+  /logisticsPackaging/findLogisticsPackaging:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 海关编码
+        in: query
+        name: customsCode
+        type: string
+      - description: 报关中文名
+        in: query
+        name: declarationChineseName
+        type: string
+      - description: 报关英文名
+        in: query
+        name: declarationEnglishName
+        type: string
+      - description: 报关价格币种
+        in: query
+        name: declarationPriceCurrency
+        type: string
+      - description: 报关重量单位
+        in: query
+        name: declarationWeightUnit
+        type: string
+      - description: 商品SKU
+        in: query
+        name: goodsSku
+        type: string
+      - description: 商品尺寸 - 高 (cm)
+        in: query
+        name: heightCm
+        type: number
+      - description: 商品尺寸 - 长 (cm)
+        in: query
+        name: lengthCm
+        type: number
+      - description: 材质
+        in: query
+        name: material
+        type: string
+      - description: 商品净重 (g)
+        in: query
+        name: netWeight
+        type: number
+      - description: 包装信息
+        in: query
+        name: packaging
+        type: string
+      - description: 用途
+        in: query
+        name: purpose
+        type: string
+      - description: 危险运输品
+        in: query
+        name: specialGoods
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - description: 允许称重误差 (g)
+        in: query
+        name: weightErrorTolerance
+        type: number
+      - description: 商品尺寸 - 宽 (cm)
+        in: query
+        name: widthCm
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询物流包装
+      tags:
+      - LogisticsPackaging
+  /logisticsPackaging/getLogisticsPackagingList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 海关编码
+        in: query
+        name: customsCode
+        type: string
+      - description: 报关中文名
+        in: query
+        name: declarationChineseName
+        type: string
+      - description: 报关英文名
+        in: query
+        name: declarationEnglishName
+        type: string
+      - description: 报关价格币种
+        in: query
+        name: declarationPriceCurrency
+        type: string
+      - description: 报关重量单位
+        in: query
+        name: declarationWeightUnit
+        type: string
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 商品SKU
+        in: query
+        name: goodsSku
+        type: string
+      - description: 商品尺寸 - 高 (cm)
+        in: query
+        name: heightCm
+        type: number
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 商品尺寸 - 长 (cm)
+        in: query
+        name: lengthCm
+        type: number
+      - description: 材质
+        in: query
+        name: material
+        type: string
+      - description: 商品净重 (g)
+        in: query
+        name: netWeight
+        type: number
+      - description: 包装信息
+        in: query
+        name: packaging
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 用途
+        in: query
+        name: purpose
+        type: string
+      - description: 危险运输品
+        in: query
+        name: specialGoods
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - description: 允许称重误差 (g)
+        in: query
+        name: weightErrorTolerance
+        type: number
+      - description: 商品尺寸 - 宽 (cm)
+        in: query
+        name: widthCm
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取物流包装列表
+      tags:
+      - LogisticsPackaging
+  /logisticsPackaging/updateLogisticsPackaging:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新物流包装
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.LogisticsPackaging'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新物流包装
+      tags:
+      - LogisticsPackaging
   /menu/addBaseMenu:
     post:
       consumes:
@@ -3279,6 +5072,1856 @@ paths:
       summary: 更新菜单
       tags:
       - Menu
+  /order/createOrder:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建订单
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Order'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建订单
+      tags:
+      - Order
+  /order/deleteOrder:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除订单
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Order'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除订单
+      tags:
+      - Order
+  /order/deleteOrderByIds:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批量删除订单
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除订单
+      tags:
+      - Order
+  /order/findOrder:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 客户邮箱
+        in: query
+        name: customerEmail
+        type: string
+      - description: 客户ID
+        in: query
+        name: customerId
+        type: string
+      - description: 客户名称
+        in: query
+        name: customerName
+        type: string
+      - description: 客户备注
+        in: query
+        name: customerRemarks
+        type: string
+      - description: 客户电话
+        in: query
+        name: customerTel
+        type: string
+      - description: 订单折扣金额
+        in: query
+        name: discount
+        type: number
+      - description: 店铺订单号
+        in: query
+        name: orderId
+        type: string
+      - description: 付款时间
+        in: query
+        name: paymentAt
+        type: string
+      - description: 支付方式
+        in: query
+        name: paymentMethod
+        type: string
+      - description: 电商平台
+        in: query
+        name: platformName
+        type: string
+      - description: 退款时间
+        in: query
+        name: refundAt
+        type: string
+      - description: 发货时间
+        in: query
+        name: shipAt
+        type: string
+      - description: 城市
+        in: query
+        name: shippingCity
+        type: string
+      - description: 运费
+        in: query
+        name: shippingCost
+        type: number
+      - description: 国家
+        in: query
+        name: shippingCountry
+        type: string
+      - description: 运单号
+        in: query
+        name: shippingOrderId
+        type: string
+      - description: 邮政编码
+        in: query
+        name: shippingPostalCode
+        type: string
+      - description: 省/州
+        in: query
+        name: shippingState
+        type: string
+      - description: 街道地址
+        in: query
+        name: shippingStreetAddress
+        type: string
+      - description: 店铺ID
+        in: query
+        name: shopId
+        type: string
+      - description: 店铺名称
+        in: query
+        name: shopName
+        type: string
+      - description: 状态ID
+        in: query
+        name: statusId
+        type: integer
+      - description: 订单税额
+        in: query
+        name: tax
+        type: number
+      - description: 订单总金额
+        in: query
+        name: totalAmount
+        type: number
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询订单
+      tags:
+      - Order
+  /order/getOrderList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 客户邮箱
+        in: query
+        name: customerEmail
+        type: string
+      - description: 客户ID
+        in: query
+        name: customerId
+        type: string
+      - description: 客户名称
+        in: query
+        name: customerName
+        type: string
+      - description: 客户备注
+        in: query
+        name: customerRemarks
+        type: string
+      - description: 客户电话
+        in: query
+        name: customerTel
+        type: string
+      - description: 订单折扣金额
+        in: query
+        name: discount
+        type: number
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 店铺订单号
+        in: query
+        name: orderId
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 付款时间
+        in: query
+        name: paymentAt
+        type: string
+      - description: 支付方式
+        in: query
+        name: paymentMethod
+        type: string
+      - description: 电商平台
+        in: query
+        name: platformName
+        type: string
+      - description: 退款时间
+        in: query
+        name: refundAt
+        type: string
+      - description: 发货时间
+        in: query
+        name: shipAt
+        type: string
+      - description: 城市
+        in: query
+        name: shippingCity
+        type: string
+      - description: 运费
+        in: query
+        name: shippingCost
+        type: number
+      - description: 国家
+        in: query
+        name: shippingCountry
+        type: string
+      - description: 运单号
+        in: query
+        name: shippingOrderId
+        type: string
+      - description: 邮政编码
+        in: query
+        name: shippingPostalCode
+        type: string
+      - description: 省/州
+        in: query
+        name: shippingState
+        type: string
+      - description: 街道地址
+        in: query
+        name: shippingStreetAddress
+        type: string
+      - description: 店铺ID
+        in: query
+        name: shopId
+        type: string
+      - description: 店铺名称
+        in: query
+        name: shopName
+        type: string
+      - in: query
+        name: startCreatedAt
+        type: string
+      - description: 状态ID
+        in: query
+        name: statusId
+        type: integer
+      - description: 订单税额
+        in: query
+        name: tax
+        type: number
+      - description: 订单总金额
+        in: query
+        name: totalAmount
+        type: number
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取订单列表
+      tags:
+      - Order
+  /order/updateOrder:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新订单
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Order'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新订单
+      tags:
+      - Order
+  /orderItem/createOrderItem:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建订单明细
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.OrderItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建订单明细
+      tags:
+      - OrderItem
+  /orderItem/deleteOrderItem:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除订单明细
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.OrderItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除订单明细
+      tags:
+      - OrderItem
+  /orderItem/deleteOrderItemByIds:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批量删除订单明细
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除订单明细
+      tags:
+      - OrderItem
+  /orderItem/findOrderItem:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 产品属性
+        in: query
+        name: attributes
+        type: string
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 关联订单的标识符
+        in: query
+        name: orderId
+        type: string
+      - description: 关联产品的标识符
+        in: query
+        name: productSku
+        type: string
+      - description: 产品图片
+        in: query
+        name: productUrl
+        type: string
+      - description: 订单中产品的数量
+        in: query
+        name: quantity
+        type: integer
+      - description: 订单项总金额
+        in: query
+        name: totalAmount
+        type: number
+      - description: 产品的单价
+        in: query
+        name: unitPrice
+        type: number
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询订单明细
+      tags:
+      - OrderItem
+  /orderItem/getOrderItemList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 产品属性
+        in: query
+        name: attributes
+        type: string
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 关联订单的标识符
+        in: query
+        name: orderId
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 关联产品的标识符
+        in: query
+        name: productSku
+        type: string
+      - description: 产品图片
+        in: query
+        name: productUrl
+        type: string
+      - description: 订单中产品的数量
+        in: query
+        name: quantity
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      - description: 订单项总金额
+        in: query
+        name: totalAmount
+        type: number
+      - description: 产品的单价
+        in: query
+        name: unitPrice
+        type: number
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取订单明细列表
+      tags:
+      - OrderItem
+  /orderItem/updateOrderItem:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新订单明细
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.OrderItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新订单明细
+      tags:
+      - OrderItem
+  /outboundLog/createOutboundLog:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建出库记录
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.OutboundLog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建出库记录
+      tags:
+      - OutboundLog
+  /outboundLog/deleteOutboundLog:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除出库记录
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.OutboundLog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除出库记录
+      tags:
+      - OutboundLog
+  /outboundLog/deleteOutboundLogByIds:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除出库记录
+      tags:
+      - OutboundLog
+  /outboundLog/findOutboundLog:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - description: 商品SKU
+        in: query
+        name: goodsSku
+        required: true
+        type: string
+      - description: 出库数量
+        in: query
+        name: quantity
+        required: true
+        type: integer
+      - description: 货架
+        in: query
+        name: rackId
+        required: true
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      - description: 仓库
+        in: query
+        name: warehouseId
+        required: true
+        type: integer
+      - description: 库区
+        in: query
+        name: zoneId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询出库记录
+      tags:
+      - OutboundLog
+  /outboundLog/getOutboundLogList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: endCreatedAt
+        type: string
+      - in: query
+        name: goodsSku
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取出库记录列表
+      tags:
+      - OutboundLog
+  /outboundLog/updateOutboundLog:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新出库记录
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.OutboundLog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新出库记录
+      tags:
+      - OutboundLog
+  /platform/createPlatform:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建电商平台
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Platform'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建电商平台
+      tags:
+      - Platform
+  /platform/deletePlatform:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除电商平台
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Platform'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除电商平台
+      tags:
+      - Platform
+  /platform/deletePlatformByIds:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批量删除电商平台
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除电商平台
+      tags:
+      - Platform
+  /platform/findPlatform:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 平台logo
+        in: query
+        name: logoUrl
+        type: string
+      - description: 平台名称
+        in: query
+        name: name
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询电商平台
+      tags:
+      - Platform
+  /platform/getPlatformList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 平台logo
+        in: query
+        name: logoUrl
+        type: string
+      - description: 平台名称
+        in: query
+        name: name
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取电商平台列表
+      tags:
+      - Platform
+  /platform/updatePlatform:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新电商平台
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Platform'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新电商平台
+      tags:
+      - Platform
+  /product/createProduct:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建产品表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建产品表
+      tags:
+      - Product
+  /product/deleteProduct:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除产品表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除产品表
+      tags:
+      - Product
+  /product/deleteProductByIds:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批量删除产品表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除产品表
+      tags:
+      - Product
+  /product/findProduct:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 产品所属的类别标识符
+        in: query
+        name: categoryId
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - description: 产品描述
+        in: query
+        name: description
+        type: string
+      - description: 产品名称
+        in: query
+        name: productName
+        type: string
+      - description: 产品的唯一标识符
+        in: query
+        name: sku
+        type: string
+      - description: 产品摘要
+        in: query
+        name: summary
+        type: string
+      - description: 产品的单价
+        in: query
+        name: unitPrice
+        type: number
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询产品表
+      tags:
+      - Product
+  /product/getProductList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 产品所属的类别标识符
+        in: query
+        name: categoryId
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - description: 产品描述
+        in: query
+        name: description
+        type: string
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 产品名称
+        in: query
+        name: productName
+        type: string
+      - description: 产品的唯一标识符
+        in: query
+        name: sku
+        type: string
+      - in: query
+        name: startCreatedAt
+        type: string
+      - description: 产品摘要
+        in: query
+        name: summary
+        type: string
+      - description: 产品的单价
+        in: query
+        name: unitPrice
+        type: number
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取产品表列表
+      tags:
+      - Product
+  /product/updateProduct:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新产品表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新产品表
+      tags:
+      - Product
+  /rack/createRack:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建货架
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Rack'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建货架
+      tags:
+      - Rack
+  /rack/deleteRack:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除货架
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Rack'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除货架
+      tags:
+      - Rack
+  /rack/deleteRackByIds:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批量删除货架
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除货架
+      tags:
+      - Rack
+  /rack/findRack:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - description: 拣货权重
+        in: query
+        name: priority
+        type: integer
+      - description: 货架编号
+        in: query
+        name: rackCode
+        type: string
+      - description: 备注说明
+        in: query
+        name: remarks
+        type: string
+      - description: 货架状态
+        in: query
+        name: status
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      - description: 仓库ID
+        in: query
+        name: warehouseId
+        type: integer
+      - description: 分区ID
+        in: query
+        name: zoneId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询货架
+      tags:
+      - Rack
+  /rack/getRackList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 拣货权重
+        in: query
+        name: priority
+        type: integer
+      - description: 货架编号
+        in: query
+        name: rackCode
+        type: string
+      - description: 备注说明
+        in: query
+        name: remarks
+        type: string
+      - in: query
+        name: startCreatedAt
+        type: string
+      - description: 货架状态
+        in: query
+        name: status
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      - description: 仓库ID
+        in: query
+        name: warehouseId
+        type: integer
+      - description: 分区ID
+        in: query
+        name: zoneId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取货架列表
+      tags:
+      - Rack
+  /rack/updateRack:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新货架
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Rack'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新货架
+      tags:
+      - Rack
+  /shop/createShop:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建店铺
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Shop'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建店铺
+      tags:
+      - Shop
+  /shop/deleteShop:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除店铺
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Shop'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除店铺
+      tags:
+      - Shop
+  /shop/deleteShopByIds:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批量删除店铺
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除店铺
+      tags:
+      - Shop
+  /shop/findShop:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: API Client Cert
+        in: query
+        name: clientCert
+        type: string
+      - description: API Client ID
+        in: query
+        name: clientId
+        type: string
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - description: 平台名称
+        in: query
+        name: platformName
+        type: string
+      - description: 平台ID
+        in: query
+        name: shopId
+        type: string
+      - description: 店铺名称
+        in: query
+        name: shopName
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询店铺
+      tags:
+      - Shop
+  /shop/getShopList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: API Client Cert
+        in: query
+        name: clientCert
+        type: string
+      - description: API Client ID
+        in: query
+        name: clientId
+        type: string
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 平台名称
+        in: query
+        name: platformName
+        type: string
+      - description: 平台ID
+        in: query
+        name: shopId
+        type: string
+      - description: 店铺名称
+        in: query
+        name: shopName
+        type: string
+      - in: query
+        name: startCreatedAt
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取店铺列表
+      tags:
+      - Shop
+  /shop/updateShop:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新店铺
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eCommerce.Shop'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新店铺
+      tags:
+      - Shop
+  /skuMapping/createSkuMapping:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建商品映射
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.SkuMapping'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建商品映射
+      tags:
+      - SkuMapping
+  /skuMapping/deleteSkuMapping:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除商品映射
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.SkuMapping'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除商品映射
+      tags:
+      - SkuMapping
+  /skuMapping/deleteSkuMappingByIds:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批量删除商品映射
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除商品映射
+      tags:
+      - SkuMapping
+  /skuMapping/findSkuMapping:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - description: 商品SKU
+        in: query
+        name: goodsSku
+        type: string
+      - description: 产品SKU
+        in: query
+        name: productSku
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询商品映射
+      tags:
+      - SkuMapping
+  /skuMapping/getSkuMappingList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 商品SKU
+        in: query
+        name: goodsSku
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 产品SKU
+        in: query
+        name: productSku
+        type: string
+      - in: query
+        name: startCreatedAt
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取商品映射列表
+      tags:
+      - SkuMapping
+  /skuMapping/updateSkuMapping:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新商品映射
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.SkuMapping'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新商品映射
+      tags:
+      - SkuMapping
   /sysDictionary/createSysDictionary:
     post:
       consumes:
@@ -3656,6 +7299,228 @@ paths:
       summary: 更新SysDictionaryDetail
       tags:
       - SysDictionaryDetail
+  /sysExportTemplate/createSysExportTemplate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建导出模板
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysExportTemplate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建导出模板
+      tags:
+      - SysExportTemplate
+  /sysExportTemplate/deleteSysExportTemplate:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除导出模板
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysExportTemplate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除导出模板
+      tags:
+      - SysExportTemplate
+  /sysExportTemplate/deleteSysExportTemplateByIds:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批量删除导出模板
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除导出模板
+      tags:
+      - SysExportTemplate
+  /sysExportTemplate/exportExcel:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      security:
+      - ApiKeyAuth: []
+      summary: 导出表格模板
+      tags:
+      - SysExportTemplate
+  /sysExportTemplate/findSysExportTemplate:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 模板名称
+        in: query
+        name: name
+        type: string
+      - description: 表名称
+        in: query
+        name: tableName
+        type: string
+      - description: 模板标识
+        in: query
+        name: templateID
+        type: string
+      - description: 模板信息
+        in: query
+        name: templateInfo
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询导出模板
+      tags:
+      - SysExportTemplate
+  /sysExportTemplate/getSysExportTemplateList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 模板名称
+        in: query
+        name: name
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      - description: 表名称
+        in: query
+        name: tableName
+        type: string
+      - description: 模板标识
+        in: query
+        name: templateID
+        type: string
+      - description: 模板信息
+        in: query
+        name: templateInfo
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取导出模板列表
+      tags:
+      - SysExportTemplate
+  /sysExportTemplate/importExcel:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      security:
+      - ApiKeyAuth: []
+      summary: 导入表格
+      tags:
+      - SysImportTemplate
+  /sysExportTemplate/updateSysExportTemplate:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新导出模板
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysExportTemplate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新导出模板
+      tags:
+      - SysExportTemplate
   /sysOperationRecord/createSysOperationRecord:
     post:
       consumes:
@@ -4271,6 +8136,256 @@ paths:
       summary: 设置用户信息
       tags:
       - SysUser
+  /warehouse/createWarehouse:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建仓库
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Warehouse'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建仓库
+      tags:
+      - Warehouse
+  /warehouse/deleteWarehouse:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除仓库
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Warehouse'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除仓库
+      tags:
+      - Warehouse
+  /warehouse/deleteWarehouseByIds:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批量删除仓库
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除仓库
+      tags:
+      - Warehouse
+  /warehouse/findWarehouse:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 城市
+        in: query
+        name: city
+        type: string
+      - description: 国家
+        in: query
+        name: country
+        type: string
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - description: 仓库名称
+        in: query
+        name: name
+        type: string
+      - description: 负责人
+        in: query
+        name: owner
+        type: string
+      - description: 邮政编码
+        in: query
+        name: postalCode
+        type: string
+      - description: 州/省
+        in: query
+        name: stateProvince
+        type: string
+      - description: 仓库街道地址
+        in: query
+        name: streetAddress
+        type: string
+      - description: 联系电话
+        in: query
+        name: telephone
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询仓库
+      tags:
+      - Warehouse
+  /warehouse/getWarehouseList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 城市
+        in: query
+        name: city
+        type: string
+      - description: 国家
+        in: query
+        name: country
+        type: string
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 仓库名称
+        in: query
+        name: name
+        type: string
+      - description: 负责人
+        in: query
+        name: owner
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 邮政编码
+        in: query
+        name: postalCode
+        type: string
+      - in: query
+        name: startCreatedAt
+        type: string
+      - description: 州/省
+        in: query
+        name: stateProvince
+        type: string
+      - description: 仓库街道地址
+        in: query
+        name: streetAddress
+        type: string
+      - description: 联系电话
+        in: query
+        name: telephone
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取仓库列表
+      tags:
+      - Warehouse
+  /warehouse/updateWarehouse:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新仓库
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Warehouse'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新仓库
+      tags:
+      - Warehouse
 securityDefinitions:
   ApiKeyAuth:
     in: header
