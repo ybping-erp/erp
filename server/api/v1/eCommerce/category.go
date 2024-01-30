@@ -2,20 +2,20 @@ package eCommerce
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
-    eCommerceReq "github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce/request"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-    "github.com/flipped-aurora/gin-vue-admin/server/service"
-    "github.com/gin-gonic/gin"
-    "go.uber.org/zap"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce"
+	eCommerceReq "github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/service"
+	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type CategoryApi struct {
 }
 
 var categoryService = service.ServiceGroupApp.ECommerceServiceGroup.CategoryService
-
 
 // CreateCategory 创建品类
 // @Tags Category
@@ -33,8 +33,9 @@ func (categoryApi *CategoryApi) CreateCategory(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	category.CreatedBy = utils.GetUserID(c)
 	if err := categoryService.CreateCategory(&category); err != nil {
-        global.GVA_LOG.Error("创建失败!", zap.Error(err))
+		global.GVA_LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败", c)
 	} else {
 		response.OkWithMessage("创建成功", c)
@@ -57,8 +58,9 @@ func (categoryApi *CategoryApi) DeleteCategory(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := categoryService.DeleteCategory(category); err != nil {
-        global.GVA_LOG.Error("删除失败!", zap.Error(err))
+	userID := utils.GetUserID(c)
+	if err := categoryService.DeleteCategoryByIds([]int{int(category.ID)}, userID); err != nil {
+		global.GVA_LOG.Error("删除失败!", zap.Error(err))
 		response.FailWithMessage("删除失败", c)
 	} else {
 		response.OkWithMessage("删除成功", c)
@@ -76,13 +78,14 @@ func (categoryApi *CategoryApi) DeleteCategory(c *gin.Context) {
 // @Router /category/deleteCategoryByIds [delete]
 func (categoryApi *CategoryApi) DeleteCategoryByIds(c *gin.Context) {
 	var IDS request.IdsReq
-    err := c.ShouldBindJSON(&IDS)
+	err := c.ShouldBindJSON(&IDS)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := categoryService.DeleteCategoryByIds(IDS); err != nil {
-        global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
+	userID := utils.GetUserID(c)
+	if err := categoryService.DeleteCategoryByIds(IDS.Ids, userID); err != nil {
+		global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
 		response.FailWithMessage("批量删除失败", c)
 	} else {
 		response.OkWithMessage("批量删除成功", c)
@@ -105,8 +108,9 @@ func (categoryApi *CategoryApi) UpdateCategory(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	category.UpdatedBy = utils.GetUserID(c)
 	if err := categoryService.UpdateCategory(category); err != nil {
-        global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
 	} else {
 		response.OkWithMessage("更新成功", c)
@@ -130,7 +134,7 @@ func (categoryApi *CategoryApi) FindCategory(c *gin.Context) {
 		return
 	}
 	if recategory, err := categoryService.GetCategory(category.ID); err != nil {
-        global.GVA_LOG.Error("查询失败!", zap.Error(err))
+		global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败", c)
 	} else {
 		response.OkWithData(gin.H{"recategory": recategory}, c)
@@ -154,14 +158,14 @@ func (categoryApi *CategoryApi) GetCategoryList(c *gin.Context) {
 		return
 	}
 	if list, total, err := categoryService.GetCategoryInfoList(pageInfo); err != nil {
-	    global.GVA_LOG.Error("获取失败!", zap.Error(err))
-        response.FailWithMessage("获取失败", c)
-    } else {
-        response.OkWithDetailed(response.PageResult{
-            List:     list,
-            Total:    total,
-            Page:     pageInfo.Page,
-            PageSize: pageInfo.PageSize,
-        }, "获取成功", c)
-    }
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, "获取成功", c)
+	}
 }
