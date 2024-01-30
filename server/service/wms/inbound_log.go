@@ -1,18 +1,28 @@
 package wms
 
 import (
+	"errors"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/wms"
 	wmsReq "github.com/flipped-aurora/gin-vue-admin/server/model/wms/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"gorm.io/gorm"
 )
 
 type InboundLogService struct {
 }
 
+const (
+	InboundLogStatus_PENDING   int = 0 // 待入库
+	InboundLogStatus_FINISHED  int = 1 // 已入库
+	InboundLogStatus_Cancelled int = 2 // 已取消
+)
+
 // CreateInboundLog 创建入库记录记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (inboundLogService *InboundLogService) CreateInboundLog(inboundLog *wms.InboundLog) (err error) {
+	inboundLog.Status = utils.Pointer(InboundLogStatus_PENDING)
 	err = global.GVA_DB.Create(inboundLog).Error
 	return err
 }
@@ -57,6 +67,10 @@ func (inboundLogService *InboundLogService) DeleteInboundLogByIds(IDs []string, 
 // UpdateInboundLog 更新入库记录记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (inboundLogService *InboundLogService) UpdateInboundLog(inboundLog wms.InboundLog) (err error) {
+	if *inboundLog.Status != InboundLogStatus_PENDING {
+		return errors.New("只能修改待入库的入库单")
+	}
+
 	err = global.GVA_DB.Save(&inboundLog).Error
 	return err
 }
@@ -83,6 +97,10 @@ func (inboundLogService *InboundLogService) GetInboundLogInfoList(info wmsReq.In
 	if info.GoodsSku != "" {
 		db = db.Where("goods_sku = ?", info.GoodsSku)
 	}
+	if info.Status != nil {
+		db = db.Where("status = ?", info.Status)
+	}
+
 	err = db.Count(&total).Error
 	if err != nil {
 		return

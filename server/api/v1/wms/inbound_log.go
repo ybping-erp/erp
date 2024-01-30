@@ -101,7 +101,7 @@ func (inboundLogApi *InboundLogApi) UpdateInboundLog(c *gin.Context) {
 
 	if err := inboundLogService.UpdateInboundLog(inboundLog); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Error(err))
-		response.FailWithMessage("更新失败", c)
+		response.FailWithMessage(err.Error(), c)
 	} else {
 		response.OkWithMessage("更新成功", c)
 	}

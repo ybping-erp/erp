@@ -2,23 +2,14 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-      <el-form-item label="创建日期" prop="createdAt">
-      <template #label>
-        <span>
-          创建日期
-          <el-tooltip content="搜索范围是开始日期（包含）至结束日期（不包含）">
-            <el-icon><QuestionFilled /></el-icon>
-          </el-tooltip>
-        </span>
-      </template>
-      <el-date-picker v-model="searchInfo.startCreatedAt" type="datetime" placeholder="开始日期" :disabled-date="time=> searchInfo.endCreatedAt ? time.getTime() > searchInfo.endCreatedAt.getTime() : false"></el-date-picker>
-       —
-      <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
-      </el-form-item>
-      
         <el-form-item label="商品SKU" prop="goodsSku">
          <el-input v-model="searchInfo.goodsSku" placeholder="搜索条件" />
+        </el-form-item>
 
+        <el-form-item label="入库状态" prop="status">
+            <el-select v-model="searchInfo.status" clearable placeholder="请选择" @clear="()=>{searchInfo.status=undefined}">
+              <el-option v-for="(item,key) in inbound_log_statusOptions" :key="key" :label="item.label" :value="item.value" />
+            </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">查询</el-button>
@@ -49,23 +40,25 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
-        
-        <el-table-column align="left" label="日期" width="180">
-            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
-        </el-table-column>
-        
         <el-table-column align="left" label="商品SKU" prop="goodsSku" width="120" />
-        <el-table-column align="left" label="入库数量" prop="quantity" width="120" />
+        <el-table-column align="left" label="数量" prop="quantity" width="120" />
+        <el-table-column align="left" label="状态" width="180">
+            <template #default="scope">{{ filterDict(scope.row.status, inbound_log_statusOptions) }}</template>
+        </el-table-column>
         <el-table-column align="left" label="货架" prop="rackId" width="120" />
         <el-table-column align="left" label="仓库" prop="warehouseId" width="120" />
         <el-table-column align="left" label="库区" prop="zoneId" width="120" />
+        <el-table-column align="left" label="日期" width="180">
+            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
+        </el-table-column>
         <el-table-column align="left" label="操作" fixed="right" min-width="240">
             <template #default="scope">
-            <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
+            <!-- <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
                 查看详情
-            </el-button>
-            <!-- <el-button type="primary" link icon="edit" class="table-button" @click="updateInboundLogFunc(scope.row)">变更</el-button> -->
+            </el-button> -->
+            <el-button type="primary" link icon="plus" @click="addInvetoryFunc(scope.row)">入库</el-button>
+            <el-button type="primary" link icon="edit" class="table-button" @click="updateInboundLogFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
             </template>
         </el-table-column>
@@ -137,6 +130,9 @@
                 <el-descriptions-item label="库区">
                         {{ formData.zoneId }}
                 </el-descriptions-item>
+                <el-descriptions-item label="状态">
+                  {{ filterDict(formData.status, inbound_log_statusOptions) }}
+                </el-descriptions-item>
         </el-descriptions>
       </el-scrollbar>
     </el-dialog>
@@ -175,6 +171,7 @@ defineOptions({
 })
 
 // 自动化生成的字典（可能为空）以及字段
+const inbound_log_statusOptions = ref([])
 const wms_zoneOptions = ref([])
 const wms_warehouses = ref([])
 const wms_goods = ref([])
@@ -298,6 +295,7 @@ getTableData()
 
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
+  inbound_log_statusOptions.value = await getDictFunc('inbound_log_status')
   wms_zoneOptions.value = await getDictFunc('wms_zone')
   
   const warehouseListRes = await getWarehouseList({ page: 1, pageSize: 1000})
@@ -404,6 +402,22 @@ const deleteInboundLogFunc = async (row) => {
         }
         getTableData()
     }
+}
+
+
+const addInvetoryFunc = async(row) => {
+  ElMessageBox.confirm('确定要入库吗?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+      // deleteInboundLogFunc(row)
+      ElMessage({
+      type: 'success',
+      message: '入库成功'
+    })
+    getTableData()
+  })
 }
 
 // 弹窗控制标记
