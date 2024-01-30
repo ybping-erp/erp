@@ -63,7 +63,7 @@ func (categoryService *CategoryService) GetCategoryInfoList(info eCommerceReq.Ca
 	if limit != 0 {
 		db = db.Limit(limit).Offset(offset)
 	}
-	err = db.Preload("Creator").Find(&categorys).Error
+	err = db.Find(&categorys).Error
 	for k := range categorys {
 		err = categoryService.findChildrenCategory(&categorys[k])
 	}
@@ -72,7 +72,7 @@ func (categoryService *CategoryService) GetCategoryInfoList(info eCommerceReq.Ca
 
 // findChildrenCategory 查询子品类
 func (categoryService *CategoryService) findChildrenCategory(category *eCommerce.Category) (err error) {
-	err = global.GVA_DB.Where("parent_id = ?", category.ID).Preload("Creator").Find(&category.Children).Error
+	err = global.GVA_DB.Where("parent_id = ?", category.ID).Find(&category.Children).Error
 	if len(category.Children) > 0 {
 		for k := range category.Children {
 			err = categoryService.findChildrenCategory(&category.Children[k])

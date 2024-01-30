@@ -27,19 +27,6 @@
       </el-form>
     </div>
     <div class="gva-table-box">
-        <div class="gva-btn-list">
-            <el-button type="primary" icon="plus" @click="openDialog">新增</el-button>
-            <el-popover v-model:visible="deleteVisible" :disabled="!multipleSelection.length" placement="top" width="160">
-            <p>确定要删除吗？</p>
-            <div style="text-align: right; margin-top: 8px;">
-                <el-button type="primary" link @click="deleteVisible = false">取消</el-button>
-                <el-button type="primary" @click="onDelete">确定</el-button>
-            </div>
-            <template #reference>
-                <el-button icon="delete" style="margin-left: 10px;" :disabled="!multipleSelection.length" @click="deleteVisible = true">删除</el-button>
-            </template>
-            </el-popover>
-        </div>
         <el-table
         ref="multipleTable"
         style="width: 100%"
@@ -48,7 +35,7 @@
         row-key="ID"
         @selection-change="handleSelectionChange"
         >
-        <el-table-column type="selection" width="55" />
+        <!-- <el-table-column type="selection" width="55" /> -->
         <el-table-column align="left" label="商品SKU" prop="goodsSku" width="120" />
         <el-table-column align="left" label="仓库" prop="warehouseId" width="120" />
         <el-table-column align="left" label="总数量" prop="quantity" width="120" />
@@ -59,9 +46,6 @@
             {{ filterDict(scope.row.stockStatus,stock_statusOptions) }}
             </template>
         </el-table-column>
-         <el-table-column align="left" label="更新时间" width="180">
-            <template #default="scope">{{ formatDate(scope.row.lastStockUpdate) }}</template>
-         </el-table-column>
         <el-table-column align="left" label="操作" min-width="120">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
@@ -400,10 +384,10 @@ const closeDetailShow = () => {
 
 
 // 打开弹窗
-const openDialog = () => {
-    type.value = 'create'
-    dialogFormVisible.value = true
-}
+// const openDialog = () => {
+//     type.value = 'create'
+//     dialogFormVisible.value = true
+// }
 
 // 关闭弹窗
 const closeDialog = () => {

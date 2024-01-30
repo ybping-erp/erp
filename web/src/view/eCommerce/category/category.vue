@@ -8,15 +8,6 @@
         style="width: 100%"
       >
         <el-table-column align="left" label="类别名称" prop="name" width="120" />
-        <el-table-column
-          align="left"
-          label="创建人"
-          width="140"
-        >
-          <template #default="scope">
-            <div>{{ scope.row.creator.userName }}({{ scope.row.creator.nickName }})</div>
-          </template>
-        </el-table-column>
         <el-table-column align="left" label="操作" min-width="120">
             <template #default="scope">
             <!-- <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
