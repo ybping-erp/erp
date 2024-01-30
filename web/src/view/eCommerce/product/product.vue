@@ -1,6 +1,10 @@
 <template>
   <div>
     <div class="gva-search-box">
+      <ProductSpider />
+    </div>
+
+    <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
         <el-form-item label="类别" prop="categoryId">
              <el-cascader
@@ -26,6 +30,7 @@
         </el-form-item>
       </el-form>
     </div>
+
     <div class="gva-table-box">
         <div class="gva-btn-list">
             <el-button type="primary" icon="plus" @click="openDialog">新增</el-button>
@@ -159,6 +164,8 @@ import {
 import {
   buildProductCategoryOptions
 } from '@/api/category'
+
+import ProductSpider from '@/view/eCommerce/product/productSpider.vue'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterCascaderDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
