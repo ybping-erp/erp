@@ -2,23 +2,13 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-      <el-form-item label="创建日期" prop="createdAt">
-      <template #label>
-        <span>
-          创建日期
-          <el-tooltip content="搜索范围是开始日期（包含）至结束日期（不包含）">
-            <el-icon><QuestionFilled /></el-icon>
-          </el-tooltip>
-        </span>
-      </template>
-      <el-date-picker v-model="searchInfo.startCreatedAt" type="datetime" placeholder="开始日期" :disabled-date="time=> searchInfo.endCreatedAt ? time.getTime() > searchInfo.endCreatedAt.getTime() : false"></el-date-picker>
-       —
-      <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
-      </el-form-item>
-      
         <el-form-item label="商品SKU" prop="goodsSku">
          <el-input v-model="searchInfo.goodsSku" placeholder="搜索条件" />
-
+        </el-form-item>
+        <el-form-item label="出库状态" prop="status">
+            <el-select v-model="searchInfo.status" clearable placeholder="请选择" @clear="()=>{searchInfo.status=undefined}">
+              <el-option v-for="(item,key) in outbound_log_statusOptions" :key="key" :label="item.label" :value="item.value" />
+            </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">查询</el-button>
@@ -48,17 +38,18 @@
         row-key="ID"
         @selection-change="handleSelectionChange"
         >
-        <el-table-column type="selection" width="55" />
-        
-        <el-table-column align="left" label="日期" width="180">
-            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
-        </el-table-column>
-        
+        <el-table-column type="selection" width="55" />  
         <el-table-column align="left" label="商品SKU" prop="goodsSku" width="120" />
-        <el-table-column align="left" label="出库数量" prop="quantity" width="120" />
+        <el-table-column align="left" label="数量" prop="quantity" width="120" />
+        <el-table-column align="left" label="状态" width="180">
+            <template #default="scope">{{ filterDict(scope.row.status, outbound_log_statusOptions) }}</template>
+        </el-table-column>
         <el-table-column align="left" label="货架" prop="rackId" width="120" />
         <el-table-column align="left" label="仓库" prop="warehouseId" width="120" />
         <el-table-column align="left" label="库区" prop="zoneId" width="120" />
+        <el-table-column align="left" label="日期" width="180">
+            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
+        </el-table-column>
         <el-table-column align="left" label="操作" fixed="right" min-width="240">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
@@ -137,6 +128,9 @@
                 <el-descriptions-item label="库区">
                         {{ formData.zoneId }}
                 </el-descriptions-item>
+                <el-descriptions-item label="状态">
+                  {{ filterDict(formData.status, outbound_log_statusOptions) }}
+                </el-descriptions-item>
         </el-descriptions>
       </el-scrollbar>
     </el-dialog>
@@ -175,6 +169,7 @@ defineOptions({
 })
 
 // 自动化生成的字典（可能为空）以及字段
+const outbound_log_statusOptions = ref([])
 const wms_zoneOptions = ref([])
 const wms_warehouses = ref([])
 const wms_goods = ref([])
@@ -298,6 +293,7 @@ getTableData()
 
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
+  outbound_log_statusOptions.value = await getDictFunc('outbound_log_status')
   wms_zoneOptions.value = await getDictFunc('wms_zone')
   
   const warehouseListRes = await getWarehouseList({ page: 1, pageSize: 1000})
