@@ -1,6 +1,8 @@
 package eCommerce
 
 import (
+	"errors"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce"
 	eCommerceReq "github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce/request"
@@ -19,6 +21,15 @@ func (categoryService *CategoryService) CreateCategory(category *eCommerce.Categ
 
 // DeleteCategoryByIds 批量删除品类记录
 func (categoryService *CategoryService) DeleteCategoryByIds(IDs []int, deletedBy uint) (err error) {
+	db := global.GVA_DB.Model(&eCommerce.Category{})
+	var total int64
+	if err = db.Where("parent_id in ?", IDs).Count(&total).Error; err != nil {
+		return err
+	}
+	if total > 0 {
+		return errors.New("存在子类别，不允许删除")
+	}
+
 	err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(&eCommerce.Category{}).Where("id in ?", IDs).Update("deleted_by", deletedBy).Error; err != nil {
 			return err

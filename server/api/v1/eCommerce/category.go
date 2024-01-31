@@ -6,6 +6,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce"
 	eCommerceReq "github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce/request"
+	wmsReq "github.com/flipped-aurora/gin-vue-admin/server/model/wms/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ type CategoryApi struct {
 }
 
 var categoryService = service.ServiceGroupApp.ECommerceServiceGroup.CategoryService
+var goodsService = service.ServiceGroupApp.WmsServiceGroup.GoodsService
 
 // CreateCategory 创建品类
 // @Tags Category
@@ -58,6 +60,39 @@ func (categoryApi *CategoryApi) DeleteCategory(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	categoryID, total := (int)(category.ID), int64(0)
+
+	// 有商品绑定了该类别，不能删除
+	_, total, err = goodsService.GetGoodsInfoList(wmsReq.GoodsSearch{
+		CategoryId: &categoryID,
+		PageInfo: request.PageInfo{
+			Page:     1,
+			PageSize: 10,
+		},
+	})
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if total > 0 {
+		response.FailWithMessage("有商品绑定了该类别，删除失败", c)
+		return
+	}
+
+	// 有产品绑定了该类别，不能删除
+	_, total, err = productService.GetProductInfoList(eCommerceReq.ProductSearch{
+		Product:  eCommerce.Product{CategoryId: &categoryID},
+		PageInfo: request.PageInfo{Page: 1, PageSize: 10},
+	})
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if total > 0 {
+		response.FailWithMessage("有产品绑定了该类别，删除失败", c)
+		return
+	}
+
 	userID := utils.GetUserID(c)
 	if err := categoryService.DeleteCategoryByIds([]int{int(category.ID)}, userID); err != nil {
 		global.GVA_LOG.Error("删除失败!", zap.Error(err))
