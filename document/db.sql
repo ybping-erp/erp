@@ -25,14 +25,13 @@ CREATE TABLE t_shop (
     shop_name VARCHAR(255) COMMENT '店铺名称',
     client_id VARCHAR(255) COMMENT 'API Client ID',
     client_cert VARCHAR(255) COMMENT 'API Client Cert',
-    creator_id BIGINT UNSIGNED COMMENT "创建人",
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '账号创建时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '账号最后更新时间',
     deleted_at TIMESTAMP COMMENT '账号软删除时间（如果适用）'
 ) CHARACTER SET utf8mb4;
 ALTER TABLE t_shop ADD CONSTRAINT t_shop UNIQUE (platform_name, shop_id); -- 在同一个平台下店铺唯一
-INSERT INTO t_shop (platform_name, shop_id, shop_name, creator_id) VALUES 
-('eBay', 'ShopID001', 'Shop 1', 1);
+INSERT INTO t_shop (platform_name, shop_id, shop_name) VALUES 
+('eBay', 'ShopID001', 'Shop 1');
 
 -- Create Category table
 DROP Table IF EXISTS t_category;
@@ -41,15 +40,14 @@ CREATE TABLE t_category (
     domain ENUM('Product', 'Goods') COMMENT '类型场景',
     name VARCHAR(100) COMMENT '类别名称',
     parent_id BIGINT UNSIGNED COMMENT '父类别的标识符',
-    creator_id BIGINT UNSIGNED COMMENT "创建人",
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '类别创建时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '类别最后更新时间',
     deleted_at TIMESTAMP COMMENT '类别软删除时间（如果适用）'
 ) CHARACTER SET utf8mb4;
 ADD CONSTRAINT t_category UNIQUE (domain, name); -- 在同一个场景下类别唯一
-INSERT INTO t_category (domain, name, creator_id, parent_id) VALUES 
-('Product', '所有分类',1, 0),
-('Goods', '所有分类',1, 0);
+INSERT INTO t_category (domain, name, parent_id) VALUES 
+('Product', '所有分类', 0),
+('Goods', '所有分类', 0);
 
 -- Create Product table
 DROP Table IF EXISTS t_product;
@@ -61,20 +59,18 @@ CREATE TABLE t_product (
     description TEXT COMMENT '产品描述',
     category_id BIGINT UNSIGNED COMMENT '产品所属的类别标识符',
     unit_price DECIMAL(10, 2) COMMENT '产品的单价',
-    creator_id BIGINT UNSIGNED COMMENT "创建人",
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '产品创建时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '产品最后更新时间',
     deleted_at TIMESTAMP COMMENT '产品软删除时间（如果适用）'
-    -- FOREIGN KEY (creator_id) REFERENCES sys_users(id)
 ) CHARACTER SET utf8mb4;
 -- Insert sample data into t_product table
-INSERT INTO t_product (sku, summary, product_name, description, category_id, unit_price, creator_id)
+INSERT INTO t_product (sku, summary, product_name, description, category_id, unit_price)
 VALUES
-    ('SKU001', 'Product summary 1', 'Product 1', 'Description for Product 1', 1, 19.99, 1),
-    ('SKU002', 'Product summary 2', 'Product 2', 'Description for Product 2', 2, 29.99, 1),
-    ('SKU003', 'Product summary 3', 'Product 3', 'Description for Product 3', 1, 39.99, 1),
-    ('SKU004', 'Product summary 4', 'Product 4', 'Description for Product 4', 3, 49.99, 1),
-    ('SKU005', 'Product summary 5', 'Product 5', 'Description for Product 5', 2, 59.99, 1);
+    ('SKU001', 'Product summary 1', 'Product 1', 'Description for Product 1', 1, 19.99),
+    ('SKU002', 'Product summary 2', 'Product 2', 'Description for Product 2', 2, 29.99),
+    ('SKU003', 'Product summary 3', 'Product 3', 'Description for Product 3', 1, 39.99),
+    ('SKU004', 'Product summary 4', 'Product 4', 'Description for Product 4', 3, 49.99),
+    ('SKU005', 'Product summary 5', 'Product 5', 'Description for Product 5', 2, 59.99);
 
 -- Create image table
 DROP Table IF EXISTS t_image;
@@ -204,7 +200,6 @@ CREATE TABLE t_wms_warehouse (
     state_province VARCHAR(100) COMMENT '州/省',
     postal_code VARCHAR(20) COMMENT '邮政编码',
     country VARCHAR(100) COMMENT '国家',
-    creator_id BIGINT UNSIGNED COMMENT "创建人",
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '仓库创建时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '仓库最后更新时间',
     deleted_at TIMESTAMP COMMENT '仓库软删除时间（如果适用）'
@@ -216,7 +211,6 @@ CREATE TABLE t_wms_zone (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '数据库主键',
     name VARCHAR(255) UNIQUE COMMENT '区域名称',
     status int COMMENT '区域状态',
-    creator_id BIGINT UNSIGNED COMMENT "创建人",
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
     deleted_at TIMESTAMP COMMENT '软删除时间（如果适用）'
@@ -308,7 +302,6 @@ CREATE TABLE t_wms_goods (
     english_name VARCHAR(1024) COMMENT '英文名称',
     identifier_code VARCHAR(50) COMMENT '识别码',
     source_urls TEXT COMMENT '来源URL列表',
-    creator_id BIGINT UNSIGNED COMMENT "创建人",
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '商品创建时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '商品最后更新时间',
     deleted_at TIMESTAMP COMMENT '商品软删除时间（如果适用’）' -- 请注意这里的注释末尾的特殊字符
@@ -328,7 +321,7 @@ CREATE TABLE t_wms_sku_mapping (
 
 
 -- Create t_logistics_packaging table
-DROP TABLE IF EXISTS t_wms_logistics_packaging
+DROP TABLE IF EXISTS t_wms_logistics_packaging;
 CREATE TABLE t_wms_logistics_packaging (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '数据库主键',
     goods_sku VARCHAR(50) UNIQUE COMMENT '商品SKU',
@@ -345,9 +338,42 @@ CREATE TABLE t_wms_logistics_packaging (
     length_cm DECIMAL(10, 2) COMMENT '商品尺寸 - 长 (cm)',
     width_cm DECIMAL(10, 2) COMMENT '商品尺寸 - 宽 (cm)',
     height_cm DECIMAL(10, 2) COMMENT '商品尺寸 - 高 (cm)',
-    creator_id BIGINT UNSIGNED COMMENT "创建人",
     packaging TEXT COMMENT '包装信息', -- {'material_sku': 'material_quantity'}
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '包裹创建时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '包裹最后更新时间',
     deleted_at TIMESTAMP COMMENT '包裹软删除时间（如果适用）'
 ) CHARACTER SET utf8mb4;
+
+-- Supply and Demand
+DROP TABLE IF EXISTS t_sd_supplier;
+CREATE TABLE t_sd_supplier ( 
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '数据库主键',
+    name VARCHAR(255) COMMENT '供应商名称',
+    company_address VARCHAR(255) COMMENT '公司地址',
+    company_website VARCHAR(255) COMMENT '公司网址',
+    
+    contact_name  VARCHAR(255) COMMENT '联系人',
+    contact_telephone  VARCHAR(255) COMMENT '联系电话',
+    bank_name  VARCHAR(255) COMMENT '银行名称',
+    bank_account_number VARCHAR(255) COMMENT '银行卡号',
+    bank_account_name VARCHAR(255) COMMENT '收款人',
+
+    payment_method int COMMENT '付款方式',
+    settlement_method int COMMENT '结算方式',
+
+    remarks VARCHAR(1024) COMMENT '备注信息',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '包裹创建时间',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '包裹最后更新时间',
+    deleted_at TIMESTAMP COMMENT '包裹软删除时间（如果适用）'
+) CHARACTER SET utf8mb4;
+
+INSERT INTO t_sd_supplier (
+    name, company_address, company_website,
+    contact_name, contact_telephone, bank_name,
+    bank_account_number, bank_account_name,
+    payment_method, settlement_method,
+    remarks
+) VALUES
+    ('Supplier1', 'Address1', 'www.supplier1.com', 'John Doe', '123-456-7890', 'Bank1', '1234567890123456', 'John Doe', 1, 2, 'Sample remarks 1'),
+    ('Supplier2', 'Address2', 'www.supplier2.com', 'Jane Smith', '987-654-3210', 'Bank2', '9876543210987654', 'Jane Smith', 2, 1, 'Sample remarks 2'),
+    ('Supplier3', 'Address3', 'www.supplier3.com', 'Sam Johnson', '555-123-4567', 'Bank3', '5555123456789012', 'Sam Johnson', 1, 1, 'Sample remarks 3');
