@@ -2,21 +2,20 @@ package eCommerce
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
-    eCommerceReq "github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce/request"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-    "github.com/flipped-aurora/gin-vue-admin/server/service"
-    "github.com/gin-gonic/gin"
-    "go.uber.org/zap"
-    "github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce"
+	eCommerceReq "github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/service"
+	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type OrderApi struct {
 }
 
 var orderService = service.ServiceGroupApp.ECommerceServiceGroup.OrderService
-
 
 // CreateOrder 创建订单
 // @Tags Order
@@ -34,15 +33,15 @@ func (orderApi *OrderApi) CreateOrder(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-    verify := utils.Rules{
-        "StatusId":{utils.NotEmpty()},
-    }
+	verify := utils.Rules{
+		"StatusId": {utils.NotEmpty()},
+	}
 	if err := utils.Verify(order, verify); err != nil {
-    		response.FailWithMessage(err.Error(), c)
-    		return
-    	}
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	if err := orderService.CreateOrder(&order); err != nil {
-        global.GVA_LOG.Error("创建失败!", zap.Error(err))
+		global.GVA_LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败", c)
 	} else {
 		response.OkWithMessage("创建成功", c)
@@ -66,7 +65,7 @@ func (orderApi *OrderApi) DeleteOrder(c *gin.Context) {
 		return
 	}
 	if err := orderService.DeleteOrder(order); err != nil {
-        global.GVA_LOG.Error("删除失败!", zap.Error(err))
+		global.GVA_LOG.Error("删除失败!", zap.Error(err))
 		response.FailWithMessage("删除失败", c)
 	} else {
 		response.OkWithMessage("删除成功", c)
@@ -84,13 +83,13 @@ func (orderApi *OrderApi) DeleteOrder(c *gin.Context) {
 // @Router /order/deleteOrderByIds [delete]
 func (orderApi *OrderApi) DeleteOrderByIds(c *gin.Context) {
 	var IDS request.IdsReq
-    err := c.ShouldBindJSON(&IDS)
+	err := c.ShouldBindJSON(&IDS)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 	if err := orderService.DeleteOrderByIds(IDS); err != nil {
-        global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
+		global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
 		response.FailWithMessage("批量删除失败", c)
 	} else {
 		response.OkWithMessage("批量删除成功", c)
@@ -113,15 +112,15 @@ func (orderApi *OrderApi) UpdateOrder(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-      verify := utils.Rules{
-          "StatusId":{utils.NotEmpty()},
-      }
-    if err := utils.Verify(order, verify); err != nil {
-      	response.FailWithMessage(err.Error(), c)
-      	return
-     }
+	verify := utils.Rules{
+		"StatusId": {utils.NotEmpty()},
+	}
+	if err := utils.Verify(order, verify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	if err := orderService.UpdateOrder(order); err != nil {
-        global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
 	} else {
 		response.OkWithMessage("更新成功", c)
@@ -145,7 +144,7 @@ func (orderApi *OrderApi) FindOrder(c *gin.Context) {
 		return
 	}
 	if reorder, err := orderService.GetOrder(order.ID); err != nil {
-        global.GVA_LOG.Error("查询失败!", zap.Error(err))
+		global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败", c)
 	} else {
 		response.OkWithData(gin.H{"reorder": reorder}, c)
@@ -169,14 +168,14 @@ func (orderApi *OrderApi) GetOrderList(c *gin.Context) {
 		return
 	}
 	if list, total, err := orderService.GetOrderInfoList(pageInfo); err != nil {
-	    global.GVA_LOG.Error("获取失败!", zap.Error(err))
-        response.FailWithMessage("获取失败", c)
-    } else {
-        response.OkWithDetailed(response.PageResult{
-            List:     list,
-            Total:    total,
-            Page:     pageInfo.Page,
-            PageSize: pageInfo.PageSize,
-        }, "获取成功", c)
-    }
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, "获取成功", c)
+	}
 }
