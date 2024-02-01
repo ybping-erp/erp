@@ -377,3 +377,20 @@ INSERT INTO t_sd_supplier (
     ('Supplier1', 'Address1', 'www.supplier1.com', 'John Doe', '123-456-7890', 'Bank1', '1234567890123456', 'John Doe', 1, 2, 'Sample remarks 1'),
     ('Supplier2', 'Address2', 'www.supplier2.com', 'Jane Smith', '987-654-3210', 'Bank2', '9876543210987654', 'Jane Smith', 2, 1, 'Sample remarks 2'),
     ('Supplier3', 'Address3', 'www.supplier3.com', 'Sam Johnson', '555-123-4567', 'Bank3', '5555123456789012', 'Sam Johnson', 1, 1, 'Sample remarks 3');
+
+
+-- 规则引擎
+DROP TABLE IF EXISTS t_rules;
+CREATE TABLE t_rules ( 
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '数据库主键',
+    domain VARCHAR(128) COMMENT '领域', --  订单规则， 物流规则，赠品规则等
+    name VARCHAR(255) COMMENT '规则名称',
+    rule_str TEXT COMMENT '规则条件',
+    action_code INT COMMENT '动作代码',
+    action_desc VARCHAR(255) COMMENT '动作描述',
+    status INT COMMENT '规则状态', -- 启用 停用
+    system_default INT COMMENT '系统默认规则', -- 只有系统预设的规则时为 1
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '包裹创建时间',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '包裹最后更新时间',
+    deleted_at TIMESTAMP COMMENT '包裹软删除时间（如果适用）'
+) CHARACTER SET utf8mb4;
