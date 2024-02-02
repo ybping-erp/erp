@@ -9,4 +9,5 @@ type ServiceGroup struct {
 	SkuMappingService
 	InboundLogService
 	OutboundLogService
+	SupplierService
 }

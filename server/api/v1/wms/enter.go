@@ -9,4 +9,5 @@ type ApiGroup struct {
 	SkuMappingApi
 	InboundLogApi
 	OutboundLogApi
+	SupplierApi
 }

@@ -9,4 +9,5 @@ type RouterGroup struct {
 	SkuMappingRouter
 	InboundLogRouter
 	OutboundLogRouter
+	SupplierRouter
 }

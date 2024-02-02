@@ -11,6 +11,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/wms"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/shared"
 )
 
 func Gorm() *gorm.DB {
@@ -71,7 +72,7 @@ func RegisterTables() {
 		wms.Rack{}, wms.Warehouse{},
 		wms.SkuMapping{},
 		wms.InboundLog{},
-		wms.OutboundLog{},
+		wms.OutboundLog{}, shared.Rule{}, wms.Supplier{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
