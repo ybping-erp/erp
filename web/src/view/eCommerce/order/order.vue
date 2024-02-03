@@ -72,45 +72,52 @@
         row-key="ID"
         @selection-change="handleSelectionChange"
         >
-        <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="日期" width="180">
-            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
-        </el-table-column>
+        <!-- <el-table-column type="selection" width="55" />
         <el-table-column align="left" label="电商平台" prop="platformName" width="120" />
         <el-table-column align="left" label="店铺ID" prop="shopId" width="120" />
-        <el-table-column align="left" label="店铺名称" prop="shopName" width="120" />
+        <el-table-column align="left" label="店铺名称" prop="shopName" width="120" /> -->
         <el-table-column align="left" label="订单号" prop="orderId" width="120" />
         <el-table-column align="left" label="总金额" prop="totalAmount" width="120" />
-        <el-table-column align="left" label="折扣金额" prop="discount" width="120" />
-        <el-table-column align="left" label="税额" prop="tax" width="120" />
+        <!-- <el-table-column align="left" label="折扣金额" prop="discount" width="120" /> -->
+        <!-- <el-table-column align="left" label="税额" prop="tax" width="120" /> -->
         <el-table-column align="left" label="状态" prop="statusId" width="120">
             <template #default="scope">
             {{ filterDict(scope.row.statusId,order_statusOptions) }}
             </template>
         </el-table-column>
-        <el-table-column align="left" label="客户ID" prop="customerId" width="120" />
+        <!-- <el-table-column align="left" label="客户ID" prop="customerId" width="120" />
         <el-table-column align="left" label="客户名称" prop="customerName" width="120" />
         <el-table-column align="left" label="客户电话" prop="customerTel" width="120" />
         <el-table-column align="left" label="客户邮箱" prop="customerEmail" width="120" />
         <el-table-column align="left" label="客户备注" prop="customerRemarks" width="120" />
-        <el-table-column align="left" label="支付方式" prop="paymentMethod" width="120" />
-         <el-table-column align="left" label="付款时间" width="180">
-            <template #default="scope">{{ formatDate(scope.row.paymentAt) }}</template>
+        <el-table-column align="left" label="支付方式" prop="paymentMethod" width="120" /> -->
+        
+         <el-table-column align="left" label="物流" prop="" width="180">
+          <template #default="scope">
+              运单：{{ scope.row.shippingOrderId }} <br>
+              运费：{{ scope.row.shippingCost }} <br>
+            </template>
          </el-table-column>
-        <el-table-column align="left" label="运单号" prop="shippingOrderId" width="120" />
-        <el-table-column align="left" label="订单运费" prop="shippingCost" width="120" />
-        <el-table-column align="left" label="街道地址" prop="shippingStreetAddress" width="120" />
-        <el-table-column align="left" label="城市" prop="shippingCity" width="120" />
-        <el-table-column align="left" label="省/州" prop="shippingState" width="120" />
-        <el-table-column align="left" label="邮政编码" prop="shippingPostalCode" width="120" />
-        <el-table-column align="left" label="国家" prop="shippingCountry" width="120" />
-         <el-table-column align="left" label="发货时间" width="180">
-            <template #default="scope">{{ formatDate(scope.row.shipAt) }}</template>
+
+        <el-table-column align="left" label="收件人[国家/地区]" width="180">
+            <template #default="scope">
+              街道：{{ scope.row.shippingStreetAddress }} <br>
+              城市：{{ scope.row.shippingCity }} <br>
+              省/州：{{ scope.row.shippingState }} <br>
+              国家：{{ scope.row.shippingCountry }} <br>
+              邮编：{{ scope.row.shippingPostalCode }}
+            </template>
+            
          </el-table-column>
-         <el-table-column align="left" label="退款时间" width="180">
-            <template #default="scope">{{ formatDate(scope.row.refundAt) }}</template>
-         </el-table-column>
-        <el-table-column align="left" label="操作" min-width="120">
+         <el-table-column align="left" label="时间" width="200">
+            <template #default="scope">
+              下单：{{ formatDate(scope.row.CreatedAt) }}<br>
+              支付：{{ formatDate(scope.row.paymentAt) }}<br>
+              发货：{{ formatDate(scope.row.shipAt) }}<br>
+              退款：{{ formatDate(scope.row.refundAt) }}
+            </template>
+        </el-table-column>
+        <el-table-column align="left" label="操作" fixed="right" min-width="240">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>

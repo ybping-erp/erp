@@ -61,9 +61,6 @@
             </template>
         </el-table-column>
         <el-table-column align="left" label="备注信息" prop="remarks" width="120" />
-        <el-table-column align="left" label="创建者" prop="createdBy" width="120" />
-        <el-table-column align="left" label="更新者" prop="updatedBy" width="120" />
-        <el-table-column align="left" label="删除者" prop="deletedBy" width="120" />
         <el-table-column align="left" label="操作" fixed="right" min-width="240">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
@@ -127,15 +124,6 @@
             <el-form-item label="备注信息:"  prop="remarks" >
               <el-input v-model="formData.remarks" :clearable="true"  placeholder="请输入备注信息" />
             </el-form-item>
-            <el-form-item label="创建者:"  prop="createdBy" >
-              <el-input v-model.number="formData.createdBy" :clearable="true" placeholder="请输入创建者" />
-            </el-form-item>
-            <el-form-item label="更新者:"  prop="updatedBy" >
-              <el-input v-model.number="formData.updatedBy" :clearable="true" placeholder="请输入更新者" />
-            </el-form-item>
-            <el-form-item label="删除者:"  prop="deletedBy" >
-              <el-input v-model.number="formData.deletedBy" :clearable="true" placeholder="请输入删除者" />
-            </el-form-item>
           </el-form>
       </el-scrollbar>
       <template #footer>
@@ -182,15 +170,6 @@
                 <el-descriptions-item label="备注信息">
                         {{ formData.remarks }}
                 </el-descriptions-item>
-                <el-descriptions-item label="创建者">
-                        {{ formData.createdBy }}
-                </el-descriptions-item>
-                <el-descriptions-item label="更新者">
-                        {{ formData.updatedBy }}
-                </el-descriptions-item>
-                <el-descriptions-item label="删除者">
-                        {{ formData.deletedBy }}
-                </el-descriptions-item>
         </el-descriptions>
       </el-scrollbar>
     </el-dialog>
@@ -231,9 +210,6 @@ const formData = ref({
         paymentMethod: undefined,
         settlementMethod: undefined,
         remarks: '',
-        createdBy: 0,
-        updatedBy: 0,
-        deletedBy: 0,
         })
 
 
@@ -439,9 +415,6 @@ const closeDetailShow = () => {
           paymentMethod: undefined,
           settlementMethod: undefined,
           remarks: '',
-          createdBy: 0,
-          updatedBy: 0,
-          deletedBy: 0,
           }
 }
 
@@ -467,9 +440,6 @@ const closeDialog = () => {
         paymentMethod: undefined,
         settlementMethod: undefined,
         remarks: '',
-        createdBy: 0,
-        updatedBy: 0,
-        deletedBy: 0,
         }
 }
 // 弹窗确定
