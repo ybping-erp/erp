@@ -150,6 +150,10 @@ import {
 } from '@/api/inbound_log'
 
 import {
+  addInventoryFromInboundLog
+} from '@/api/inventory'
+
+import {
   getGoodsList
 } from '@/api/goods'
 
@@ -410,13 +414,15 @@ const addInvetoryFunc = async(row) => {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
-  }).then(() => {
-      // deleteInboundLogFunc(row)
-      ElMessage({
-      type: 'success',
-      message: '入库成功'
-    })
-    getTableData()
+  }).then(async () => {
+    const res = await addInventoryFromInboundLog(row.ID)
+    if (res.code === 0) {
+        ElMessage({
+        type: 'success',
+        message: '入库成功'
+      })
+      getTableData()
+    }
   })
 }
 

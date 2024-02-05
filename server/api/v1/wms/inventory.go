@@ -2,20 +2,19 @@ package wms
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/wms"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
-    wmsReq "github.com/flipped-aurora/gin-vue-admin/server/model/wms/request"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-    "github.com/flipped-aurora/gin-vue-admin/server/service"
-    "github.com/gin-gonic/gin"
-    "go.uber.org/zap"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/wms"
+	wmsReq "github.com/flipped-aurora/gin-vue-admin/server/model/wms/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/service"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type InventoryApi struct {
 }
 
 var inventoryService = service.ServiceGroupApp.WmsServiceGroup.InventoryService
-
 
 // CreateInventory 创建商品库存
 // @Tags Inventory
@@ -33,12 +32,13 @@ func (inventoryApi *InventoryApi) CreateInventory(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := inventoryService.CreateInventory(&inventory); err != nil {
-        global.GVA_LOG.Error("创建失败!", zap.Error(err))
-		response.FailWithMessage("创建失败", c)
-	} else {
-		response.OkWithMessage("创建成功", c)
-	}
+	// if err := inventoryService.CreateInventory(&inventory); err != nil {
+	// 	global.GVA_LOG.Error("创建失败!", zap.Error(err))
+	// 	response.FailWithMessage("创建失败", c)
+	// } else {
+	// 	response.OkWithMessage("创建成功", c)
+	// }
+	response.OkWithMessage("请通过入库单入库", c)
 }
 
 // DeleteInventory 删除商品库存
@@ -58,7 +58,7 @@ func (inventoryApi *InventoryApi) DeleteInventory(c *gin.Context) {
 		return
 	}
 	if err := inventoryService.DeleteInventory(inventory); err != nil {
-        global.GVA_LOG.Error("删除失败!", zap.Error(err))
+		global.GVA_LOG.Error("删除失败!", zap.Error(err))
 		response.FailWithMessage("删除失败", c)
 	} else {
 		response.OkWithMessage("删除成功", c)
@@ -76,13 +76,13 @@ func (inventoryApi *InventoryApi) DeleteInventory(c *gin.Context) {
 // @Router /inventory/deleteInventoryByIds [delete]
 func (inventoryApi *InventoryApi) DeleteInventoryByIds(c *gin.Context) {
 	var IDS request.IdsReq
-    err := c.ShouldBindJSON(&IDS)
+	err := c.ShouldBindJSON(&IDS)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 	if err := inventoryService.DeleteInventoryByIds(IDS); err != nil {
-        global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
+		global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
 		response.FailWithMessage("批量删除失败", c)
 	} else {
 		response.OkWithMessage("批量删除成功", c)
@@ -106,7 +106,7 @@ func (inventoryApi *InventoryApi) UpdateInventory(c *gin.Context) {
 		return
 	}
 	if err := inventoryService.UpdateInventory(inventory); err != nil {
-        global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
 	} else {
 		response.OkWithMessage("更新成功", c)
@@ -130,7 +130,7 @@ func (inventoryApi *InventoryApi) FindInventory(c *gin.Context) {
 		return
 	}
 	if reinventory, err := inventoryService.GetInventory(inventory.ID); err != nil {
-        global.GVA_LOG.Error("查询失败!", zap.Error(err))
+		global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败", c)
 	} else {
 		response.OkWithData(gin.H{"reinventory": reinventory}, c)
@@ -154,14 +154,41 @@ func (inventoryApi *InventoryApi) GetInventoryList(c *gin.Context) {
 		return
 	}
 	if list, total, err := inventoryService.GetInventoryInfoList(pageInfo); err != nil {
-	    global.GVA_LOG.Error("获取失败!", zap.Error(err))
-        response.FailWithMessage("获取失败", c)
-    } else {
-        response.OkWithDetailed(response.PageResult{
-            List:     list,
-            Total:    total,
-            Page:     pageInfo.Page,
-            PageSize: pageInfo.PageSize,
-        }, "获取成功", c)
-    }
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, "获取成功", c)
+	}
+}
+
+// AddInventoryFromInboundLog 根据入库单入库
+// @Tags Inventory
+// @Summary 创建商品库存
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body wms.Inventory true "创建商品库存"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"入库成功"}"
+// @Router /inventory/addInventoryFromInboundLog [put]
+func (inventoryApi *InventoryApi) AddInventoryFromInboundLog(c *gin.Context) {
+	inboundLogID := c.Query("inboundLogID")
+	var inboundLog wms.InboundLog
+	var err error = nil
+	if inboundLog, err = inboundLogService.GetInboundLog(inboundLogID); err != nil {
+		global.GVA_LOG.Error("入库失败!", zap.Error(err))
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := inventoryService.AddInventoryFromInboundLog(inboundLog); err != nil {
+		global.GVA_LOG.Error("入库失败!", zap.Error(err))
+		response.FailWithMessage(err.Error(), c)
+	} else {
+		response.OkWithMessage("入库成功", c)
+	}
 }

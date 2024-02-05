@@ -95,3 +95,21 @@ export const getInventoryList = (params) => {
     params
   })
 }
+
+
+// AddInventoryFromInboundLog 根据入库单入库
+// @Tags Inventory
+// @Summary 创建商品库存
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body wms.Inventory true "创建商品库存"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"入库成功"}"
+// @Router /inventory/addInventoryFromInboundLog [put]
+export const addInventoryFromInboundLog = (inboundLogID) => {
+  return service({
+    url: `/inventory/addInventoryFromInboundLog?inboundLogID=${inboundLogID}`,
+    method: 'put',
+  })
+}
+

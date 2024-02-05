@@ -3,7 +3,6 @@ package wms
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"gorm.io/gorm"
 )
 
 // 出库记录 结构体  OutboundLog
@@ -23,8 +22,4 @@ type OutboundLog struct {
 // TableName 出库记录 OutboundLog自定义表名 t_wms_outbound_log
 func (OutboundLog) TableName() string {
 	return "t_wms_outbound_log"
-}
-
-func (outboundLog *OutboundLog) AfterCreate(tx *gorm.DB) (err error) {
-	return Inventory{}.UpdateInventory(tx, outboundLog.GoodsSku, *outboundLog.WarehouseId, *outboundLog.ZoneId, *outboundLog.RackId, *outboundLog.Quantity*-1)
 }
