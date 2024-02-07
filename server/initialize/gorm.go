@@ -72,7 +72,7 @@ func RegisterTables() {
 		wms.Rack{}, wms.Warehouse{},
 		wms.SkuMapping{},
 		wms.InboundLog{},
-		wms.OutboundLog{}, shared.Rule{}, wms.Supplier{},
+		wms.OutboundLog{}, shared.Rule{}, wms.Supplier{}, wms.PickOrder{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))

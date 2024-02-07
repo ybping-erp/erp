@@ -16,8 +16,8 @@
        —
       <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
       </el-form-item> -->
-      <el-form-item label="订单号" prop="orderId">
-         <el-input v-model="searchInfo.orderId" placeholder="搜索条件" />
+      <el-form-item label="订单号" prop="platformOrderId">
+         <el-input v-model="searchInfo.platformOrderId" placeholder="搜索条件" />
       </el-form-item>
 
         <el-form-item label="电商平台" prop="platformName">
@@ -76,7 +76,7 @@
         <el-table-column align="left" label="电商平台" prop="platformName" width="120" />
         <el-table-column align="left" label="店铺ID" prop="shopId" width="120" />
         <el-table-column align="left" label="店铺名称" prop="shopName" width="120" /> -->
-        <el-table-column align="left" label="订单号" prop="orderId" width="120" />
+        <el-table-column align="left" label="订单号" prop="platformOrderId" width="120" />
         <el-table-column align="left" label="总金额" prop="totalAmount" width="120" />
         <!-- <el-table-column align="left" label="折扣金额" prop="discount" width="120" /> -->
         <!-- <el-table-column align="left" label="税额" prop="tax" width="120" /> -->
@@ -152,8 +152,8 @@
             <el-form-item label="店铺名称:"  prop="shopName" >
               <el-input v-model="formData.shopName" :clearable="true"  placeholder="请输入店铺名称" />
             </el-form-item>
-            <el-form-item label="订单号:"  prop="orderId" >
-              <el-input v-model="formData.orderId" :clearable="true"  placeholder="请输入订单号" />
+            <el-form-item label="订单号:"  prop="platformOrderId" >
+              <el-input v-model="formData.platformOrderId" :clearable="true"  placeholder="请输入订单号" />
             </el-form-item>
             <el-form-item label="总金额:"  prop="totalAmount" >
               <el-input-number v-model="formData.totalAmount"  style="width:100%" :precision="2" :clearable="true"  />
@@ -240,7 +240,7 @@
                         {{ formData.shopName }}
                 </el-descriptions-item>
                 <el-descriptions-item label="订单号">
-                        {{ formData.orderId }}
+                        {{ formData.platformOrderId }}
                 </el-descriptions-item>
                 <el-descriptions-item label="总金额">
                         {{ formData.totalAmount }}
@@ -333,7 +333,7 @@ const formData = ref({
         platformName: '',
         shopId: '',
         shopName: '',
-        orderId: '',
+        platformOrderId: '',
         totalAmount: 0,
         discount: 0,
         tax: 0,
@@ -550,7 +550,7 @@ const closeDetailShow = () => {
           platformName: '',
           shopId: '',
           shopName: '',
-          orderId: '',
+          platformOrderId: '',
           totalAmount: 0,
           discount: 0,
           tax: 0,
@@ -588,7 +588,7 @@ const closeDialog = () => {
         platformName: '',
         shopId: '',
         shopName: '',
-        orderId: '',
+        platformOrderId: '',
         totalAmount: 0,
         discount: 0,
         tax: 0,

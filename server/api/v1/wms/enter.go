@@ -10,4 +10,5 @@ type ApiGroup struct {
 	InboundLogApi
 	OutboundLogApi
 	SupplierApi
+	PickOrderApi
 }

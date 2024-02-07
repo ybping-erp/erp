@@ -115,6 +115,7 @@ func Routers() *gin.Engine {
 		wmsRouter.InitInboundLogRouter(PrivateGroup)
 		wmsRouter.InitOutboundLogRouter(PrivateGroup)
 		wmsRouter.InitSupplierRouter(PrivateGroup)
+		wmsRouter.InitPickOrderRouter(PrivateGroup)
 	}
 	{
 		sharedRouter := router.RouterGroupApp.Shared

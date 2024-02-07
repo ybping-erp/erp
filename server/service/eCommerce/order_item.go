@@ -57,8 +57,8 @@ func (orderItemService *OrderItemService) GetOrderItemInfoList(info eCommerceReq
 	if info.StartCreatedAt != nil && info.EndCreatedAt != nil {
 		db = db.Where("created_at BETWEEN ? AND ?", info.StartCreatedAt, info.EndCreatedAt)
 	}
-	if info.OrderId != "" {
-		db = db.Where("order_id = ?", info.OrderId)
+	if info.PlatormOrderId != "" {
+		db = db.Where("platform_order_id = ?", info.PlatormOrderId)
 	}
 	err = db.Count(&total).Error
 	if err != nil {

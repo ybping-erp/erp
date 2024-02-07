@@ -10,4 +10,5 @@ type ServiceGroup struct {
 	InboundLogService
 	OutboundLogService
 	SupplierService
+	PickOrderService
 }

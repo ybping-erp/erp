@@ -2,9 +2,20 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-        <el-form-item label="订单号" prop="platformOrderId">
-         <el-input v-model="searchInfo.platformOrderId" placeholder="搜索条件" />
-      </el-form-item>
+      
+        <el-form-item label="商品" prop="goodsName">
+         <el-input v-model="searchInfo.goodsName" placeholder="搜索条件" />
+
+        </el-form-item>
+        <el-form-item label="SKU" prop="goodsSku">
+         <el-input v-model="searchInfo.goodsSku" placeholder="搜索条件" />
+
+        </el-form-item>
+        <el-form-item label="订单" prop="orderId">
+            
+             <el-input v-model.number="searchInfo.orderId" placeholder="搜索条件" />
+
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">查询</el-button>
           <el-button icon="refresh" @click="onReset">重置</el-button>
@@ -34,27 +45,23 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="订单ID" prop="platformOrderId" width="120" />
-        <el-table-column align="left" label="产品SKU" prop="productSku" width="120" />
-        <el-table-column align="left" label="产品图片" width="120">
-          <template #default="scope">
-            <CustomPic
-              style="margin-top:8px"
-              :pic-src="scope.row.productUrl"
-            />
-          </template>
+        <el-table-column align="left" label="订单" prop="orderId" width="120" />
+        <el-table-column align="left" label="商品" prop="goodsName" width="120" />
+        <el-table-column align="left" label="SKU" prop="goodsSku" width="120" />
+        <el-table-column align="left" label="拣货数量" prop="quantity" width="120" />
+        <el-table-column align="left" label="货架" prop="rackId" width="120" />
+        <el-table-column align="left" label="仓库" prop="warehouseId" width="120" />
+        <el-table-column align="left" label="库区" prop="zoneId" width="120" />
+        <el-table-column align="left" label="日期" width="180">
+            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
-        <el-table-column align="left" label="产品属性" prop="attributes" width="120" />
-        <el-table-column align="left" label="数量" prop="quantity" width="120" />
-        <el-table-column align="left" label="产品的单价" prop="unitPrice" width="120" />
-        <el-table-column align="left" label="订单项总金额" prop="totalAmount" width="120" />
-        <el-table-column align="left" label="操作" min-width="120">
+        <el-table-column align="left" label="操作" fixed="right" min-width="240">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
                 查看详情
             </el-button>
-            <el-button type="primary" link icon="edit" class="table-button" @click="updateOrderItemFunc(scope.row)">变更</el-button>
+            <el-button type="primary" link icon="edit" class="table-button" @click="updatePickOrderFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
             </template>
         </el-table-column>
@@ -74,25 +81,26 @@
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
       <el-scrollbar height="500px">
           <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="订单ID:"  prop="platformOrderId" >
-              <el-input v-model="formData.platformOrderId" :clearable="true"  placeholder="请输入订单ID" />
+            <el-form-item label="商品:"  prop="goodsName" >
+              <el-input v-model="formData.goodsName" :clearable="true"  placeholder="请输入商品" />
             </el-form-item>
-            <el-form-item label="产品SKU:"  prop="productSku" >
-              <el-input v-model="formData.productSku" :clearable="true"  placeholder="请输入产品SKU" />
+            <el-form-item label="SKU:"  prop="goodsSku" >
+              <el-input v-model="formData.goodsSku" :clearable="true"  placeholder="请输入SKU" />
             </el-form-item>
-            <el-form-item label="产品图片:"  prop="productUrl" >
-              <el-input v-model="formData.productUrl" :clearable="true"  placeholder="请输入产品图片" />
+            <el-form-item label="订单:"  prop="orderId" >
+              <el-input v-model.number="formData.orderId" :clearable="true" placeholder="请输入订单" />
             </el-form-item>
-            <el-form-item label="产品属性:"  prop="attributes" >
+            <el-form-item label="拣货数量:"  prop="quantity" >
+              <el-input v-model.number="formData.quantity" :clearable="true" placeholder="请输入拣货数量" />
             </el-form-item>
-            <el-form-item label="数量:"  prop="quantity" >
-              <el-input v-model.number="formData.quantity" :clearable="true" placeholder="请输入数量" />
+            <el-form-item label="货架:"  prop="rackId" >
+              <el-input v-model.number="formData.rackId" :clearable="true" placeholder="请输入货架" />
             </el-form-item>
-            <el-form-item label="产品的单价:"  prop="unitPrice" >
-              <el-input-number v-model="formData.unitPrice"  style="width:100%" :precision="2" :clearable="true"  />
+            <el-form-item label="仓库:"  prop="warehouseId" >
+              <el-input v-model.number="formData.warehouseId" :clearable="true" placeholder="请输入仓库" />
             </el-form-item>
-            <el-form-item label="订单项总金额:"  prop="totalAmount" >
-              <el-input-number v-model="formData.totalAmount"  style="width:100%" :precision="2" :clearable="true"  />
+            <el-form-item label="库区:"  prop="zoneId" >
+              <el-input v-model.number="formData.zoneId" :clearable="true" placeholder="请输入库区" />
             </el-form-item>
           </el-form>
       </el-scrollbar>
@@ -107,26 +115,26 @@
     <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="查看详情" destroy-on-close>
       <el-scrollbar height="550px">
         <el-descriptions column="1" border>
-                <el-descriptions-item label="订单ID">
-                        {{ formData.platformOrderId }}
+                <el-descriptions-item label="商品">
+                        {{ formData.goodsName }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品SKU">
-                        {{ formData.productSku }}
+                <el-descriptions-item label="SKU">
+                        {{ formData.goodsSku }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品图片">
-                        {{ formData.productUrl }}
+                <el-descriptions-item label="订单">
+                        {{ formData.orderId }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品属性">
-                        {{ formData.attributes }}
-                </el-descriptions-item>
-                <el-descriptions-item label="数量">
+                <el-descriptions-item label="拣货数量">
                         {{ formData.quantity }}
                 </el-descriptions-item>
-                <el-descriptions-item label="产品的单价">
-                        {{ formData.unitPrice }}
+                <el-descriptions-item label="货架">
+                        {{ formData.rackId }}
                 </el-descriptions-item>
-                <el-descriptions-item label="订单项总金额">
-                        {{ formData.totalAmount }}
+                <el-descriptions-item label="仓库">
+                        {{ formData.warehouseId }}
+                </el-descriptions-item>
+                <el-descriptions-item label="库区">
+                        {{ formData.zoneId }}
                 </el-descriptions-item>
         </el-descriptions>
       </el-scrollbar>
@@ -136,13 +144,13 @@
 
 <script setup>
 import {
-  createOrderItem,
-  deleteOrderItem,
-  deleteOrderItemByIds,
-  updateOrderItem,
-  findOrderItem,
-  getOrderItemList
-} from '@/api/order_item'
+  createPickOrder,
+  deletePickOrder,
+  deletePickOrderByIds,
+  updatePickOrder,
+  findPickOrder,
+  getPickOrderList
+} from '@/api/pick_order'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
@@ -150,17 +158,18 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 
 defineOptions({
-    name: 'OrderItem'
+    name: 'PickOrder'
 })
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
-        platformOrderId: '',
-        productSku: '',
-        productUrl: '',
+        goodsName: '',
+        goodsSku: '',
+        orderId: 0,
         quantity: 0,
-        unitPrice: 0,
-        totalAmount: 0,
+        rackId: 0,
+        warehouseId: 0,
+        zoneId: 0,
         })
 
 
@@ -224,7 +233,7 @@ const handleCurrentChange = (val) => {
 
 // 查询
 const getTableData = async() => {
-  const table = await getOrderItemList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
+  const table = await getPickOrderList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -259,7 +268,7 @@ const deleteRow = (row) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-            deleteOrderItemFunc(row)
+            deletePickOrderFunc(row)
         })
     }
 
@@ -269,7 +278,7 @@ const deleteVisible = ref(false)
 
 // 多选删除
 const onDelete = async() => {
-      const ids = []
+      const IDs = []
       if (multipleSelection.value.length === 0) {
         ElMessage({
           type: 'warning',
@@ -279,15 +288,15 @@ const onDelete = async() => {
       }
       multipleSelection.value &&
         multipleSelection.value.map(item => {
-          ids.push(item.ID)
+          IDs.push(item.ID)
         })
-      const res = await deleteOrderItemByIds({ ids })
+      const res = await deletePickOrderByIds({ IDs })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
           message: '删除成功'
         })
-        if (tableData.value.length === ids.length && page.value > 1) {
+        if (tableData.value.length === IDs.length && page.value > 1) {
           page.value--
         }
         deleteVisible.value = false
@@ -299,19 +308,19 @@ const onDelete = async() => {
 const type = ref('')
 
 // 更新行
-const updateOrderItemFunc = async(row) => {
-    const res = await findOrderItem({ ID: row.ID })
+const updatePickOrderFunc = async(row) => {
+    const res = await findPickOrder({ ID: row.ID })
     type.value = 'update'
     if (res.code === 0) {
-        formData.value = res.data.reorderItem
+        formData.value = res.data.repickOrder
         dialogFormVisible.value = true
     }
 }
 
 
 // 删除行
-const deleteOrderItemFunc = async (row) => {
-    const res = await deleteOrderItem({ ID: row.ID })
+const deletePickOrderFunc = async (row) => {
+    const res = await deletePickOrder({ ID: row.ID })
     if (res.code === 0) {
         ElMessage({
                 type: 'success',
@@ -341,9 +350,9 @@ const openDetailShow = () => {
 // 打开详情
 const getDetails = async (row) => {
   // 打开弹窗
-  const res = await findOrderItem({ ID: row.ID })
+  const res = await findPickOrder({ ID: row.ID })
   if (res.code === 0) {
-    formData.value = res.data.reorderItem
+    formData.value = res.data.repickOrder
     openDetailShow()
   }
 }
@@ -353,12 +362,13 @@ const getDetails = async (row) => {
 const closeDetailShow = () => {
   detailShow.value = false
   formData.value = {
-          platformOrderId: '',
-          productSku: '',
-          productUrl: '',
+          goodsName: '',
+          goodsSku: '',
+          orderId: 0,
           quantity: 0,
-          unitPrice: 0,
-          totalAmount: 0,
+          rackId: 0,
+          warehouseId: 0,
+          zoneId: 0,
           }
 }
 
@@ -373,12 +383,13 @@ const openDialog = () => {
 const closeDialog = () => {
     dialogFormVisible.value = false
     formData.value = {
-        platformOrderId: '',
-        productSku: '',
-        productUrl: '',
+        goodsName: '',
+        goodsSku: '',
+        orderId: 0,
         quantity: 0,
-        unitPrice: 0,
-        totalAmount: 0,
+        rackId: 0,
+        warehouseId: 0,
+        zoneId: 0,
         }
 }
 // 弹窗确定
@@ -388,13 +399,13 @@ const enterDialog = async () => {
               let res
               switch (type.value) {
                 case 'create':
-                  res = await createOrderItem(formData.value)
+                  res = await createPickOrder(formData.value)
                   break
                 case 'update':
-                  res = await updateOrderItem(formData.value)
+                  res = await updatePickOrder(formData.value)
                   break
                 default:
-                  res = await createOrderItem(formData.value)
+                  res = await createPickOrder(formData.value)
                   break
               }
               if (res.code === 0) {

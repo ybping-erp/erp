@@ -113,7 +113,7 @@ CREATE TABLE t_order (
     platform_name VARCHAR(50) COMMENT '电商平台',
     shop_id VARCHAR(255) COMMENT '店铺唯一标识符',
     shop_name VARCHAR(50)  COMMENT '店铺名称',
-    order_id VARCHAR(50) COMMENT '店铺订单号',
+    platform_order_id VARCHAR(50) COMMENT '店铺订单号',
 
     total_amount DECIMAL(12, 2) COMMENT '订单总金额',
     discount DECIMAL(5, 2) COMMENT '订单折扣金额',
@@ -148,18 +148,18 @@ CREATE TABLE t_order (
 ) CHARACTER SET utf8mb4;
 -- Insert sample data into t_order table
 INSERT INTO t_order (
-    platform_name, shop_id, shop_name, order_id,
+    platform_name, shop_id, shop_name, platform_order_id,
     total_amount, discount, tax,
-    status_id, status_name,
+    status_id,
     customer_id, customer_name, customer_tel, customer_email, customer_remarks,
     payment_method, payment_at,
     shipping_order_id, shipping_cost,
     shipping_street_address, shipping_city, shipping_state, shipping_postal_code, shipping_country,
     ship_at, refund_at
 ) VALUES
-    ('eBay', 'ShopID001', 'Shop 1', 'OrderID001', 100.00, 10.00, 5.00, 1, 'Pending', 'CustomerID001', 'John Doe', '123456789', 'john@example.com', 'Special instructions for the order', 'Credit Card', '2023-01-01 12:00:00', 'Shipping123', 8.00, '123 Main St', 'City1', 'State1', '12345', 'Country1', '2023-01-02 10:00:00', NULL),
-    ('eBay', 'ShopID002', 'Shop 2', 'OrderID002', 150.00, 15.00, 7.50, 2, 'Processing', 'CustomerID002', 'Jane Smith', '987654321', 'jane@example.com', 'Additional notes for the order', 'PayPal', '2023-01-02 15:30:00', 'Shipping456', 12.00, '456 Oak St', 'City2', 'State2', '54321', 'Country2', '2023-01-03 09:45:00', NULL),
-    ('eBay', 'ShopID003', 'Shop 3', 'OrderID003', 80.00, 8.00, 4.00, 3, 'Shipped', 'CustomerID003', 'Bob Johnson', '555111222', 'bob@example.com', 'No special instructions', 'Bank Transfer', '2023-01-03 18:20:00', 'Shipping789', 6.50, '789 Pine St', 'City3', 'State3', '67890', 'Country3', '2023-01-04 11:20:00', NULL);
+    ('eBay', 'ShopID001', 'Shop 1', 'OrderID001', 100.00, 10.00, 5.00, 1, 'CustomerID001', 'John Doe', '123456789', 'john@example.com', 'Special instructions for the order', 'Credit Card', '2023-01-01 12:00:00', 'Shipping123', 8.00, '123 Main St', 'City1', 'State1', '12345', 'Country1', '2023-01-02 10:00:00', NULL),
+    ('eBay', 'ShopID002', 'Shop 2', 'OrderID002', 150.00, 15.00, 7.50, 2, 'CustomerID002', 'Jane Smith', '987654321', 'jane@example.com', 'Additional notes for the order', 'PayPal', '2023-01-02 15:30:00', 'Shipping456', 12.00, '456 Oak St', 'City2', 'State2', '54321', 'Country2', '2023-01-03 09:45:00', NULL),
+    ('eBay', 'ShopID003', 'Shop 3', 'OrderID003', 80.00, 8.00, 4.00, 3, 'CustomerID003', 'Bob Johnson', '555111222', 'bob@example.com', 'No special instructions', 'Bank Transfer', '2023-01-03 18:20:00', 'Shipping789', 6.50, '789 Pine St', 'City3', 'State3', '67890', 'Country3', '2023-01-04 11:20:00', NULL);
 
 
 -- Create Order Item table
@@ -179,13 +179,13 @@ CREATE TABLE t_order_item (
 ) CHARACTER SET utf8mb4;
 -- Insert sample data into t_order_item table
 INSERT INTO t_order_item (
-    order_id, product_sku, product_url, attributes, quantity, unit_price, total_amount
+    order_id, platform_order_id, product_sku, product_url, attributes, quantity, unit_price, total_amount
 ) VALUES
-    ('OrderID001', 'SKU001', 'https://example.com/product1.jpg', '{"color": "Red", "size": "Large"}', 2, 25.00, 50.00),
-    ('OrderID001', 'SKU002', 'https://example.com/product2.jpg', '{"color": "Blue", "size": "Medium"}', 1, 30.00, 30.00),
-    ('OrderID002', 'SKU003', 'https://example.com/product3.jpg', '{"color": "Green", "size": "Small"}', 3, 15.00, 45.00),
-    ('OrderID003', 'SKU004', 'https://example.com/product4.jpg', '{"color": "Black", "size": "XL"}', 1, 50.00, 50.00),
-    ('OrderID003', 'SKU005', 'https://example.com/product5.jpg', '{"color": "White", "size": "Small"}', 2, 40.00, 80.00);
+    (1, 'OrderID001', 'SKU001', 'https://example.com/product1.jpg', '{"color": "Red", "size": "Large"}', 2, 25.00, 50.00),
+    (1, 'OrderID001', 'SKU002', 'https://example.com/product2.jpg', '{"color": "Blue", "size": "Medium"}', 1, 30.00, 30.00),
+    (2, 'OrderID002', 'SKU003', 'https://example.com/product3.jpg', '{"color": "Green", "size": "Small"}', 3, 15.00, 45.00),
+    (2, 'OrderID003', 'SKU004', 'https://example.com/product4.jpg', '{"color": "Black", "size": "XL"}', 1, 50.00, 50.00),
+    (3, 'OrderID003', 'SKU005', 'https://example.com/product5.jpg', '{"color": "White", "size": "Small"}', 2, 40.00, 80.00);
 
 -----------------------仓库相关----------------------
 -- Create t_wms_warehouse table
@@ -283,6 +283,21 @@ CREATE TABLE t_wms_outbound_log (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '库存创建时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '库存最后更新时间',
     deleted_at TIMESTAMP COMMENT '库存软删除时间（如果适用）'
+) CHARACTER SET utf8mb4;
+
+DROP Table IF EXISTS t_wms_pick_order;
+CREATE TABLE t_wms_pick_order (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '数据库主键',
+    order_id BIGINT UNSIGNED DEFAULT 0 COMMENT '订单ID',
+    goods_sku VARCHAR(50) COMMENT '商品SKU',
+    goods_name VARCHAR(50) COMMENT '商品名称',
+    warehouse_id BIGINT UNSIGNED COMMENT '仓库ID',
+    zone_id BIGINT UNSIGNED COMMENT '库区ID',
+    rack_id  BIGINT UNSIGNED COMMENT '货架ID',
+    quantity INT COMMENT '拣货数量',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
+    deleted_at TIMESTAMP COMMENT '软删除时间（如果适用）'
 ) CHARACTER SET utf8mb4;
 
 -- Create t_wms_goods table

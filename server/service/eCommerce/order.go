@@ -41,7 +41,7 @@ func (orderService *OrderService) UpdateOrder(order eCommerce.Order) (err error)
 // GetOrder 根据id获取订单记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (orderService *OrderService) GetOrder(id uint) (order eCommerce.Order, err error) {
-	err = global.GVA_DB.Where("id = ?", id).First(&order).Error
+	err = global.GVA_DB.Where("id = ?", id).Preload("OrderItem").First(&order).Error
 	return
 }
 
@@ -57,8 +57,8 @@ func (orderService *OrderService) GetOrderInfoList(info eCommerceReq.OrderSearch
 	if info.StartCreatedAt != nil && info.EndCreatedAt != nil {
 		db = db.Where("created_at BETWEEN ? AND ?", info.StartCreatedAt, info.EndCreatedAt)
 	}
-	if info.OrderId != "" {
-		db = db.Where("order_id = ?", info.OrderId)
+	if info.PlatormOrderId != "" {
+		db = db.Where("platform_order_id = ?", info.PlatormOrderId)
 	}
 	if info.PlatformName != "" {
 		db = db.Where("platform_name = ?", info.PlatformName)
@@ -89,4 +89,17 @@ func (orderService *OrderService) GetOrderInfoList(info eCommerceReq.OrderSearch
 
 	err = db.Find(&orders).Error
 	return orders, total, err
+}
+
+// GeneratePickOrders 自动生成拣货单
+func (orderService *OrderService) GeneratePickOrders(Id uint) (err error) {
+	// order, err := orderService.GetOrder(Id)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// 根据items 查询库存
+
+	// 根据库存分配拣货单
+	return nil
 }
