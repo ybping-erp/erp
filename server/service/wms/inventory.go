@@ -127,3 +127,45 @@ func (inventoryService *InventoryService) AddInventoryFromInboundLog(inboundLog 
 	return err
 
 }
+
+func (inventoryService *InventoryService) SubInventoryFromOutboundLog(outBoundLog wms.OutboundLog) (err error) {
+	if *outBoundLog.Status == OutboundLogStatus_FINISHED {
+		return errors.New("该出库单已经出库")
+	}
+
+	if *outBoundLog.Status != InboundLogStatus_PENDING {
+		return errors.New("该状态不允许出库")
+	}
+
+	err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		var inventory wms.Inventory
+		err := tx.Model(&wms.Inventory{}).Where("goods_sku = ? and warehouse_id = ? and zone_id = ? and rack_id = ?", outBoundLog.GoodsSku, outBoundLog.WarehouseId, outBoundLog.ZoneId, outBoundLog.RackId).First(&inventory).Error
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+
+		// 初始化库存
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			inventory = wms.Inventory{
+				GoodsSku:    outBoundLog.GoodsSku,
+				WarehouseId: outBoundLog.WarehouseId,
+				ZoneId:      outBoundLog.ZoneId,
+				RackId:      outBoundLog.RackId,
+				Quantity:    utils.Pointer[int](0),
+			}
+		}
+
+		// 更新入库单状态
+		outBoundLog.Status = utils.Pointer[int](OutboundLogStatus_FINISHED)
+		err = tx.Save(&outBoundLog).Error
+		if err != nil {
+			return err
+		}
+
+		// 更新库存
+		*inventory.Quantity -= *outBoundLog.Quantity
+		return tx.Save(&inventory).Error
+	})
+	return err
+
+}
