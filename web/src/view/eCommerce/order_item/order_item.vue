@@ -36,6 +36,7 @@
         <el-table-column type="selection" width="55" />
         <el-table-column align="left" label="订单ID" prop="platformOrderId" width="120" />
         <el-table-column align="left" label="产品SKU" prop="productSku" width="120" />
+        <el-table-column align="left" label="商品SKU" prop="goodsSku" width="120" />
         <el-table-column align="left" label="产品图片" width="120">
           <template #default="scope">
             <CustomPic
@@ -44,10 +45,9 @@
             />
           </template>
         </el-table-column>
-        <el-table-column align="left" label="产品属性" prop="attributes" width="120" />
-        <el-table-column align="left" label="数量" prop="quantity" width="120" />
-        <el-table-column align="left" label="产品的单价" prop="unitPrice" width="120" />
-        <el-table-column align="left" label="订单项总金额" prop="totalAmount" width="120" />
+        <el-table-column align="left" label="产品属性" prop="attributes" width="240" />
+        <el-table-column align="left" label="数量" prop="quantity" width="80" />
+        <!-- <el-table-column align="left" label="订单项总金额" prop="totalAmount" width="120" /> -->
         <el-table-column align="left" label="操作" min-width="120">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">

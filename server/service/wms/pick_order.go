@@ -102,9 +102,14 @@ func (pickOrderService *PickOrderService) GetPickOrderInfoList(info wmsReq.PickO
 func (pickOrderService *PickOrderService) AllocatePickOrders(order eCommerce.Order, inventoryMap map[string][]wms.Inventory) (pickOrders []wms.PickOrder, err error) {
 	// 根据库存为每个订单明细分配拣货单
 	for _, item := range order.Items {
-		inventoryList, exists := inventoryMap[item.ProductSku]
+		if item.GoodsSku == nil {
+			err = fmt.Errorf("%v 不存在配对的商品", item.ProductSku)
+			return
+		}
+		goodsSKU := *item.GoodsSku
+		inventoryList, exists := inventoryMap[goodsSKU]
 		if !exists {
-			err = fmt.Errorf("%v 库存不存在", item.ProductSku)
+			err = fmt.Errorf("%v 库存不存在", goodsSKU)
 			return
 		}
 
@@ -121,8 +126,8 @@ func (pickOrderService *PickOrderService) AllocatePickOrders(order eCommerce.Ord
 
 			pickOrder := wms.PickOrder{
 				// ybping: 修改为GoodsName
-				GoodsName:   item.ProductSku,
-				GoodsSku:    item.ProductSku,
+				GoodsName:   goodsSKU,
+				GoodsSku:    goodsSKU,
 				OrderId:     &item.OrderId,
 				Quantity:    &quantity,
 				RackId:      inventory.RackId,
@@ -148,6 +153,7 @@ func (pickOrderService *PickOrderService) AllocatePickOrders(order eCommerce.Ord
 		if err := tx.Save(pickOrders).Error; err != nil {
 			return err
 		}
+
 		return nil
 	})
 	return
