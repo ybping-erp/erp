@@ -169,3 +169,24 @@ func (inventoryService *InventoryService) SubInventoryFromOutboundLog(outBoundLo
 	return err
 
 }
+
+func (inventoryService *InventoryService) GetInventoryBySKUs(skus []string) (list []wms.Inventory, err error) {
+	var inventorys []wms.Inventory
+	err = global.GVA_DB.Where("goods_sku in ?", skus).Find(&inventorys).Error
+	return inventorys, err
+}
+
+func (inventoryService *InventoryService) GetInventoryMapBySKUs(skus []string) (dict map[string][]wms.Inventory, err error) {
+	dict = make(map[string][]wms.Inventory)
+	inventoryList, err := inventoryService.GetInventoryBySKUs(skus)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, inv := range inventoryList {
+		dict[inv.GoodsSku] = append(dict[inv.GoodsSku], inv)
+	}
+
+	return dict, nil
+
+}

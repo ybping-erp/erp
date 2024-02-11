@@ -80,3 +80,11 @@ func RandomString(n int) string {
 func RandomInt(min, max int) int {
 	return min + rand.Intn(max-min)
 }
+
+func MapToArray[T any](m map[string]T) []T {
+	var values []T
+	for _, val := range m {
+		values = append(values, val)
+	}
+	return values
+}

@@ -16,6 +16,8 @@ type OrderApi struct {
 }
 
 var orderService = service.ServiceGroupApp.ECommerceServiceGroup.OrderService
+var inventoryService = service.ServiceGroupApp.WmsServiceGroup.InventoryService
+var pickOrderService = service.ServiceGroupApp.WmsServiceGroup.PickOrderService
 
 // CreateOrder 创建订单
 // @Tags Order
@@ -178,4 +180,33 @@ func (orderApi *OrderApi) GetOrderList(c *gin.Context) {
 			PageSize: pageInfo.PageSize,
 		}, "获取成功", c)
 	}
+}
+
+// AllocatePickOrders 自动生成拣货单
+// 为了防止并发分配导致的库存不一致，后面需要修改为队列按序生成
+func (orderApi *OrderApi) AllocatePickOrders(c *gin.Context) {
+	var Id uint = 1
+	order, err := orderService.GetOrder(Id)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+	}
+
+	var skus []string
+	for _, item := range order.Items {
+		skus = append(skus, item.ProductSku)
+	}
+
+	// 根据items 查询库存
+	inventoryMap, err := inventoryService.GetInventoryMapBySKUs(skus)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	pickOrders, err := pickOrderService.AllocatePickOrders(order, inventoryMap)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OkWithData(pickOrders, c)
 }
