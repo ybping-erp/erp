@@ -159,6 +159,15 @@
             <el-button
               type="primary"
               link
+              class="table-button"
+              @click="getDetails(scope.row)"
+            >
+              <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
+              详情
+            </el-button>
+            <el-button
+              type="primary"
+              link
               icon="edit"
               class="table-button"
               @click="updateSysExportTemplateFunc(scope.row)"
@@ -399,6 +408,38 @@
         </el-form-item>
       </el-form>
     </el-drawer>
+<<<<<<< HEAD
+=======
+
+    <el-dialog
+      v-model="detailShow"
+      style="width: 800px"
+      lock-scroll
+      :before-close="closeDetailShow"
+      title="详情"
+      destroy-on-close
+    >
+      <el-scrollbar height="550px">
+        <el-descriptions
+          column="1"
+          border
+        >
+          <el-descriptions-item label="模板名称">
+            {{ formData.name }}
+          </el-descriptions-item>
+          <el-descriptions-item label="表名称">
+            {{ formData.tableName }}
+          </el-descriptions-item>
+          <el-descriptions-item label="模板标识">
+            {{ formData.templateID }}
+          </el-descriptions-item>
+          <el-descriptions-item label="模板信息">
+            {{ formData.templateInfo }}
+          </el-descriptions-item>
+        </el-descriptions>
+      </el-scrollbar>
+    </el-dialog>
+>>>>>>> f46b498b (简化描述)
   </div>
 </template>
 
@@ -715,6 +756,38 @@ const deleteSysExportTemplateFunc = async(row) => {
 // 弹窗控制标记
 const dialogFormVisible = ref(false)
 
+<<<<<<< HEAD
+=======
+// 详情控制标记
+const detailShow = ref(false)
+
+// 打开详情弹窗
+const openDetailShow = () => {
+  detailShow.value = true
+}
+
+// 打开详情
+const getDetails = async(row) => {
+  // 打开弹窗
+  const res = await findSysExportTemplate({ ID: row.ID })
+  if (res.code === 0) {
+    formData.value = res.data.resysExportTemplate
+    openDetailShow()
+  }
+}
+
+// 关闭详情弹窗
+const closeDetailShow = () => {
+  detailShow.value = false
+  formData.value = {
+    name: '',
+    tableName: '',
+    templateID: '',
+    templateInfo: '',
+  }
+}
+
+>>>>>>> f46b498b (简化描述)
 // 打开弹窗
 const openDialog = () => {
   type.value = 'create'

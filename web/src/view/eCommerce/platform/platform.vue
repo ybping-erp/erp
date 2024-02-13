@@ -53,7 +53,7 @@
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
-                查看详情
+                详情
             </el-button>
             <el-button type="primary" link icon="edit" class="table-button" @click="updatePlatformFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
@@ -91,7 +91,7 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="查看详情" destroy-on-close>
+    <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="详情" destroy-on-close>
       <el-scrollbar height="550px">
         <el-descriptions column="1" border>
                 <el-descriptions-item label="平台名称">
@@ -296,7 +296,7 @@ const deletePlatformFunc = async (row) => {
 const dialogFormVisible = ref(false)
 
 
-// 查看详情控制标记
+// 详情控制标记
 const detailShow = ref(false)
 
 
