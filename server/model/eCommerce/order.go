@@ -18,7 +18,7 @@ type Order struct {
 	TotalAmount           *float64         `json:"totalAmount" form:"totalAmount" gorm:"column:total_amount;comment:订单总金额;size:12;"`                                //订单总金额
 	Discount              *float64         `json:"discount" form:"discount" gorm:"column:discount;comment:订单折扣金额;size:5;"`                                          //订单折扣金额
 	Tax                   *float64         `json:"tax" form:"tax" gorm:"column:tax;comment:订单税额;size:8;"`                                                           //订单税额
-	StatusId              *int             `json:"statusId" form:"statusId" gorm:"column:status_id;comment:订单当前状态ID;size:20;"`                                      //状态ID
+	Status                *int             `json:"status" form:"status" gorm:"column:status;comment:订单当前状态ID;size:20;"`                                             //状态ID
 	CustomerId            string           `json:"customerId" form:"customerId" gorm:"column:customer_id;comment:客户的标识符;size:50;"`                                  //客户ID
 	CustomerName          string           `json:"customerName" form:"customerName" gorm:"column:customer_name;comment:客户名称;size:50;"`                              //客户名称
 	CustomerTel           string           `json:"customerTel" form:"customerTel" gorm:"column:customer_tel;comment:客户电话;size:50;"`                                 //客户电话

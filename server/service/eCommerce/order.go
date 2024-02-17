@@ -72,8 +72,8 @@ func (orderService *OrderService) GetOrderInfoList(info eCommerceReq.OrderSearch
 	if info.ShopName != "" {
 		db = db.Where("shop_name LIKE ?", "%"+info.ShopName+"%")
 	}
-	if info.StatusId != nil {
-		db = db.Where("status_id = ?", info.StatusId)
+	if info.Status != nil {
+		db = db.Where("status = ?", info.Status)
 	}
 	if info.ShippingOrderId != "" {
 		db = db.Where("shipping_order_id = ?", info.ShippingOrderId)

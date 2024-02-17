@@ -36,7 +36,7 @@ func (orderApi *OrderApi) CreateOrder(c *gin.Context) {
 		return
 	}
 	verify := utils.Rules{
-		"StatusId": {utils.NotEmpty()},
+		"Status": {utils.NotEmpty()},
 	}
 	if err := utils.Verify(order, verify); err != nil {
 		response.FailWithMessage(err.Error(), c)
@@ -115,7 +115,7 @@ func (orderApi *OrderApi) UpdateOrder(c *gin.Context) {
 		return
 	}
 	verify := utils.Rules{
-		"StatusId": {utils.NotEmpty()},
+		"Status": {utils.NotEmpty()},
 	}
 	if err := utils.Verify(order, verify); err != nil {
 		response.FailWithMessage(err.Error(), c)

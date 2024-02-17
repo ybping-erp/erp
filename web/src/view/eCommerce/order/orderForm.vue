@@ -23,8 +23,8 @@
         <el-form-item label="订单税额:" prop="tax">
           <el-input-number v-model="formData.tax" :precision="2" :clearable="true"></el-input-number>
        </el-form-item>
-        <el-form-item label="状态ID:" prop="statusId">
-          <el-select v-model="formData.statusId" placeholder="请选择" :clearable="false">
+        <el-form-item label="状态ID:" prop="status">
+          <el-select v-model="formData.status" placeholder="请选择" :clearable="false">
             <el-option v-for="(item,key) in order_statusOptions" :key="key" :label="item.label" :value="item.value" />
           </el-select>
        </el-form-item>
@@ -115,7 +115,7 @@ const formData = ref({
             totalAmount: 0,
             discount: 0,
             tax: 0,
-            statusId: undefined,
+            status: undefined,
             customerId: '',
             customerName: '',
             customerTel: '',
@@ -135,7 +135,7 @@ const formData = ref({
         })
 // 验证规则
 const rule = reactive({
-               statusId : [{
+               status : [{
                    required: true,
                    message: '',
                    trigger: ['input','blur'],

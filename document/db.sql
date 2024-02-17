@@ -119,7 +119,7 @@ CREATE TABLE t_order (
     discount DECIMAL(5, 2) COMMENT '订单折扣金额',
     tax DECIMAL(8, 2) COMMENT '订单税额',
     
-    status_id BIGINT UNSIGNED COMMENT '订单当前状态ID',
+    status BIGINT UNSIGNED COMMENT '订单当前状态ID',
     status_name VARCHAR(50) COMMENT '订单当前状态',
 
     customer_id VARCHAR(50) COMMENT '客户的标识符',
@@ -150,7 +150,7 @@ CREATE TABLE t_order (
 INSERT INTO t_order (
     platform_name, shop_id, shop_name, platform_order_id,
     total_amount, discount, tax,
-    status_id,
+    status,
     customer_id, customer_name, customer_tel, customer_email, customer_remarks,
     payment_method, payment_at,
     shipping_order_id, shipping_cost,

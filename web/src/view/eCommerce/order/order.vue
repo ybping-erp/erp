@@ -32,8 +32,8 @@
          <el-input v-model="searchInfo.shopName" placeholder="搜索条件" />
 
         </el-form-item>
-           <el-form-item label="状态" prop="statusId">
-            <el-select v-model="searchInfo.statusId" clearable placeholder="请选择" @clear="()=>{searchInfo.statusId=undefined}">
+           <el-form-item label="状态" prop="status">
+            <el-select v-model="searchInfo.status" clearable placeholder="请选择" @clear="()=>{searchInfo.status=undefined}">
               <el-option v-for="(item,key) in order_statusOptions" :key="key" :label="item.label" :value="item.value" />
             </el-select>
             </el-form-item>
@@ -80,9 +80,9 @@
         <el-table-column align="left" label="总金额" prop="totalAmount" width="120" />
         <!-- <el-table-column align="left" label="折扣金额" prop="discount" width="120" /> -->
         <!-- <el-table-column align="left" label="税额" prop="tax" width="120" /> -->
-        <el-table-column align="left" label="状态" prop="statusId" width="120">
+        <el-table-column align="left" label="状态" prop="status" width="120">
             <template #default="scope">
-            {{ filterDict(scope.row.statusId,order_statusOptions) }}
+            {{ filterDict(scope.row.status,order_statusOptions) }}
             </template>
         </el-table-column>
         <!-- <el-table-column align="left" label="客户ID" prop="customerId" width="120" />
@@ -164,8 +164,8 @@
             <el-form-item label="税额:"  prop="tax" >
               <el-input-number v-model="formData.tax"  style="width:100%" :precision="2" :clearable="true"  />
             </el-form-item>
-            <el-form-item label="状态:"  prop="statusId" >
-              <el-select v-model="formData.statusId" placeholder="请选择状态" style="width:100%" :clearable="true" >
+            <el-form-item label="状态:"  prop="status" >
+              <el-select v-model="formData.status" placeholder="请选择状态" style="width:100%" :clearable="true" >
                 <el-option v-for="(item,key) in order_statusOptions" :key="key" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
@@ -252,7 +252,7 @@
                         {{ formData.tax }}
                 </el-descriptions-item>
                 <el-descriptions-item label="状态">
-                        {{ filterDict(formData.statusId,order_statusOptions) }}
+                        {{ filterDict(formData.status,order_statusOptions) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="客户ID">
                         {{ formData.customerId }}
@@ -337,7 +337,7 @@ const formData = ref({
         totalAmount: 0,
         discount: 0,
         tax: 0,
-        statusId: undefined,
+        status: undefined,
         customerId: '',
         customerName: '',
         customerTel: '',
@@ -554,7 +554,7 @@ const closeDetailShow = () => {
           totalAmount: 0,
           discount: 0,
           tax: 0,
-          statusId: undefined,
+          status: undefined,
           customerId: '',
           customerName: '',
           customerTel: '',
@@ -592,7 +592,7 @@ const closeDialog = () => {
         totalAmount: 0,
         discount: 0,
         tax: 0,
-        statusId: undefined,
+        status: undefined,
         customerId: '',
         customerName: '',
         customerTel: '',
