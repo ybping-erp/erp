@@ -5,6 +5,9 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce"
 	eCommerceReq "github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/shared"
+	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/wangxin1248/gparser"
 )
 
 type OrderService struct {
@@ -89,4 +92,24 @@ func (orderService *OrderService) GetOrderInfoList(info eCommerceReq.OrderSearch
 
 	err = db.Find(&orders).Error
 	return orders, total, err
+}
+
+// getOrderByRules 统计各个订单规则下的订单列表
+// Author [piexlmax](https://github.com/piexlmax)
+func (orderService *OrderService) GetOrdersByRules(orders []*eCommerce.Order, rules []*shared.Rule) (ruleOrderMap map[uint][]*eCommerce.Order, err error) {
+	ruleOrderMap = make(map[uint][]*eCommerce.Order)
+	for _, order := range orders {
+		orderMap := utils.StructToMap(order)
+		for _, rule := range rules {
+			matched, err := gparser.Match(rule.RuleStr, orderMap)
+			if err != nil {
+				return nil, err
+			}
+
+			if matched {
+				ruleOrderMap[rule.ID] = append(ruleOrderMap[rule.ID], order)
+			}
+		}
+	}
+	return
 }
