@@ -2,10 +2,12 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-        <el-form-item label="平台名称" prop="platformName">
-         <el-input v-model="searchInfo.platformName" placeholder="搜索条件" />
+        <el-form-item label="电商平台" prop="platformName">
+         <el-select v-model.number="searchInfo.platformName" placeholder="请选择" style="width:100%" :clearable="true" >
+            <el-option v-for="item in ePlatforms" :key="item.ID" :label="item.name" :value="item.ID" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="平台ID" prop="shopId">
+        <el-form-item label="店铺ID" prop="shopId">
          <el-input v-model="searchInfo.shopId" placeholder="搜索条件" />
 
         </el-form-item>
@@ -42,14 +44,11 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="日期" width="180">
-            <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
-        </el-table-column>
-        <el-table-column align="left" label="平台名称" prop="platformName" width="120" />
-        <el-table-column align="left" label="平台ID" prop="shopId" width="120" />
+        <el-table-column align="left" label="电商平台" prop="platformName" width="120" />
+        <!-- <el-table-column align="left" label="店铺ID" prop="shopId" width="120" /> -->
         <el-table-column align="left" label="店铺名称" prop="shopName" width="120" />
         <el-table-column align="left" label="API Client ID" prop="clientId" width="120" />
-        <el-table-column align="left" label="API Client Cert" prop="clientCert" width="120" />
+        <el-table-column align="left" label="API Client Cert" prop="clientCert" width="160" />
         <el-table-column align="left" label="操作" min-width="120">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
@@ -76,11 +75,13 @@
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" :title="type==='create'?'添加':'修改'" destroy-on-close>
       <el-scrollbar height="500px">
           <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="平台名称:"  prop="platformName" >
-              <el-input v-model="formData.platformName" :clearable="true"  placeholder="请输入平台名称" />
+            <el-form-item label="电商平台:"  prop="platformName" >
+              <el-select v-model.number="formData.platformName" placeholder="请选择" style="width:100%" :clearable="true" >
+            <el-option v-for="item in ePlatforms" :key="item.ID" :label="item.name" :value="item.name" />
+          </el-select>
             </el-form-item>
-            <el-form-item label="平台ID:"  prop="shopId" >
-              <el-input v-model="formData.shopId" :clearable="true"  placeholder="请输入平台ID" />
+            <el-form-item label="店铺ID:"  prop="shopId" >
+              <el-input v-model="formData.shopId" :clearable="true"  placeholder="请输入店铺ID" />
             </el-form-item>
             <el-form-item label="店铺名称:"  prop="shopName" >
               <el-input v-model="formData.shopName" :clearable="true"  placeholder="请输入店铺名称" />
@@ -104,10 +105,10 @@
     <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="详情" destroy-on-close>
       <el-scrollbar height="550px">
         <el-descriptions column="1" border>
-                <el-descriptions-item label="平台名称">
+                <el-descriptions-item label="电商平台">
                         {{ formData.platformName }}
                 </el-descriptions-item>
-                <el-descriptions-item label="平台ID">
+                <el-descriptions-item label="店铺ID">
                         {{ formData.shopId }}
                 </el-descriptions-item>
                 <el-descriptions-item label="店铺名称">
@@ -135,6 +136,10 @@ import {
   getShopList
 } from '@/api/shop'
 
+import {
+  getPlatformList
+} from '@/api/platform'
+
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -153,6 +158,7 @@ const formData = ref({
         clientCert: '',
         })
 
+const ePlatforms = ref([])
 
 // 验证规则
 const rule = reactive({
@@ -229,6 +235,8 @@ getTableData()
 
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
+  const res = await getPlatformList({ page: 1, pageSize: 1000})
+  ePlatforms.value = res.data.list
 }
 
 // 获取需要的字典 可能为空 按需保留

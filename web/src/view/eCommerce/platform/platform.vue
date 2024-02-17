@@ -2,19 +2,9 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
-      <el-form-item label="创建日期" prop="createdAt">
-      <template #label>
-        <span>
-          创建日期
-          <el-tooltip content="搜索范围是开始日期（包含）至结束日期（不包含）">
-            <el-icon><QuestionFilled /></el-icon>
-          </el-tooltip>
-        </span>
-      </template>
-      <el-date-picker v-model="searchInfo.startCreatedAt" type="datetime" placeholder="开始日期" :disabled-date="time=> searchInfo.endCreatedAt ? time.getTime() > searchInfo.endCreatedAt.getTime() : false"></el-date-picker>
-       —
-      <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
-      </el-form-item>
+        <el-form-item label="名称" prop="name">
+         <el-input v-model="searchInfo.name" placeholder="搜索条件" />
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">查询</el-button>
           <el-button icon="refresh" @click="onReset">重置</el-button>
@@ -44,16 +34,17 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
+        <el-table-column align="left" label="平台名称" prop="name" width="120" />
+        <el-table-column align="left" label="平台logo" width="120">
+        </el-table-column>
         <el-table-column align="left" label="日期" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
-        <el-table-column align="left" label="平台名称" prop="name" width="120" />
-        <el-table-column align="left" label="平台logo" prop="logoUrl" width="120" />
         <el-table-column align="left" label="操作" min-width="120">
             <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
-                详情
+                查看详情
             </el-button>
             <el-button type="primary" link icon="edit" class="table-button" @click="updatePlatformFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
@@ -91,7 +82,7 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="详情" destroy-on-close>
+    <el-dialog v-model="detailShow" style="width: 800px" lock-scroll :before-close="closeDetailShow" title="查看详情" destroy-on-close>
       <el-scrollbar height="550px">
         <el-descriptions column="1" border>
                 <el-descriptions-item label="平台名称">
@@ -115,6 +106,8 @@ import {
   findPlatform,
   getPlatformList
 } from '@/api/platform'
+
+import CustomPic from '@/components/customPic/index.vue'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict, ReturnArrImg, onDownloadFile } from '@/utils/format'
@@ -296,7 +289,7 @@ const deletePlatformFunc = async (row) => {
 const dialogFormVisible = ref(false)
 
 
-// 详情控制标记
+// 查看详情控制标记
 const detailShow = ref(false)
 
 
