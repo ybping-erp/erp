@@ -1,7 +1,7 @@
 package eCommerce
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/api/v1"
+	v1 "github.com/flipped-aurora/gin-vue-admin/server/api/v1"
 	"github.com/flipped-aurora/gin-vue-admin/server/middleware"
 	"github.com/gin-gonic/gin"
 )
@@ -15,13 +15,14 @@ func (s *ShopRouter) InitShopRouter(Router *gin.RouterGroup) {
 	shopRouterWithoutRecord := Router.Group("shop")
 	var shopApi = v1.ApiGroupApp.ECommerceApiGroup.ShopApi
 	{
-		shopRouter.POST("createShop", shopApi.CreateShop)   // 新建店铺
-		shopRouter.DELETE("deleteShop", shopApi.DeleteShop) // 删除店铺
+		shopRouter.POST("createShop", shopApi.CreateShop)             // 新建店铺
+		shopRouter.DELETE("deleteShop", shopApi.DeleteShop)           // 删除店铺
 		shopRouter.DELETE("deleteShopByIds", shopApi.DeleteShopByIds) // 批量删除店铺
-		shopRouter.PUT("updateShop", shopApi.UpdateShop)    // 更新店铺
+		shopRouter.PUT("updateShop", shopApi.UpdateShop)              // 更新店铺
+		shopRouter.POST("authorize", shopApi.AuthorizeShop)           // 店铺第三方授权
 	}
 	{
-		shopRouterWithoutRecord.GET("findShop", shopApi.FindShop)        // 根据ID获取店铺
-		shopRouterWithoutRecord.GET("getShopList", shopApi.GetShopList)  // 获取店铺列表
+		shopRouterWithoutRecord.GET("findShop", shopApi.FindShop)       // 根据ID获取店铺
+		shopRouterWithoutRecord.GET("getShopList", shopApi.GetShopList) // 获取店铺列表
 	}
 }

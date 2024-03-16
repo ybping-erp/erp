@@ -51,10 +51,7 @@
         <el-table-column align="left" label="API Client Cert" prop="clientCert" width="160" />
         <el-table-column align="left" label="操作" min-width="120">
             <template #default="scope">
-            <el-button type="primary" link class="table-button" @click="getDetails(scope.row)">
-                <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
-                详情
-            </el-button>
+              <el-button type="primary" link icon="edit" class="table-button" @click="authorizeFunc(scope.row)">授权</el-button>
             <el-button type="primary" link icon="edit" class="table-button" @click="updateShopFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
             </template>
@@ -133,7 +130,8 @@ import {
   deleteShopByIds,
   updateShop,
   findShop,
-  getShopList
+  getShopList,
+  authorizeShop
 } from '@/api/shop'
 
 import {
@@ -295,6 +293,16 @@ const onDelete = async() => {
 
 // 行为控制标记（弹窗内部需要增还是改）
 const type = ref('')
+
+// 店铺第三方授权
+const authorizeFunc = async(row) => {
+  const res = await authorizeShop({ID: row.ID}) 
+  type.value = 'update'
+  if (res.code === 0) {
+    window.open(res.data.oAuthUrl);
+  }
+}
+
 
 // 更新行
 const updateShopFunc = async(row) => {

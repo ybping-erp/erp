@@ -29,4 +29,7 @@ type Server struct {
 
 	// 跨域配置
 	Cors CORS `mapstructure:"cors" json:"cors" yaml:"cors"`
+
+	// eBay Open API config
+	Ebay EBayCredential `mapstructure:"ebay" json:"ebay" yaml:"ebay"`
 }

@@ -1,6 +1,7 @@
 package eCommerce
 
 import (
+	"github.com/flipped-aurora/gin-vue-admin/server/eBay/oauth"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
@@ -168,4 +169,42 @@ func (shopApi *ShopApi) GetShopList(c *gin.Context) {
 			PageSize: pageInfo.PageSize,
 		}, "获取成功", c)
 	}
+}
+
+// GetShopAccessToken 店铺授权
+// @Tags Shop
+// @Summary 店铺授权
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body eCommerce.Shop true "店铺授权"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"授权成功"}"
+// @Router /shop/authorize [post]
+func (shopApi *ShopApi) AuthorizeShop(c *gin.Context) {
+	var req request.GetById
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	var shop eCommerce.Shop
+	if shop, err = shopService.GetShop(req.Uint()); err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Error(err))
+		response.FailWithMessage("查询失败", c)
+		return
+	}
+
+	if shop.PlatformName == "eBay" {
+		client := oauth.GetAPIClient()
+		if oAuthUrl, err := client.GenerateUserAuthorizationURL(c, "random-state", client.GetDefaultScopes()); err != nil {
+			global.GVA_LOG.Error("授权失败!", zap.Error(err))
+			response.FailWithMessage("授权失败", c)
+		} else {
+			response.OkWithData(gin.H{"oAuthUrl": oAuthUrl}, c)
+		}
+		return
+	}
+
+	response.FailWithMessage("不支持该平台授权", c)
 }

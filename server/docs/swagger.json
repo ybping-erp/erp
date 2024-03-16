@@ -6,7 +6,6 @@
         "contact": {},
         "version": "v2.6.2"
     },
-    "basePath": "/",
     "paths": {
         "/api/createApi": {
             "post": {
@@ -1918,8 +1917,12 @@
                     },
                     {
                         "type": "integer",
-                        "description": "用户id",
-                        "name": "creator_id",
+                        "name": "createdBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "deletedBy",
                         "in": "query"
                     },
                     {
@@ -1944,6 +1947,11 @@
                         "type": "string",
                         "description": "更新时间",
                         "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "updatedBy",
                         "in": "query"
                     }
                 ],
@@ -1989,8 +1997,12 @@
                     },
                     {
                         "type": "integer",
-                        "description": "用户id",
-                        "name": "creator_id",
+                        "name": "createdBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "deletedBy",
                         "in": "query"
                     },
                     {
@@ -2043,6 +2055,11 @@
                         "type": "string",
                         "description": "更新时间",
                         "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "updatedBy",
                         "in": "query"
                     }
                 ],
@@ -3248,6 +3265,12 @@
                         "required": true
                     },
                     {
+                        "type": "integer",
+                        "description": "入库状态",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "更新时间",
                         "name": "updatedAt",
@@ -3332,6 +3355,11 @@
                     {
                         "type": "string",
                         "name": "startCreatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "status",
                         "in": "query"
                     }
                 ],
@@ -3455,6 +3483,44 @@
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/addInventoryFromInboundLog": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "创建商品库存",
+                "parameters": [
+                    {
+                        "description": "创建商品库存",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wms.Inventory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"入库成功\"}",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -5001,12 +5067,6 @@
                     },
                     {
                         "type": "string",
-                        "description": "店铺订单号",
-                        "name": "orderId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "付款时间",
                         "name": "paymentAt",
                         "in": "query"
@@ -5021,6 +5081,12 @@
                         "type": "string",
                         "description": "电商平台",
                         "name": "platformName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "店铺订单号",
+                        "name": "platformOrderId",
                         "in": "query"
                     },
                     {
@@ -5092,7 +5158,7 @@
                     {
                         "type": "integer",
                         "description": "状态ID",
-                        "name": "statusId",
+                        "name": "status",
                         "in": "query"
                     },
                     {
@@ -5202,12 +5268,6 @@
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "店铺订单号",
-                        "name": "orderId",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "description": "页码",
                         "name": "page",
@@ -5235,6 +5295,12 @@
                         "type": "string",
                         "description": "电商平台",
                         "name": "platformName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "店铺订单号",
+                        "name": "platformOrderId",
                         "in": "query"
                     },
                     {
@@ -5311,7 +5377,7 @@
                     {
                         "type": "integer",
                         "description": "状态ID",
-                        "name": "statusId",
+                        "name": "status",
                         "in": "query"
                     },
                     {
@@ -5533,8 +5599,18 @@
                     },
                     {
                         "type": "string",
-                        "description": "关联订单的标识符",
+                        "name": "goodsSku",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "name": "orderId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关联订单的标识符",
+                        "name": "platformOrderId",
                         "in": "query"
                     },
                     {
@@ -5627,13 +5703,17 @@
                     },
                     {
                         "type": "string",
+                        "name": "goodsSku",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "关键字",
                         "name": "keyword",
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "关联订单的标识符",
+                        "type": "integer",
                         "name": "orderId",
                         "in": "query"
                     },
@@ -5647,6 +5727,12 @@
                         "type": "integer",
                         "description": "每页大小",
                         "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关联订单的标识符",
+                        "name": "platformOrderId",
                         "in": "query"
                     },
                     {
@@ -5904,6 +5990,12 @@
                         "required": true
                     },
                     {
+                        "type": "integer",
+                        "description": "出库状态",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "更新时间",
                         "name": "updatedAt",
@@ -5989,6 +6081,11 @@
                         "type": "string",
                         "name": "startCreatedAt",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "status",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -6026,6 +6123,323 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/wms.OutboundLog"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"更新成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/pickOrder/createPickOrder": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PickOrder"
+                ],
+                "summary": "创建拣货单",
+                "parameters": [
+                    {
+                        "description": "创建拣货单",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wms.PickOrder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"创建成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/pickOrder/deletePickOrder": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PickOrder"
+                ],
+                "summary": "删除拣货单",
+                "parameters": [
+                    {
+                        "description": "删除拣货单",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wms.PickOrder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"删除成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/pickOrder/deletePickOrderByIds": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PickOrder"
+                ],
+                "summary": "批量删除拣货单",
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"批量删除成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/pickOrder/findPickOrder": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PickOrder"
+                ],
+                "summary": "用id查询拣货单",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主键ID",
+                        "name": "ID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "createdBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "deletedBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "商品",
+                        "name": "goodsName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "SKU",
+                        "name": "goodsSku",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "订单",
+                        "name": "orderId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "拣货数量",
+                        "name": "quantity",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "货架",
+                        "name": "rackId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "updatedBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "仓库",
+                        "name": "warehouseId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "库区",
+                        "name": "zoneId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"查询成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/pickOrder/getPickOrderList": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PickOrder"
+                ],
+                "summary": "分页获取拣货单列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "endCreatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "goodsName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "goodsSku",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "orderId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "startCreatedAt",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/pickOrder/updatePickOrder": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PickOrder"
+                ],
+                "summary": "更新拣货单",
+                "parameters": [
+                    {
+                        "description": "更新拣货单",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wms.PickOrder"
                         }
                     }
                 ],
@@ -6244,11 +6658,6 @@
                     },
                     {
                         "type": "string",
-                        "name": "endCreatedAt",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "关键字",
                         "name": "keyword",
                         "in": "query"
@@ -6275,11 +6684,6 @@
                         "type": "integer",
                         "description": "每页大小",
                         "name": "pageSize",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "startCreatedAt",
                         "in": "query"
                     },
                     {
@@ -7089,6 +7493,318 @@
                 }
             }
         },
+        "/rule/createRule": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rule"
+                ],
+                "summary": "创建规则",
+                "parameters": [
+                    {
+                        "description": "创建规则",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared.Rule"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"创建成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/rule/deleteRule": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rule"
+                ],
+                "summary": "删除规则",
+                "parameters": [
+                    {
+                        "description": "删除规则",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared.Rule"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"删除成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/rule/deleteRuleByIds": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rule"
+                ],
+                "summary": "批量删除规则",
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"批量删除成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/rule/findRule": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rule"
+                ],
+                "summary": "用id查询规则",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主键ID",
+                        "name": "ID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "动作代码",
+                        "name": "actionCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "动作描述",
+                        "name": "actionDesc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "createdBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "deletedBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "领域",
+                        "name": "domain",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "规则名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "规则条件",
+                        "name": "ruleStr",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "规则状态",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "系统默认规则",
+                        "name": "systemDefault",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "updatedBy",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"查询成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/rule/getRuleList": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rule"
+                ],
+                "summary": "分页获取规则列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "endCreatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "startCreatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/rule/updateRule": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rule"
+                ],
+                "summary": "更新规则",
+                "parameters": [
+                    {
+                        "description": "更新规则",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared.Rule"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"更新成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/shop/createShop": {
             "post": {
                 "security": [
@@ -7768,6 +8484,347 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/wms.SkuMapping"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"更新成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/supplier/createSupplier": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Supplier"
+                ],
+                "summary": "创建供应商",
+                "parameters": [
+                    {
+                        "description": "创建供应商",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wms.Supplier"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"创建成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/supplier/deleteSupplier": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Supplier"
+                ],
+                "summary": "删除供应商",
+                "parameters": [
+                    {
+                        "description": "删除供应商",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wms.Supplier"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"删除成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/supplier/deleteSupplierByIds": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Supplier"
+                ],
+                "summary": "批量删除供应商",
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"批量删除成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/supplier/findSupplier": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Supplier"
+                ],
+                "summary": "用id查询供应商",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主键ID",
+                        "name": "ID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "收款人",
+                        "name": "bankAccountName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "银行卡号",
+                        "name": "bankAccountNumber",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "银行名称",
+                        "name": "bankName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "公司地址",
+                        "name": "companyAddress",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "公司网址",
+                        "name": "companyWebsite",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "联系人",
+                        "name": "contactName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "联系电话",
+                        "name": "contactTelephone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "createdBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "deletedBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "付款方式",
+                        "name": "paymentMethod",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "备注信息",
+                        "name": "remarks",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "结算方式",
+                        "name": "settlementMethod",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "updatedBy",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"查询成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/supplier/getSupplierList": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Supplier"
+                ],
+                "summary": "分页获取供应商列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "contactName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "contactTelephone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "endCreatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "startCreatedAt",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/supplier/updateSupplier": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Supplier"
+                ],
+                "summary": "更新供应商",
+                "parameters": [
+                    {
+                        "description": "更新供应商",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wms.Supplier"
                         }
                     }
                 ],
@@ -8555,7 +9612,8 @@
                 "tags": [
                     "SysExportTemplate"
                 ],
-                "summary": "导出表格模板"
+                "summary": "导出表格模板",
+                "responses": {}
             }
         },
         "/sysExportTemplate/findSysExportTemplate": {
@@ -8590,8 +9648,24 @@
                     },
                     {
                         "type": "string",
+                        "description": "数据库名称",
+                        "name": "dbName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "模板名称",
                         "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "order",
                         "in": "query"
                     },
                     {
@@ -8661,6 +9735,12 @@
                     },
                     {
                         "type": "string",
+                        "description": "数据库名称",
+                        "name": "dbName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "endCreatedAt",
                         "in": "query"
                     },
@@ -8671,9 +9751,19 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "模板名称",
                         "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "order",
                         "in": "query"
                     },
                     {
@@ -8744,7 +9834,8 @@
                 "tags": [
                     "SysImportTemplate"
                 ],
-                "summary": "导入表格"
+                "summary": "导入表格",
+                "responses": {}
             }
         },
         "/sysExportTemplate/updateSysExportTemplate": {
@@ -10416,39 +11507,6 @@
                 }
             }
         },
-        "config.Email": {
-            "type": "object",
-            "properties": {
-                "from": {
-                    "description": "发件人  你自己要发邮件的邮箱",
-                    "type": "string"
-                },
-                "host": {
-                    "description": "服务器地址 例如 smtp.qq.com  请前往QQ或者你要发邮件的邮箱查看其smtp协议",
-                    "type": "string"
-                },
-                "is-ssl": {
-                    "description": "是否SSL   是否开启SSL",
-                    "type": "boolean"
-                },
-                "nickname": {
-                    "description": "昵称    发件人昵称 通常为自己的邮箱",
-                    "type": "string"
-                },
-                "port": {
-                    "description": "端口     请前往QQ或者你要发邮件的邮箱查看其smtp协议 大多为 465",
-                    "type": "integer"
-                },
-                "secret": {
-                    "description": "密钥    用于登录的密钥 最好不要用邮箱密码 去邮箱smtp申请一个用于登录的密钥",
-                    "type": "string"
-                },
-                "to": {
-                    "description": "收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用",
-                    "type": "string"
-                }
-            }
-        },
         "config.Excel": {
             "type": "object",
             "properties": {
@@ -10858,7 +11916,11 @@
                 },
                 "autocode": {
                     "description": "auto",
-                    "$ref": "#/definitions/config.Autocode"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.Autocode"
+                        }
+                    ]
                 },
                 "aws-s3": {
                     "$ref": "#/definitions/config.AwsS3"
@@ -10868,7 +11930,11 @@
                 },
                 "cors": {
                     "description": "跨域配置",
-                    "$ref": "#/definitions/config.CORS"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.CORS"
+                        }
+                    ]
                 },
                 "db-list": {
                     "type": "array",
@@ -10877,7 +11943,7 @@
                     }
                 },
                 "email": {
-                    "$ref": "#/definitions/config.Email"
+                    "$ref": "#/definitions/github_com_flipped-aurora_gin-vue-admin_server_config.Email"
                 },
                 "excel": {
                     "$ref": "#/definitions/config.Excel"
@@ -10890,7 +11956,11 @@
                 },
                 "local": {
                     "description": "oss",
-                    "$ref": "#/definitions/config.Local"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.Local"
+                        }
+                    ]
                 },
                 "mongo": {
                     "$ref": "#/definitions/config.Mongo"
@@ -10900,7 +11970,11 @@
                 },
                 "mysql": {
                     "description": "gorm",
-                    "$ref": "#/definitions/config.Mysql"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.Mysql"
+                        }
+                    ]
                 },
                 "oracle": {
                     "$ref": "#/definitions/config.Oracle"
@@ -11058,10 +12132,6 @@
                     "description": "数据库类型:mysql(默认)|sqlite|sqlserver|postgresql",
                     "type": "string"
                 },
-                "env": {
-                    "description": "环境值",
-                    "type": "string"
-                },
                 "iplimit-count": {
                     "type": "integer"
                 },
@@ -11170,11 +12240,10 @@
                     "description": "创建时间",
                     "type": "string"
                 },
-                "creator": {
-                    "$ref": "#/definitions/system.SysUser"
+                "createdBy": {
+                    "type": "integer"
                 },
-                "creator_id": {
-                    "description": "用户id",
+                "deletedBy": {
                     "type": "integer"
                 },
                 "domain": {
@@ -11192,6 +12261,9 @@
                 "updatedAt": {
                     "description": "更新时间",
                     "type": "string"
+                },
+                "updatedBy": {
+                    "type": "integer"
                 }
             }
         },
@@ -11230,9 +12302,11 @@
                     "description": "订单折扣金额",
                     "type": "number"
                 },
-                "orderId": {
-                    "description": "店铺订单号",
-                    "type": "string"
+                "orderItems": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/eCommerce.OrderItem"
+                    }
                 },
                 "paymentAt": {
                     "description": "付款时间",
@@ -11242,8 +12316,18 @@
                     "description": "支付方式",
                     "type": "string"
                 },
+                "pickOrders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/wms.PickOrder"
+                    }
+                },
                 "platformName": {
                     "description": "电商平台",
+                    "type": "string"
+                },
+                "platformOrderId": {
+                    "description": "店铺订单号",
                     "type": "string"
                 },
                 "refundAt": {
@@ -11290,7 +12374,7 @@
                     "description": "店铺名称",
                     "type": "string"
                 },
-                "statusId": {
+                "status": {
                     "description": "状态ID",
                     "type": "integer"
                 },
@@ -11323,7 +12407,13 @@
                     "description": "创建时间",
                     "type": "string"
                 },
+                "goodsSku": {
+                    "type": "string"
+                },
                 "orderId": {
+                    "type": "integer"
+                },
+                "platformOrderId": {
                     "description": "关联订单的标识符",
                     "type": "string"
                 },
@@ -11495,7 +12585,11 @@
                 },
                 "sysUser": {
                     "description": "管理详情",
-                    "$ref": "#/definitions/system.SysUser"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/system.SysUser"
+                        }
+                    ]
                 },
                 "sysUserAuthorityID": {
                     "description": "管理角色ID",
@@ -11617,6 +12711,39 @@
                 },
                 "url": {
                     "description": "文件地址",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_flipped-aurora_gin-vue-admin_server_config.Email": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "description": "发件人  你自己要发邮件的邮箱",
+                    "type": "string"
+                },
+                "host": {
+                    "description": "服务器地址 例如 smtp.qq.com  请前往QQ或者你要发邮件的邮箱查看其smtp协议",
+                    "type": "string"
+                },
+                "is-ssl": {
+                    "description": "是否SSL   是否开启SSL",
+                    "type": "boolean"
+                },
+                "nickname": {
+                    "description": "昵称    发件人昵称 通常为自己的邮箱",
+                    "type": "string"
+                },
+                "port": {
+                    "description": "端口     请前往QQ或者你要发邮件的邮箱查看其smtp协议 大多为 465",
+                    "type": "integer"
+                },
+                "secret": {
+                    "description": "密钥    用于登录的密钥 最好不要用邮箱密码 去邮箱smtp申请一个用于登录的密钥",
+                    "type": "string"
+                },
+                "to": {
+                    "description": "收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用",
                     "type": "string"
                 }
             }
@@ -12014,9 +13141,7 @@
         "response.PageResult": {
             "type": "object",
             "properties": {
-                "list": {
-                    "type": "object"
-                },
+                "list": {},
                 "page": {
                     "type": "integer"
                 },
@@ -12045,9 +13170,7 @@
                 "code": {
                     "type": "integer"
                 },
-                "data": {
-                    "type": "object"
-                },
+                "data": {},
                 "msg": {
                     "type": "string"
                 }
@@ -12166,6 +13289,60 @@
                 }
             }
         },
+        "shared.Rule": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "description": "主键ID",
+                    "type": "integer"
+                },
+                "actionCode": {
+                    "description": "动作代码",
+                    "type": "integer"
+                },
+                "actionDesc": {
+                    "description": "动作描述",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "integer"
+                },
+                "deletedBy": {
+                    "type": "integer"
+                },
+                "domain": {
+                    "description": "领域",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "规则名称",
+                    "type": "string"
+                },
+                "ruleStr": {
+                    "description": "规则条件",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "规则状态",
+                    "type": "integer"
+                },
+                "systemDefault": {
+                    "description": "系统默认规则",
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "integer"
+                }
+            }
+        },
         "system.AutoCodeStruct": {
             "type": "object",
             "properties": {
@@ -12223,6 +13400,35 @@
                 },
                 "tableName": {
                     "description": "表名",
+                    "type": "string"
+                }
+            }
+        },
+        "system.Condition": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "description": "主键ID",
+                    "type": "integer"
+                },
+                "column": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "from": {
+                    "type": "string"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "templateID": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
                     "type": "string"
                 }
             }
@@ -12285,6 +13491,34 @@
                 "sort": {
                     "description": "是否增加排序",
                     "type": "boolean"
+                }
+            }
+        },
+        "system.Meta": {
+            "type": "object",
+            "properties": {
+                "activeName": {
+                    "type": "string"
+                },
+                "closeTab": {
+                    "description": "自动关闭tab",
+                    "type": "boolean"
+                },
+                "defaultMenu": {
+                    "description": "是否是基础路由（开发中）",
+                    "type": "boolean"
+                },
+                "icon": {
+                    "description": "菜单图标",
+                    "type": "string"
+                },
+                "keepAlive": {
+                    "description": "是否缓存",
+                    "type": "boolean"
+                },
+                "title": {
+                    "description": "菜单名",
+                    "type": "string"
                 }
             }
         },
@@ -12404,9 +13638,6 @@
                     "description": "主键ID",
                     "type": "integer"
                 },
-                "activeName": {
-                    "type": "string"
-                },
                 "authoritys": {
                     "type": "array",
                     "items": {
@@ -12419,10 +13650,6 @@
                         "$ref": "#/definitions/system.SysBaseMenu"
                     }
                 },
-                "closeTab": {
-                    "description": "自动关闭tab",
-                    "type": "boolean"
-                },
                 "component": {
                     "description": "对应前端文件路径",
                     "type": "string"
@@ -12431,20 +13658,8 @@
                     "description": "创建时间",
                     "type": "string"
                 },
-                "defaultMenu": {
-                    "description": "是否是基础路由（开发中）",
-                    "type": "boolean"
-                },
                 "hidden": {
                     "description": "是否在列表隐藏",
-                    "type": "boolean"
-                },
-                "icon": {
-                    "description": "菜单图标",
-                    "type": "string"
-                },
-                "keepAlive": {
-                    "description": "是否缓存",
                     "type": "boolean"
                 },
                 "menuBtn": {
@@ -12452,6 +13667,14 @@
                     "items": {
                         "$ref": "#/definitions/system.SysBaseMenuBtn"
                     }
+                },
+                "meta": {
+                    "description": "附加属性",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/system.Meta"
+                        }
+                    ]
                 },
                 "name": {
                     "description": "路由name",
@@ -12474,10 +13697,6 @@
                 "sort": {
                     "description": "排序标记",
                     "type": "integer"
-                },
-                "title": {
-                    "description": "菜单名",
-                    "type": "string"
                 },
                 "updatedAt": {
                     "description": "更新时间",
@@ -12630,12 +13849,28 @@
                     "description": "主键ID",
                     "type": "integer"
                 },
+                "conditions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system.Condition"
+                    }
+                },
                 "createdAt": {
                     "description": "创建时间",
                     "type": "string"
                 },
+                "dbName": {
+                    "description": "数据库名称",
+                    "type": "string"
+                },
+                "limit": {
+                    "type": "integer"
+                },
                 "name": {
                     "description": "模板名称",
+                    "type": "string"
+                },
+                "order": {
                     "type": "string"
                 },
                 "tableName": {
@@ -12663,9 +13898,6 @@
                     "description": "主键ID",
                     "type": "integer"
                 },
-                "activeName": {
-                    "type": "string"
-                },
                 "authoritys": {
                     "type": "array",
                     "items": {
@@ -12684,10 +13916,6 @@
                         "$ref": "#/definitions/system.SysMenu"
                     }
                 },
-                "closeTab": {
-                    "description": "自动关闭tab",
-                    "type": "boolean"
-                },
                 "component": {
                     "description": "对应前端文件路径",
                     "type": "string"
@@ -12696,20 +13924,8 @@
                     "description": "创建时间",
                     "type": "string"
                 },
-                "defaultMenu": {
-                    "description": "是否是基础路由（开发中）",
-                    "type": "boolean"
-                },
                 "hidden": {
                     "description": "是否在列表隐藏",
-                    "type": "boolean"
-                },
-                "icon": {
-                    "description": "菜单图标",
-                    "type": "string"
-                },
-                "keepAlive": {
-                    "description": "是否缓存",
                     "type": "boolean"
                 },
                 "menuBtn": {
@@ -12720,6 +13936,14 @@
                 },
                 "menuId": {
                     "type": "string"
+                },
+                "meta": {
+                    "description": "附加属性",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/system.Meta"
+                        }
+                    ]
                 },
                 "name": {
                     "description": "路由name",
@@ -12742,10 +13966,6 @@
                 "sort": {
                     "description": "排序标记",
                     "type": "integer"
-                },
-                "title": {
-                    "description": "菜单名",
-                    "type": "string"
                 },
                 "updatedAt": {
                     "description": "更新时间",
@@ -13050,6 +14270,10 @@
                     "description": "货架",
                     "type": "integer"
                 },
+                "status": {
+                    "description": "入库状态",
+                    "type": "integer"
+                },
                 "updatedAt": {
                     "description": "更新时间",
                     "type": "string"
@@ -13241,6 +14465,64 @@
                     "description": "货架",
                     "type": "integer"
                 },
+                "status": {
+                    "description": "出库状态",
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "integer"
+                },
+                "warehouseId": {
+                    "description": "仓库",
+                    "type": "integer"
+                },
+                "zoneId": {
+                    "description": "库区",
+                    "type": "integer"
+                }
+            }
+        },
+        "wms.PickOrder": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "description": "主键ID",
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "integer"
+                },
+                "deletedBy": {
+                    "type": "integer"
+                },
+                "goodsName": {
+                    "description": "商品",
+                    "type": "string"
+                },
+                "goodsSku": {
+                    "description": "SKU",
+                    "type": "string"
+                },
+                "orderId": {
+                    "description": "订单",
+                    "type": "integer"
+                },
+                "quantity": {
+                    "description": "拣货数量",
+                    "type": "integer"
+                },
+                "rackId": {
+                    "description": "货架",
+                    "type": "integer"
+                },
                 "updatedAt": {
                     "description": "更新时间",
                     "type": "string"
@@ -13332,6 +14614,76 @@
                 "productSku": {
                     "description": "产品SKU",
                     "type": "string"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "wms.Supplier": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "description": "主键ID",
+                    "type": "integer"
+                },
+                "bankAccountName": {
+                    "description": "收款人",
+                    "type": "string"
+                },
+                "bankAccountNumber": {
+                    "description": "银行卡号",
+                    "type": "string"
+                },
+                "bankName": {
+                    "description": "银行名称",
+                    "type": "string"
+                },
+                "companyAddress": {
+                    "description": "公司地址",
+                    "type": "string"
+                },
+                "companyWebsite": {
+                    "description": "公司网址",
+                    "type": "string"
+                },
+                "contactName": {
+                    "description": "联系人",
+                    "type": "string"
+                },
+                "contactTelephone": {
+                    "description": "联系电话",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "integer"
+                },
+                "deletedBy": {
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "paymentMethod": {
+                    "description": "付款方式",
+                    "type": "integer"
+                },
+                "remarks": {
+                    "description": "备注信息",
+                    "type": "string"
+                },
+                "settlementMethod": {
+                    "description": "结算方式",
+                    "type": "integer"
                 },
                 "updatedAt": {
                     "description": "更新时间",

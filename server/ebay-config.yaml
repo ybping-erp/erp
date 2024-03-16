@@ -1,0 +1,14 @@
+name: eBay-Config
+
+# eBay Trading API OAuth - https://developer.ebay.com/api-docs/static/oauth-tokens.html
+api.sandbox.ebay.com:
+    appid: YabinPin-MyERP-SBX-80fe6cabc-56231a8e
+    certid: SBX-0fe6cabcfbe4-d5bc-467a-a4a4-194e
+    devid: 323b0815-15af-4627-baff-6d17a3217007
+    redirecturi: Yabin_Ping-YabinPin-MyERP--nirbolztu
+
+api.ebay.com:
+    appid: <appid-from-developer-portal>
+    certid: <certid-from-developer-portal>
+    devid: <devid-from-developer-portal>
+    redirecturi: <redirect_uri-from-developer-portal>

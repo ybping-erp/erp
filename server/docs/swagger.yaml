@@ -1,4 +1,3 @@
-basePath: /
 definitions:
   config.AliyunOSS:
     properties:
@@ -106,30 +105,6 @@ definitions:
       open-captcha-timeout:
         description: 防爆破验证码超时时间，单位：s(秒)
         type: integer
-    type: object
-  config.Email:
-    properties:
-      from:
-        description: 发件人  你自己要发邮件的邮箱
-        type: string
-      host:
-        description: 服务器地址 例如 smtp.qq.com  请前往QQ或者你要发邮件的邮箱查看其smtp协议
-        type: string
-      is-ssl:
-        description: 是否SSL   是否开启SSL
-        type: boolean
-      nickname:
-        description: 昵称    发件人昵称 通常为自己的邮箱
-        type: string
-      port:
-        description: 端口     请前往QQ或者你要发邮件的邮箱查看其smtp协议 大多为 465
-        type: integer
-      secret:
-        description: 密钥    用于登录的密钥 最好不要用邮箱密码 去邮箱smtp申请一个用于登录的密钥
-        type: string
-      to:
-        description: 收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用
-        type: string
     type: object
   config.Excel:
     properties:
@@ -424,21 +399,23 @@ definitions:
       aliyun-oss:
         $ref: '#/definitions/config.AliyunOSS'
       autocode:
-        $ref: '#/definitions/config.Autocode'
+        allOf:
+        - $ref: '#/definitions/config.Autocode'
         description: auto
       aws-s3:
         $ref: '#/definitions/config.AwsS3'
       captcha:
         $ref: '#/definitions/config.Captcha'
       cors:
-        $ref: '#/definitions/config.CORS'
+        allOf:
+        - $ref: '#/definitions/config.CORS'
         description: 跨域配置
       db-list:
         items:
           $ref: '#/definitions/config.SpecializedDB'
         type: array
       email:
-        $ref: '#/definitions/config.Email'
+        $ref: '#/definitions/github_com_flipped-aurora_gin-vue-admin_server_config.Email'
       excel:
         $ref: '#/definitions/config.Excel'
       hua-wei-obs:
@@ -446,14 +423,16 @@ definitions:
       jwt:
         $ref: '#/definitions/config.JWT'
       local:
-        $ref: '#/definitions/config.Local'
+        allOf:
+        - $ref: '#/definitions/config.Local'
         description: oss
       mongo:
         $ref: '#/definitions/config.Mongo'
       mssql:
         $ref: '#/definitions/config.Mssql'
       mysql:
-        $ref: '#/definitions/config.Mysql'
+        allOf:
+        - $ref: '#/definitions/config.Mysql'
         description: gorm
       oracle:
         $ref: '#/definitions/config.Oracle'
@@ -566,9 +545,6 @@ definitions:
       db-type:
         description: 数据库类型:mysql(默认)|sqlite|sqlserver|postgresql
         type: string
-      env:
-        description: 环境值
-        type: string
       iplimit-count:
         type: integer
       iplimit-time:
@@ -645,10 +621,9 @@ definitions:
       createdAt:
         description: 创建时间
         type: string
-      creator:
-        $ref: '#/definitions/system.SysUser'
-      creator_id:
-        description: 用户id
+      createdBy:
+        type: integer
+      deletedBy:
         type: integer
       domain:
         description: 品类场景
@@ -662,6 +637,8 @@ definitions:
       updatedAt:
         description: 更新时间
         type: string
+      updatedBy:
+        type: integer
     type: object
   eCommerce.Order:
     properties:
@@ -689,17 +666,25 @@ definitions:
       discount:
         description: 订单折扣金额
         type: number
-      orderId:
-        description: 店铺订单号
-        type: string
+      orderItems:
+        items:
+          $ref: '#/definitions/eCommerce.OrderItem'
+        type: array
       paymentAt:
         description: 付款时间
         type: string
       paymentMethod:
         description: 支付方式
         type: string
+      pickOrders:
+        items:
+          $ref: '#/definitions/wms.PickOrder'
+        type: array
       platformName:
         description: 电商平台
+        type: string
+      platformOrderId:
+        description: 店铺订单号
         type: string
       refundAt:
         description: 退款时间
@@ -734,7 +719,7 @@ definitions:
       shopName:
         description: 店铺名称
         type: string
-      statusId:
+      status:
         description: 状态ID
         type: integer
       tax:
@@ -758,7 +743,11 @@ definitions:
       createdAt:
         description: 创建时间
         type: string
+      goodsSku:
+        type: string
       orderId:
+        type: integer
+      platformOrderId:
         description: 关联订单的标识符
         type: string
       productSku:
@@ -882,7 +871,8 @@ definitions:
         description: 客户手机号
         type: string
       sysUser:
-        $ref: '#/definitions/system.SysUser'
+        allOf:
+        - $ref: '#/definitions/system.SysUser'
         description: 管理详情
       sysUserAuthorityID:
         description: 管理角色ID
@@ -969,6 +959,30 @@ definitions:
         type: integer
       url:
         description: 文件地址
+        type: string
+    type: object
+  github_com_flipped-aurora_gin-vue-admin_server_config.Email:
+    properties:
+      from:
+        description: 发件人  你自己要发邮件的邮箱
+        type: string
+      host:
+        description: 服务器地址 例如 smtp.qq.com  请前往QQ或者你要发邮件的邮箱查看其smtp协议
+        type: string
+      is-ssl:
+        description: 是否SSL   是否开启SSL
+        type: boolean
+      nickname:
+        description: 昵称    发件人昵称 通常为自己的邮箱
+        type: string
+      port:
+        description: 端口     请前往QQ或者你要发邮件的邮箱查看其smtp协议 大多为 465
+        type: integer
+      secret:
+        description: 密钥    用于登录的密钥 最好不要用邮箱密码 去邮箱smtp申请一个用于登录的密钥
+        type: string
+      to:
+        description: 收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用
         type: string
     type: object
   request.AddMenuAuthorityInfo:
@@ -1243,8 +1257,7 @@ definitions:
     type: object
   response.PageResult:
     properties:
-      list:
-        type: object
+      list: {}
       page:
         type: integer
       pageSize:
@@ -1263,8 +1276,7 @@ definitions:
     properties:
       code:
         type: integer
-      data:
-        type: object
+      data: {}
       msg:
         type: string
     type: object
@@ -1340,6 +1352,45 @@ definitions:
       user:
         $ref: '#/definitions/system.SysUser'
     type: object
+  shared.Rule:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      actionCode:
+        description: 动作代码
+        type: integer
+      actionDesc:
+        description: 动作描述
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
+      domain:
+        description: 领域
+        type: string
+      name:
+        description: 规则名称
+        type: string
+      ruleStr:
+        description: 规则条件
+        type: string
+      status:
+        description: 规则状态
+        type: integer
+      systemDefault:
+        description: 系统默认规则
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      updatedBy:
+        type: integer
+    type: object
   system.AutoCodeStruct:
     properties:
       abbreviation:
@@ -1382,6 +1433,26 @@ definitions:
         type: string
       tableName:
         description: 表名
+        type: string
+    type: object
+  system.Condition:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      column:
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      from:
+        type: string
+      operator:
+        type: string
+      templateID:
+        type: string
+      updatedAt:
+        description: 更新时间
         type: string
     type: object
   system.Field:
@@ -1428,6 +1499,26 @@ definitions:
       sort:
         description: 是否增加排序
         type: boolean
+    type: object
+  system.Meta:
+    properties:
+      activeName:
+        type: string
+      closeTab:
+        description: 自动关闭tab
+        type: boolean
+      defaultMenu:
+        description: 是否是基础路由（开发中）
+        type: boolean
+      icon:
+        description: 菜单图标
+        type: string
+      keepAlive:
+        description: 是否缓存
+        type: boolean
+      title:
+        description: 菜单名
+        type: string
     type: object
   system.SysApi:
     properties:
@@ -1511,8 +1602,6 @@ definitions:
       ID:
         description: 主键ID
         type: integer
-      activeName:
-        type: string
       authoritys:
         items:
           $ref: '#/definitions/system.SysAuthority'
@@ -1521,31 +1610,23 @@ definitions:
         items:
           $ref: '#/definitions/system.SysBaseMenu'
         type: array
-      closeTab:
-        description: 自动关闭tab
-        type: boolean
       component:
         description: 对应前端文件路径
         type: string
       createdAt:
         description: 创建时间
         type: string
-      defaultMenu:
-        description: 是否是基础路由（开发中）
-        type: boolean
       hidden:
         description: 是否在列表隐藏
-        type: boolean
-      icon:
-        description: 菜单图标
-        type: string
-      keepAlive:
-        description: 是否缓存
         type: boolean
       menuBtn:
         items:
           $ref: '#/definitions/system.SysBaseMenuBtn'
         type: array
+      meta:
+        allOf:
+        - $ref: '#/definitions/system.Meta'
+        description: 附加属性
       name:
         description: 路由name
         type: string
@@ -1562,9 +1643,6 @@ definitions:
       sort:
         description: 排序标记
         type: integer
-      title:
-        description: 菜单名
-        type: string
       updatedAt:
         description: 更新时间
         type: string
@@ -1673,11 +1751,22 @@ definitions:
       ID:
         description: 主键ID
         type: integer
+      conditions:
+        items:
+          $ref: '#/definitions/system.Condition'
+        type: array
       createdAt:
         description: 创建时间
         type: string
+      dbName:
+        description: 数据库名称
+        type: string
+      limit:
+        type: integer
       name:
         description: 模板名称
+        type: string
+      order:
         type: string
       tableName:
         description: 表名称
@@ -1697,8 +1786,6 @@ definitions:
       ID:
         description: 主键ID
         type: integer
-      activeName:
-        type: string
       authoritys:
         items:
           $ref: '#/definitions/system.SysAuthority'
@@ -1711,26 +1798,14 @@ definitions:
         items:
           $ref: '#/definitions/system.SysMenu'
         type: array
-      closeTab:
-        description: 自动关闭tab
-        type: boolean
       component:
         description: 对应前端文件路径
         type: string
       createdAt:
         description: 创建时间
         type: string
-      defaultMenu:
-        description: 是否是基础路由（开发中）
-        type: boolean
       hidden:
         description: 是否在列表隐藏
-        type: boolean
-      icon:
-        description: 菜单图标
-        type: string
-      keepAlive:
-        description: 是否缓存
         type: boolean
       menuBtn:
         items:
@@ -1738,6 +1813,10 @@ definitions:
         type: array
       menuId:
         type: string
+      meta:
+        allOf:
+        - $ref: '#/definitions/system.Meta'
+        description: 附加属性
       name:
         description: 路由name
         type: string
@@ -1754,9 +1833,6 @@ definitions:
       sort:
         description: 排序标记
         type: integer
-      title:
-        description: 菜单名
-        type: string
       updatedAt:
         description: 更新时间
         type: string
@@ -1861,8 +1937,6 @@ definitions:
       config:
         $ref: '#/definitions/config.Server'
     type: object
-<<<<<<< HEAD
-=======
   wms.Goods:
     properties:
       ID:
@@ -1971,6 +2045,9 @@ definitions:
         type: integer
       rackId:
         description: 货架
+        type: integer
+      status:
+        description: 入库状态
         type: integer
       updatedAt:
         description: 更新时间
@@ -2113,6 +2190,9 @@ definitions:
       rackId:
         description: 货架
         type: integer
+      status:
+        description: 出库状态
+        type: integer
       updatedAt:
         description: 更新时间
         type: string
@@ -2130,6 +2210,45 @@ definitions:
     - rackId
     - warehouseId
     - zoneId
+    type: object
+  wms.PickOrder:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
+      goodsName:
+        description: 商品
+        type: string
+      goodsSku:
+        description: SKU
+        type: string
+      orderId:
+        description: 订单
+        type: integer
+      quantity:
+        description: 拣货数量
+        type: integer
+      rackId:
+        description: 货架
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      updatedBy:
+        type: integer
+      warehouseId:
+        description: 仓库
+        type: integer
+      zoneId:
+        description: 库区
+        type: integer
     type: object
   wms.Rack:
     properties:
@@ -2191,6 +2310,57 @@ definitions:
       updatedBy:
         type: integer
     type: object
+  wms.Supplier:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      bankAccountName:
+        description: 收款人
+        type: string
+      bankAccountNumber:
+        description: 银行卡号
+        type: string
+      bankName:
+        description: 银行名称
+        type: string
+      companyAddress:
+        description: 公司地址
+        type: string
+      companyWebsite:
+        description: 公司网址
+        type: string
+      contactName:
+        description: 联系人
+        type: string
+      contactTelephone:
+        description: 联系电话
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      createdBy:
+        type: integer
+      deletedBy:
+        type: integer
+      name:
+        description: 名称
+        type: string
+      paymentMethod:
+        description: 付款方式
+        type: integer
+      remarks:
+        description: 备注信息
+        type: string
+      settlementMethod:
+        description: 结算方式
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      updatedBy:
+        type: integer
+    type: object
   wms.Warehouse:
     properties:
       ID:
@@ -2233,12 +2403,11 @@ definitions:
       updatedBy:
         type: integer
     type: object
->>>>>>> a15cf23b (更新Swag doc)
 info:
   contact: {}
   description: 使用gin+vue进行极速开发的全栈开发基础平台
   title: Gin-Vue-Admin Swagger API接口文档
-  version: v2.6.2
+  version: v2.6.1
 paths:
   /api/createApi:
     post:
@@ -3318,9 +3487,11 @@ paths:
         in: query
         name: createdAt
         type: string
-      - description: 用户id
-        in: query
-        name: creator_id
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
         type: integer
       - description: 品类场景
         in: query
@@ -3338,6 +3509,9 @@ paths:
         in: query
         name: updatedAt
         type: string
+      - in: query
+        name: updatedBy
+        type: integer
       produces:
       - application/json
       responses:
@@ -3363,9 +3537,11 @@ paths:
         in: query
         name: createdAt
         type: string
-      - description: 用户id
-        in: query
-        name: creator_id
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
         type: integer
       - description: 品类场景
         in: query
@@ -3401,6 +3577,9 @@ paths:
         in: query
         name: updatedAt
         type: string
+      - in: query
+        name: updatedBy
+        type: integer
       produces:
       - application/json
       responses:
@@ -4114,6 +4293,10 @@ paths:
         name: rackId
         required: true
         type: integer
+      - description: 入库状态
+        in: query
+        name: status
+        type: integer
       - description: 更新时间
         in: query
         name: updatedAt
@@ -4169,6 +4352,9 @@ paths:
       - in: query
         name: startCreatedAt
         type: string
+      - in: query
+        name: status
+        type: integer
       produces:
       - application/json
       responses:
@@ -4248,6 +4434,29 @@ paths:
       summary: 初始化用户数据库
       tags:
       - InitDB
+  /inventory/addInventoryFromInboundLog:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建商品库存
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Inventory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"入库成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建商品库存
+      tags:
+      - Inventory
   /inventory/createInventory:
     post:
       consumes:
@@ -5178,10 +5387,6 @@ paths:
         in: query
         name: discount
         type: number
-      - description: 店铺订单号
-        in: query
-        name: orderId
-        type: string
       - description: 付款时间
         in: query
         name: paymentAt
@@ -5193,6 +5398,10 @@ paths:
       - description: 电商平台
         in: query
         name: platformName
+        type: string
+      - description: 店铺订单号
+        in: query
+        name: platformOrderId
         type: string
       - description: 退款时间
         in: query
@@ -5240,7 +5449,7 @@ paths:
         type: string
       - description: 状态ID
         in: query
-        name: statusId
+        name: status
         type: integer
       - description: 订单税额
         in: query
@@ -5310,10 +5519,6 @@ paths:
         in: query
         name: keyword
         type: string
-      - description: 店铺订单号
-        in: query
-        name: orderId
-        type: string
       - description: 页码
         in: query
         name: page
@@ -5333,6 +5538,10 @@ paths:
       - description: 电商平台
         in: query
         name: platformName
+        type: string
+      - description: 店铺订单号
+        in: query
+        name: platformOrderId
         type: string
       - description: 退款时间
         in: query
@@ -5383,7 +5592,7 @@ paths:
         type: string
       - description: 状态ID
         in: query
-        name: statusId
+        name: status
         type: integer
       - description: 订单税额
         in: query
@@ -5518,9 +5727,15 @@ paths:
         in: query
         name: createdAt
         type: string
+      - in: query
+        name: goodsSku
+        type: string
+      - in: query
+        name: orderId
+        type: integer
       - description: 关联订单的标识符
         in: query
-        name: orderId
+        name: platformOrderId
         type: string
       - description: 关联产品的标识符
         in: query
@@ -5578,14 +5793,16 @@ paths:
       - in: query
         name: endCreatedAt
         type: string
+      - in: query
+        name: goodsSku
+        type: string
       - description: 关键字
         in: query
         name: keyword
         type: string
-      - description: 关联订单的标识符
-        in: query
+      - in: query
         name: orderId
-        type: string
+        type: integer
       - description: 页码
         in: query
         name: page
@@ -5594,6 +5811,10 @@ paths:
         in: query
         name: pageSize
         type: integer
+      - description: 关联订单的标识符
+        in: query
+        name: platformOrderId
+        type: string
       - description: 关联产品的标识符
         in: query
         name: productSku
@@ -5752,6 +5973,10 @@ paths:
         name: rackId
         required: true
         type: integer
+      - description: 出库状态
+        in: query
+        name: status
+        type: integer
       - description: 更新时间
         in: query
         name: updatedAt
@@ -5807,6 +6032,9 @@ paths:
       - in: query
         name: startCreatedAt
         type: string
+      - in: query
+        name: status
+        type: integer
       produces:
       - application/json
       responses:
@@ -5842,6 +6070,201 @@ paths:
       summary: 更新出库记录
       tags:
       - OutboundLog
+  /pickOrder/createPickOrder:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建拣货单
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.PickOrder'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建拣货单
+      tags:
+      - PickOrder
+  /pickOrder/deletePickOrder:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除拣货单
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.PickOrder'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除拣货单
+      tags:
+      - PickOrder
+  /pickOrder/deletePickOrderByIds:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除拣货单
+      tags:
+      - PickOrder
+  /pickOrder/findPickOrder:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - description: 商品
+        in: query
+        name: goodsName
+        type: string
+      - description: SKU
+        in: query
+        name: goodsSku
+        type: string
+      - description: 订单
+        in: query
+        name: orderId
+        type: integer
+      - description: 拣货数量
+        in: query
+        name: quantity
+        type: integer
+      - description: 货架
+        in: query
+        name: rackId
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      - description: 仓库
+        in: query
+        name: warehouseId
+        type: integer
+      - description: 库区
+        in: query
+        name: zoneId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询拣货单
+      tags:
+      - PickOrder
+  /pickOrder/getPickOrderList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: endCreatedAt
+        type: string
+      - in: query
+        name: goodsName
+        type: string
+      - in: query
+        name: goodsSku
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: orderId
+        type: integer
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取拣货单列表
+      tags:
+      - PickOrder
+  /pickOrder/updatePickOrder:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新拣货单
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.PickOrder'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新拣货单
+      tags:
+      - PickOrder
   /platform/createPlatform:
     post:
       consumes:
@@ -5961,9 +6384,6 @@ paths:
         in: query
         name: createdAt
         type: string
-      - in: query
-        name: endCreatedAt
-        type: string
       - description: 关键字
         in: query
         name: keyword
@@ -5984,9 +6404,6 @@ paths:
         in: query
         name: pageSize
         type: integer
-      - in: query
-        name: startCreatedAt
-        type: string
       - description: 更新时间
         in: query
         name: updatedAt
@@ -6494,6 +6911,198 @@ paths:
       summary: 更新货架
       tags:
       - Rack
+  /rule/createRule:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建规则
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/shared.Rule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建规则
+      tags:
+      - Rule
+  /rule/deleteRule:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除规则
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/shared.Rule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除规则
+      tags:
+      - Rule
+  /rule/deleteRuleByIds:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除规则
+      tags:
+      - Rule
+  /rule/findRule:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 动作代码
+        in: query
+        name: actionCode
+        type: integer
+      - description: 动作描述
+        in: query
+        name: actionDesc
+        type: string
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - description: 领域
+        in: query
+        name: domain
+        type: string
+      - description: 规则名称
+        in: query
+        name: name
+        type: string
+      - description: 规则条件
+        in: query
+        name: ruleStr
+        type: string
+      - description: 规则状态
+        in: query
+        name: status
+        type: integer
+      - description: 系统默认规则
+        in: query
+        name: systemDefault
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询规则
+      tags:
+      - Rule
+  /rule/getRuleList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: name
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      - in: query
+        name: status
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取规则列表
+      tags:
+      - Rule
+  /rule/updateRule:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新规则
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/shared.Rule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新规则
+      tags:
+      - Rule
   /shop/createShop:
     post:
       consumes:
@@ -6922,6 +7531,217 @@ paths:
       summary: 更新商品映射
       tags:
       - SkuMapping
+  /supplier/createSupplier:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建供应商
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Supplier'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建供应商
+      tags:
+      - Supplier
+  /supplier/deleteSupplier:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除供应商
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Supplier'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除供应商
+      tags:
+      - Supplier
+  /supplier/deleteSupplierByIds:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除供应商
+      tags:
+      - Supplier
+  /supplier/findSupplier:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 收款人
+        in: query
+        name: bankAccountName
+        type: string
+      - description: 银行卡号
+        in: query
+        name: bankAccountNumber
+        type: string
+      - description: 银行名称
+        in: query
+        name: bankName
+        type: string
+      - description: 公司地址
+        in: query
+        name: companyAddress
+        type: string
+      - description: 公司网址
+        in: query
+        name: companyWebsite
+        type: string
+      - description: 联系人
+        in: query
+        name: contactName
+        type: string
+      - description: 联系电话
+        in: query
+        name: contactTelephone
+        type: string
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: createdBy
+        type: integer
+      - in: query
+        name: deletedBy
+        type: integer
+      - description: 名称
+        in: query
+        name: name
+        type: string
+      - description: 付款方式
+        in: query
+        name: paymentMethod
+        type: integer
+      - description: 备注信息
+        in: query
+        name: remarks
+        type: string
+      - description: 结算方式
+        in: query
+        name: settlementMethod
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: updatedBy
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询供应商
+      tags:
+      - Supplier
+  /supplier/getSupplierList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: contactName
+        type: string
+      - in: query
+        name: contactTelephone
+        type: string
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: name
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取供应商列表
+      tags:
+      - Supplier
+  /supplier/updateSupplier:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新供应商
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/wms.Supplier'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新供应商
+      tags:
+      - Supplier
   /sysDictionary/createSysDictionary:
     post:
       consumes:
@@ -7374,6 +8194,7 @@ paths:
       - application/json
       produces:
       - application/json
+      responses: {}
       security:
       - ApiKeyAuth: []
       summary: 导出表格模板
@@ -7392,9 +8213,19 @@ paths:
         in: query
         name: createdAt
         type: string
+      - description: 数据库名称
+        in: query
+        name: dbName
+        type: string
+      - in: query
+        name: limit
+        type: integer
       - description: 模板名称
         in: query
         name: name
+        type: string
+      - in: query
+        name: order
         type: string
       - description: 表名称
         in: query
@@ -7437,6 +8268,10 @@ paths:
         in: query
         name: createdAt
         type: string
+      - description: 数据库名称
+        in: query
+        name: dbName
+        type: string
       - in: query
         name: endCreatedAt
         type: string
@@ -7444,9 +8279,15 @@ paths:
         in: query
         name: keyword
         type: string
+      - in: query
+        name: limit
+        type: integer
       - description: 模板名称
         in: query
         name: name
+        type: string
+      - in: query
+        name: order
         type: string
       - description: 页码
         in: query
@@ -7493,6 +8334,7 @@ paths:
       - application/json
       produces:
       - application/json
+      responses: {}
       security:
       - ApiKeyAuth: []
       summary: 导入表格

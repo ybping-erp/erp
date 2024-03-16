@@ -215,3 +215,11 @@ zap:
     max-age: 0
     show-line: true
     log-in-console: true
+ebay:
+    environment: SANDBOX
+    appid: YabinPin-MyERP-SBX-80fe6cabc-56231a8e
+    certid: SBX-0fe6cabcfbe4-d5bc-467a-a4a4-194e
+    devid: 323b0815-15af-4627-baff-6d17a3217007
+    redirecturi: Yabin_Ping-YabinPin-MyERP--nirbolztu
+    web-endpoint: "https://auth.sandbox.ebay.com/oauth2/authorize"
+    api-endpoint: "https://api.sandbox.ebay.com/identity/v1/oauth2/token"

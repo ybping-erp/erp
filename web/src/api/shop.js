@@ -95,3 +95,20 @@ export const getShopList = (params) => {
     params
   })
 }
+
+
+// @Tags Shop
+// @Summary 店铺授权
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data query model.Shop true "店铺授权"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"授权成功"}"
+// @Router /shop/authorize [get]
+export const authorizeShop = (data) => {
+  return service({
+    url: '/shop/authorize',
+    method: 'post',
+    data
+  })
+}
