@@ -195,11 +195,25 @@ func (shopApi *ShopApi) AuthorizeShop(c *gin.Context) {
 		return
 	}
 
+	// 生成SCRF Token并存储，用来在oAuth回调时进行授权凭证对比
+	shop.CSRFToken, err = utils.GenerateCSRFToken()
+	if err != nil {
+		global.GVA_LOG.Error("生成CSRFToken失败,请重试!", zap.Error(err))
+		response.FailWithMessage("授权失败,请重试!", c)
+		return
+	}
+
+	if err := shopService.UpdateShop(shop); err != nil {
+		global.GVA_LOG.Error("更新CSRFToken失败!", zap.Error(err))
+		response.FailWithMessage("授权失败，请重试!", c)
+		return
+	}
+
 	if shop.PlatformName == "eBay" {
 		client := oauth.GetAPIClient()
-		if oAuthUrl, err := client.GenerateUserAuthorizationURL(c, "random-state", client.GetDefaultScopes()); err != nil {
-			global.GVA_LOG.Error("授权失败!", zap.Error(err))
-			response.FailWithMessage("授权失败", c)
+		if oAuthUrl, err := client.GenerateUserAuthorizationURL(c, shop.CSRFToken, client.GetDefaultScopes()); err != nil {
+			global.GVA_LOG.Error("eBay.GenerateUserAuthorizationURL 失败!", zap.Error(err))
+			response.FailWithMessage("授权失败!", c)
 		} else {
 			response.OkWithData(gin.H{"oAuthUrl": oAuthUrl}, c)
 		}

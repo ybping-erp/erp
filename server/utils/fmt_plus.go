@@ -1,6 +1,8 @@
 package utils
 
 import (
+	crand "crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"math/rand"
 	"reflect"
@@ -87,4 +89,18 @@ func MapToArray[T any](m map[string]T) []T {
 		values = append(values, val)
 	}
 	return values
+}
+
+// GenerateCSRFToken generates a CSRF token
+func GenerateCSRFToken() (string, error) {
+	// Generate random bytes
+	randomBytes := make([]byte, 32)
+	_, err := crand.Read(randomBytes)
+	if err != nil {
+		return "", err
+	}
+
+	// Encode random bytes to base64
+	csrfToken := base64.URLEncoding.EncodeToString(randomBytes)
+	return csrfToken, nil
 }

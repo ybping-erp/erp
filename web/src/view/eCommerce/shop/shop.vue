@@ -4,7 +4,7 @@
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline" :rules="searchRule" @keyup.enter="onSubmit">
         <el-form-item label="电商平台" prop="platformName">
          <el-select v-model.number="searchInfo.platformName" placeholder="请选择" style="width:100%" :clearable="true" >
-            <el-option v-for="item in ePlatforms" :key="item.ID" :label="item.name" :value="item.ID" />
+            <el-option v-for="item in ePlatforms" :key="item.ID" :label="item.name" :value="item.name" />
           </el-select>
         </el-form-item>
         <el-form-item label="店铺ID" prop="shopId">
@@ -45,10 +45,8 @@
         >
         <el-table-column type="selection" width="55" />
         <el-table-column align="left" label="电商平台" prop="platformName" width="120" />
-        <!-- <el-table-column align="left" label="店铺ID" prop="shopId" width="120" /> -->
+        <el-table-column align="left" label="店铺ID" prop="shopId" width="120" />
         <el-table-column align="left" label="店铺名称" prop="shopName" width="120" />
-        <el-table-column align="left" label="API Client ID" prop="clientId" width="120" />
-        <el-table-column align="left" label="API Client Cert" prop="clientCert" width="160" />
         <el-table-column align="left" label="操作" min-width="120">
             <template #default="scope">
               <el-button type="primary" link icon="edit" class="table-button" @click="authorizeFunc(scope.row)">授权</el-button>
@@ -83,12 +81,6 @@
             <el-form-item label="店铺名称:"  prop="shopName" >
               <el-input v-model="formData.shopName" :clearable="true"  placeholder="请输入店铺名称" />
             </el-form-item>
-            <el-form-item label="API Client ID:"  prop="clientId" >
-              <el-input v-model="formData.clientId" :clearable="true"  placeholder="请输入API Client ID" />
-            </el-form-item>
-            <el-form-item label="API Client Cert:"  prop="clientCert" >
-              <el-input v-model="formData.clientCert" :clearable="true"  placeholder="请输入API Client Cert" />
-            </el-form-item>
           </el-form>
       </el-scrollbar>
       <template #footer>
@@ -110,12 +102,6 @@
                 </el-descriptions-item>
                 <el-descriptions-item label="店铺名称">
                         {{ formData.shopName }}
-                </el-descriptions-item>
-                <el-descriptions-item label="API Client ID">
-                        {{ formData.clientId }}
-                </el-descriptions-item>
-                <el-descriptions-item label="API Client Cert">
-                        {{ formData.clientCert }}
                 </el-descriptions-item>
         </el-descriptions>
       </el-scrollbar>
