@@ -26,3 +26,9 @@ func (s *ShopRouter) InitShopRouter(Router *gin.RouterGroup) {
 		shopRouterWithoutRecord.GET("getShopList", shopApi.GetShopList) // 获取店铺列表
 	}
 }
+
+func (s *ShopRouter) InitShopPublicRouter(Router *gin.RouterGroup) {
+	var shopApi = v1.ApiGroupApp.ECommerceApiGroup.ShopApi
+	shopRouter := Router.Group("shop").Use(middleware.OperationRecord())
+	shopRouter.GET("authorize/callback", shopApi.OAuthCallback) // 店铺第三方授权回调
+}

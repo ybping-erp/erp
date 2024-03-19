@@ -67,6 +67,12 @@ func (shopService *ShopService) GetShopInfoList(info eCommerceReq.ShopSearch) (l
 	if info.ShopName != "" {
 		db = db.Where("shop_name LIKE ?", "%"+info.ShopName+"%")
 	}
+	if info.CreatedBy != 0 {
+		db = db.Where("created_by = ?", info.CreatedBy)
+	}
+	if info.CSRFToken != "" {
+		db = db.Where("scrf_token = ?", info.CSRFToken)
+	}
 	err = db.Count(&total).Error
 	if err != nil {
 		return

@@ -1,4 +1,4 @@
-package oauth
+package eBay
 
 import (
 	"context"

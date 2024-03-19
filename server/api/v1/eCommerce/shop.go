@@ -1,7 +1,9 @@
 package eCommerce
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/eBay/oauth"
+	"net/http"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/eBay"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
@@ -195,8 +197,8 @@ func (shopApi *ShopApi) AuthorizeShop(c *gin.Context) {
 		return
 	}
 
-	// 生成SCRF Token并存储，用来在oAuth回调时进行授权凭证对比
-	shop.CSRFToken, err = utils.GenerateCSRFToken()
+	// 生成SCRF Token并存储，用来在oAuth回调时进行授权凭证对比, 对比后重置该Token
+	err = shop.GenerateOAuthState()
 	if err != nil {
 		global.GVA_LOG.Error("生成CSRFToken失败,请重试!", zap.Error(err))
 		response.FailWithMessage("授权失败,请重试!", c)
@@ -210,7 +212,7 @@ func (shopApi *ShopApi) AuthorizeShop(c *gin.Context) {
 	}
 
 	if shop.PlatformName == "eBay" {
-		client := oauth.GetAPIClient()
+		client := eBay.GetAPIClient()
 		if oAuthUrl, err := client.GenerateUserAuthorizationURL(c, shop.CSRFToken, client.GetDefaultScopes()); err != nil {
 			global.GVA_LOG.Error("eBay.GenerateUserAuthorizationURL 失败!", zap.Error(err))
 			response.FailWithMessage("授权失败!", c)
@@ -221,4 +223,57 @@ func (shopApi *ShopApi) AuthorizeShop(c *gin.Context) {
 	}
 
 	response.FailWithMessage("不支持该平台授权", c)
+}
+
+// EBayOAuthCallback 店铺授权回调
+// @Tags Shop
+// @Summary 店铺授权
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"授权成功"}"
+// @Router /shop/authorize/callback [get]
+func (shopApi *ShopApi) OAuthCallback(c *gin.Context) {
+	state := c.Query("state")
+	code := c.Query("code")
+
+	// 解析state参数，防止CSRF攻击
+	shopID, err := eCommerce.Shop{}.GetShopIDFromOAuthState(state)
+	if err != nil {
+		global.GVA_LOG.Error("非法授权回调！", zap.Error(err))
+		response.FailWithMessage("非法请求", c)
+		return
+	}
+
+	// 应该有且只有一个合法的授权店铺存在
+	shop, err := shopService.GetShop(uint(shopID))
+	if err != nil {
+		global.GVA_LOG.Error("非法授权回调！", zap.Error(err))
+		response.FailWithMessage("非法请求", c)
+		return
+	}
+
+	if shop.CSRFToken != state {
+		global.GVA_LOG.Error("非法授权回调！")
+		response.FailWithMessage("非法请求", c)
+		return
+	}
+
+	// 用access code 换取 oauth token
+	client := eBay.GetAPIClient()
+	if token, _, err := client.ExchangeCodeForAccessTokenAndClient(c, code); err != nil {
+		global.GVA_LOG.Error("ExchangeCodeForAccessTokenAndClient失败!", zap.Error(err))
+		response.FailWithMessage("授权失败，请重试!", c)
+		return
+	} else {
+		shop.ResetToken(token)
+		if err := shopService.UpdateShop(shop); err != nil {
+			global.GVA_LOG.Error("重置Token失败!", zap.Error(err))
+			response.FailWithMessage("授权失败，请重试!", c)
+			return
+		}
+	}
+
+	// 授权成功重定向到店铺页面
+	c.Redirect(http.StatusFound, "http://localhost:8080/#/layout/eCommerce/shop")
 }

@@ -100,6 +100,7 @@ func Routers() *gin.Engine {
 		eCommerceRouter.InitPlatformRouter(PrivateGroup)
 		eCommerceRouter.InitProductRouter(PrivateGroup)
 		eCommerceRouter.InitShopRouter(PrivateGroup)
+		eCommerceRouter.InitShopPublicRouter(PublicGroup)
 		eCommerceRouter.InitCategoryRouter(PrivateGroup)
 		eCommerceRouter.InitOrderRouter(PrivateGroup)
 		eCommerceRouter.InitOrderItemRouter(PrivateGroup)

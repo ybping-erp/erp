@@ -8,10 +8,10 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/model/eCommerce"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/shared"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/wms"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/shared"
 )
 
 func Gorm() *gorm.DB {
