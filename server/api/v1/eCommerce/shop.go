@@ -213,6 +213,31 @@ func (shopApi *ShopApi) AuthorizeShop(c *gin.Context) {
 
 	if shop.PlatformName == "eBay" {
 		client := eBay.GetAPIClient()
+
+		// Test Refresh Code
+		if shop.RefreshToken != "" {
+			token, oauthClient, err := client.GetAccessTokenAndClient(c, shop.RefreshToken, client.GetDefaultScopes())
+			if err != nil {
+				response.FailWithMessage(err.Error(), c)
+				return
+			}
+
+			// Test list orders
+			// err = client.GetOrders(oauthClient)
+
+			// Test create product
+
+			err = client.CreateOrReplaceInventoryItem(oauthClient)
+			if err != nil {
+				response.FailWithMessage(err.Error(), c)
+				return
+			}
+
+			response.FailWithMessage(token.AccessToken, c)
+			return
+		}
+		// Test Refresh Code End
+
 		if oAuthUrl, err := client.GenerateUserAuthorizationURL(c, shop.CSRFToken, client.GetDefaultScopes()); err != nil {
 			global.GVA_LOG.Error("eBay.GenerateUserAuthorizationURL 失败!", zap.Error(err))
 			response.FailWithMessage("授权失败!", c)

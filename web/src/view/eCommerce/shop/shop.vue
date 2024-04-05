@@ -46,7 +46,7 @@
         <el-table-column type="selection" width="55" />
         <el-table-column align="left" label="电商平台" prop="platformName" width="120" />
         <el-table-column align="left" label="店铺ID" prop="shopId" width="120" />
-        <el-table-column align="left" label="店铺名称" prop="shopName" width="120" />
+        <el-table-column align="left" label="店铺名称" prop="shopName" width="240" />
         <el-table-column align="left" label="操作" min-width="120">
             <template #default="scope">
               <el-button type="primary" link icon="edit" class="table-button" @click="authorizeFunc(scope.row)">授权</el-button>
